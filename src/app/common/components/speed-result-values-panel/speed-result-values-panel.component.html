@@ -1,0 +1,10 @@
+<div class="wrapper" [@finishTest]="tested ? 'finished' : 'empty'">
+	<div class="title-group">
+		<img [src]="icon" alt="" />
+		<span class="title">{{ title }}</span>
+		<span class="sub-title">Мбит/с</span>
+	</div>
+	<div class="speed">{{ speed }}</div>
+	<div class="stability"><span>Стабильность</span> {{ stability }} %</div>
+	<div class="loss"><span>Потери</span> {{ loss }} %</div>
+</div>

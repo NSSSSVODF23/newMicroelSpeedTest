@@ -1,0 +1,114 @@
+<div class="content-wrapper">
+	<p-card>
+		<ng-template pTemplate="header">
+			<div><i class="pi pi-mobile"></i> Устройства</div>
+		</ng-template>
+		<p-table
+			responsiveLayout="stack"
+			dataKey="deviceId"
+			selectionMode="single"
+			[(selection)]="selectedMeasure"
+			(onRowSelect)="openLastMeasure($event)"
+			[value]="devices"
+			[lazy]="true"
+			(onLazyLoad)="loadMeasures($event)"
+			[(first)]="first"
+			[rows]="rows"
+			[totalRecords]="totalRecords"
+			[loading]="loading"
+			[paginator]="true"
+			[showCurrentPageReport]="true"
+			currentPageReportTemplate="Показано с {first} по {last} из {totalRecords} устройств"
+			[rowsPerPageOptions]="[10, 25, 50]"
+		>
+			<ng-template pTemplate="header">
+				<tr>
+					<th>Тип</th>
+					<th>ID Устройства</th>
+					<th>IP Адрес</th>
+					<th>Hostname</th>
+					<th>Система</th>
+					<th>Платформа</th>
+					<th>Сред. скачивание</th>
+					<th>Сред. загрузка</th>
+					<th>Кол. замеров</th>
+				</tr>
+			</ng-template>
+			<ng-template pTemplate="body" let-device>
+				<tr [pSelectableRow]="device">
+					<td><img [src]="device.isMobile | deviceType" alt="" srcset="" /></td>
+					<td>{{ device.deviceId }}</td>
+					<td>{{ device.ip }}</td>
+					<td>{{ device.hostname }}</td>
+					<td>{{ device.system }}</td>
+					<td>{{ device.platform }}</td>
+					<td>{{ device.avgDownload | number: "1.3" }}</td>
+					<td>{{ device.avgUpload | number: "1.3" }}</td>
+					<td>{{ device.measureCount }}</td>
+				</tr>
+			</ng-template>
+		</p-table>
+	</p-card>
+	<p-card>
+		<ng-template pTemplate="header">
+			<div><i class="pi pi-search"></i> Поиск</div>
+		</ng-template>
+		<div class="search-fields-container">
+			<input
+				type="text"
+				pInputText
+				class="p-inputtext-sm"
+				[(ngModel)]="searchFilters.deviceId"
+				(ngModelChange)="filterChangeHandler($event)"
+				placeholder="ID Устройства"
+			/>
+			<input
+				type="text"
+				pInputText
+				class="p-inputtext-sm"
+				[(ngModel)]="searchFilters.login"
+				(ngModelChange)="filterChangeHandler($event)"
+				placeholder="Логин"
+			/>
+			<p-dropdown
+				[options]="houseList"
+				[(ngModel)]="searchFilters.address"
+				(ngModelChange)="filterChangeHandler($event)"
+				optionLabel="address"
+				filterBy="address"
+				optionValue="houseId"
+				[showClear]="true"
+				[filter]="true"
+				filterBy="address"
+				class="p-inputtext-sm"
+				(onClear)="addressResetFunction($event)"
+				placeholder="Адрес"
+			></p-dropdown>
+			<input
+				type="text"
+				pInputText
+				class="p-inputtext-sm"
+				[(ngModel)]="searchFilters.ip"
+				(ngModelChange)="filterChangeHandler($event)"
+				[pKeyFilter]="ipInputFilter"
+				placeholder="IP Адрес"
+			/>
+			<input
+				type="text"
+				pInputText
+				class="p-inputtext-sm"
+				[(ngModel)]="searchFilters.hostname"
+				(ngModelChange)="filterChangeHandler($event)"
+				placeholder="Hostname"
+			/>
+
+			<button
+				pButton
+				label="Сбросить"
+				class="p-button-sm"
+				icon="pi pi-filter-slash"
+				(click)="resetFilters()"
+			></button>
+		</div>
+	</p-card>
+</div>

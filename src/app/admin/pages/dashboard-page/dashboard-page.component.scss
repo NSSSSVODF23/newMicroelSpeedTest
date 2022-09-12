@@ -1,0 +1,16 @@
+.page-wrapper {
+	display: grid;
+	padding: 1rem 0;
+	gap: 1rem;
+	justify-content: center;
+}
+
+.common-statistic {
+	display: flex;
+	gap: 1rem;
+	width: 700px;
+}
+
+.common-statistic > * {
+	flex: 1 1 0;
+}

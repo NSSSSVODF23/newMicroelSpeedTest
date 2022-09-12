@@ -1,0 +1,14 @@
+import { Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class StatisticService {
+
+  constructor(readonly apollo:Apollo) { }
+
+  getTopMeasurementAddress(){
+    
+  }
+}

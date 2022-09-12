@@ -1,0 +1,74 @@
+<div class="page-wrapper">
+	<div class="common-statistic">
+		<app-statistic-card
+			title="Новые замеры"
+			firstSuffix="за сутки"
+			secondSuffix="за месяц"
+		></app-statistic-card>
+		<app-statistic-card
+			title="Новые жалобы"
+			firstSuffix="за сутки"
+			secondSuffix="за месяц"
+		></app-statistic-card>
+		<app-statistic-card
+			title="Рейтинг"
+			firstSuffix="из 5"
+			secondSuffix="отзывов"
+		></app-statistic-card>
+	</div>
+	<p-card>
+		<ng-template pTemplate="header">
+			<div>Нагрузка</div>
+		</ng-template>
+		<p-tabView>
+			<p-tabPanel header="Сеть">
+				<p-chart
+					type="line"
+					[data]="networkChartData"
+					[responsive]="true"
+					[options]="networkChartOptions"
+					height="305px"
+				></p-chart>
+			</p-tabPanel>
+			<p-tabPanel header="Процессор">
+				<p-chart
+					type="line"
+					[data]="cpuChartData"
+					[options]="cpuChartOptions"
+					height="305px"
+				></p-chart>
+			</p-tabPanel>
+			<p-tabPanel header="Память">
+				<p-chart
+					type="line"
+					[data]="memoryChartData"
+					[options]="memoryChartOptions"
+					height="305px"
+				></p-chart>
+			</p-tabPanel>
+		</p-tabView>
+	</p-card>
+	<p-card>
+		<ng-template pTemplate="header">
+			<div>
+				Статистика: {{ statisticName }}
+				<div class="empty"></div>
+				<button
+					pButton
+					label="Выбрать"
+					(click)="statisticMenu.toggle($event)"
+					class="p-button-text p-button-success"
+				></button>
+			</div>
+			<p-tieredMenu
+				#statisticMenu
+				[model]="statisticMenuItems"
+				[popup]="true"
+			></p-tieredMenu>
+		</ng-template>
+		<p-chart
+			[data]="statisticChartData"
+			[options]="statisticChartOptions"
+		></p-chart>
+	</p-card>
+</div>

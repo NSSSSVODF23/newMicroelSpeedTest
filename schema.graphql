@@ -1,0 +1,179 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+type AcpHouse {
+    address: String
+    houseId: Int
+    sessions: [AcpSession]
+    vlan: Int
+}
+
+type AcpSession {
+    house: AcpHouse
+    ip: String
+    login: String
+    mac: String
+    measures: [Measure]
+    sessionId: Int
+    vlan: Int
+}
+
+type Device {
+    deviceId: String
+    hostname: String
+    ip: String
+    isMobile: Boolean
+    measures: [Measure]
+    platform: String
+    system: String
+    userAgent: String
+}
+
+type FloatChartPoint {
+    x: String
+    y: Float
+}
+
+type LongChartPoint {
+    x: String
+    y: Int
+}
+
+type Measure {
+    connectionType: MeasureConnectionTypes
+    created: String
+    device: Device
+    downloadLoss: Float
+    downloadSpeed: Float
+    downloadSpeedChart: [SpeedChartPoint]
+    downloadStability: Float
+    isFailed: Boolean
+    isStarted: Boolean
+    isUsed: Boolean
+    measureId: Int
+    ping: Float
+    pingJitter: Float
+    session: AcpSession
+    uploadLoss: Float
+    uploadSpeed: Float
+    uploadSpeedChart: [SpeedChartPoint]
+    uploadStability: Float
+}
+
+type Mutation {
+    createUser(user: IUser): User
+    deleteUser(userId: Int): User
+    editUser(user: IUser): User
+}
+
+type PerformanceInfo {
+    cpuChartData: [FloatChartPoint]
+    memoryChartData: [LongChartPoint]
+    receivedChartData: [FloatChartPoint]
+    totalMemoryChartData: [LongChartPoint]
+    transceivedChartData: [FloatChartPoint]
+}
+
+type Query {
+    getAllHouses: [AcpHouse]
+    getAllMeasures: [Measure]
+    getAllRoles: [RoleGroup]
+    getAllUsers: [User]
+    getBeginningMeasures: [Measure]
+    getFilteredDevices(filter: DeviceFilter): [Device]
+    getFilteredMeasures(filter: MeasureFilter): [Measure]
+    getMeasure(id: Int): Measure
+    getTotalDevices(filter: DeviceFilter): Int
+    getTotalMeasures(filter: MeasureFilter): Int
+    getUserByUsername(username: String): User
+    validateLogin(login: String): Boolean
+}
+
+type RoleGroup {
+    description: String
+    groupName: String
+    roleId: Int
+}
+
+type SpeedChartPoint {
+    speed: Float
+    stamp: Int
+}
+
+type Subscription {
+    getBeginningMeasures: [Measure]
+    getFilteredMeasures(filter: MeasureFilter): [Measure]
+    getPerformance: PerformanceInfo
+    getTotalMeasures(filter: MeasureFilter): Int
+    updateUsers: UserUpdateProvider
+}
+
+type User {
+    avatar: [Int]
+    created: String
+    lastLogin: String
+    name: String
+    password: String
+    role: RoleGroup
+    userId: Int
+    username: String
+}
+
+type UserUpdateProvider {
+    object: User
+    updateType: ListMutationTypes
+}
+
+enum ListMutationTypes {
+    ADD
+    DELETE
+    UPDATE
+}
+
+enum MeasureConnectionTypes {
+    ETHERNET
+    WIFI
+}
+
+input DeviceFilter {
+    address: Int
+    deviceId: String
+    first: Int
+    hostname: String
+    ip: String
+    login: String
+    rows: Int
+}
+
+input IRoleGroup {
+    description: String
+    groupName: String
+    roleId: Int
+}
+
+input IUser {
+    avatar: [Int]
+    created: String
+    lastLogin: String
+    name: String
+    password: String
+    role: IRoleGroup
+    userId: Int
+    username: String
+}
+
+input MeasureFilter {
+    address: Int
+    end: String
+    first: Int
+    ip: String
+    login: String
+    mac: String
+    rows: Int
+    start: String
+}

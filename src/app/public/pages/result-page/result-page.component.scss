@@ -1,0 +1,113 @@
+@import "../../../styles/variables.scss";
+
+.header {
+	font-size: 1.1rem;
+	font-weight: 500;
+	color: $text-color;
+	padding: 1.1rem 1.3rem 0 1.3rem;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.3em;
+
+	span {
+		width: max-content;
+	}
+
+	.empty {
+		flex: 1;
+	}
+
+	.timestamp {
+		font-size: 0.8rem;
+		color: $text-color-secondary;
+	}
+}
+
+.content-wrapper {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: 550px;
+	grid-template-rows: 1fr min-content;
+	justify-content: center;
+	align-items: center;
+}
+
+.result-content {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr;
+	justify-content: center;
+	align-items: center;
+	gap: 1em;
+	flex: 1;
+}
+
+.controls-content {
+	display: grid;
+	grid-template-columns: max-content;
+	grid-template-rows: min-content;
+	gap: 1em;
+}
+
+.card-content {
+	display: flex;
+	width: 100%;
+	height: 100%;
+}
+
+.speed-result-wrapper {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	gap: 1rem;
+}
+
+.mobile-content {
+	display: grid;
+	gap: 1rem;
+	justify-items: center;
+	background-color: $white-color;
+	padding: 1rem;
+}
+
+// Стандартные медиа запросы
+@media (max-width: 767px) {
+	.card-content {
+		flex-direction: column;
+	}
+	.content-wrapper {
+		grid-template-columns: 100%;
+	}
+}
+
+@media (min-width: 768px) {
+	.card-content {
+		flex-direction: column;
+	}
+	.content-wrapper {
+		grid-template-columns: 100%;
+	}
+}
+
+@media (min-width: 992px) {
+	.card-content {
+		flex-direction: column;
+	}
+	.content-wrapper {
+		padding: 1rem;
+		grid-template-columns: 800px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.card-content {
+		flex-direction: column;
+	}
+	.content-wrapper {
+		padding: 1rem;
+		grid-template-columns: 1000px;
+	}
+}

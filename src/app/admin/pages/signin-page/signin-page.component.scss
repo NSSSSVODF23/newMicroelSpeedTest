@@ -1,0 +1,36 @@
+@import "../../../styles/variables.scss";
+@import "../../../styles/theme.scss";
+
+.content-wrapper {
+	display: grid;
+	grid-template-columns: max-content;
+	justify-content: center;
+	gap: 2rem;
+	padding-top: 2rem;
+}
+.content {
+	display: grid;
+	grid-template-columns: max-content;
+	grid-auto-rows: min-content;
+	justify-items: center;
+	gap: 1rem;
+}
+.title {
+	padding: 1rem;
+	font-size: 1.4rem;
+	font-weight: 500;
+	padding: 0.5rem 0 0 1.2rem;
+}
+.footer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.logo {
+	padding: 1rem;
+	width: 100%;
+	height: 100%;
+	img {
+		width: 100%;
+	}
+}

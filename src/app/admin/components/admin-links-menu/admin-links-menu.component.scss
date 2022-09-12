@@ -1,0 +1,20 @@
+@import "../../../styles/variables.scss";
+
+.menu {
+	display: flex;
+	gap: 1.5rem;
+	padding-left: 3rem;
+}
+
+a {
+	text-decoration: none;
+	color: $text-color-light;
+	transition: color 0.2s ease-in-out;
+}
+:hover {
+	color: $text-color-secondary;
+}
+
+.active {
+	color: $primary-color;
+}

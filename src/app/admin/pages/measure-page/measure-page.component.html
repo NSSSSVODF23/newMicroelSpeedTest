@@ -1,0 +1,201 @@
+<div class="content-wrapper">
+	<p-card>
+		<ng-template pTemplate="header">
+			<div><i class="pi pi-info-circle"></i> Основная информация</div>
+		</ng-template>
+		<div class="main-measure-info-panel">
+			<div class="measure-desc-row">
+				<span class="label">ID устройства</span>
+				<span class="value">{{ currentMeasure?.device?.deviceId }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Логин</span>
+				<span class="value">{{ currentMeasure?.session?.login }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Дата измерения</span>
+				<span class="value">{{
+					currentMeasure?.created | date: "dd-MM-yyyy HH:mm:ss"
+				}}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">IP Адрес</span>
+				<span class="value">{{ currentMeasure?.session?.ip }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Vlan</span>
+				<span class="value">{{ currentMeasure?.session?.house?.vlan }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">MAC Адрес</span>
+				<span class="value">{{ currentMeasure?.session?.mac }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Адрес</span>
+				<span class="value">{{ currentMeasure?.session?.house?.address }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Имя хоста</span>
+				<span class="value">{{ currentMeasure?.device?.hostname }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Платформа</span>
+				<span class="value">{{ currentMeasure?.device?.platform }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Операционная система</span>
+				<span class="value">{{ currentMeasure?.device?.system }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Агент</span>
+				<span class="value">{{ currentMeasure?.device?.userAgent }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Тип устройства</span>
+				<span class="value">{{ currentMeasure?.device?.isMobile }}</span>
+			</div>
+			<div class="measure-desc-row">
+				<span class="label">Тип подключения</span>
+				<span class="value">{{ currentMeasure?.connectionType }}</span>
+			</div>
+			<div [@anotherMeasureExtend]="anotherMeasureExtend" class="extend">
+				<div class="extend-label" (click)="changeExtend()">
+					Другие замеры пользователя
+				</div>
+				<p-table
+					#anotherMeasuresTable
+					selectionMode="single"
+					(onRowSelect)="selectMeasure($event)"
+					[lazy]="true"
+					[rows]="25"
+					[totalRecords]="190"
+					[loading]="loading"
+					responsiveLayout="scroll"
+					[value]="anotherMeasureByLogin"
+					(onLazyLoad)="loadMeasures($event)"
+					[scrollable]="true"
+					scrollHeight="350px"
+					[virtualScroll]="true"
+					[virtualRowHeight]="75"
+				>
+					<ng-template pTemplate="header">
+						<tr>
+							<th>ID</th>
+							<th>Соединение</th>
+							<th>Дата замера</th>
+							<th>MAC Адрес</th>
+							<th>Пинг</th>
+							<th>Скачивание</th>
+							<th>Загрузка</th>
+						</tr>
+					</ng-template>
+					<ng-template pTemplate="body" let-measure>
+						<tr
+							[pSelectableRow]="measure"
+							[ngClass]="{
+								'highlight-current-measure':
+									measure.measureId === currentMeasure?.measureId
+							}"
+							class="another-measure-row"
+						>
+							<td>{{ measure.measureId }}</td>
+							<td><img [src]="measure.connectionType | connectionType" alt="" srcset=""></td>
+							<td>{{ measure.created | date: "dd-MM-yyyy HH:mm:ss" }}</td>
+							<td>{{ measure.session.mac }}</td>
+							<td>{{ measure.ping | number: "1.3" }}</td>
+							<td>{{ measure.downloadSpeed | number: "1.3" }}</td>
+							<td>{{ measure.uploadSpeed | number: "1.3" }}</td>
+						</tr>
+					</ng-template>
+				</p-table>
+			</div>
+		</div>
+	</p-card>
+	<div class="measured-values-wrapper">
+		<p-card>
+			<ng-template pTemplate="header">
+				<div><i class="pi pi-sort-alt"></i> Ping</div>
+			</ng-template>
+			<div class="main-measure-info-panel">
+				<div class="main-value">
+					{{ currentMeasure?.ping | number: "1.3" }} мс
+				</div>
+				<div class="measure-desc-row">
+					<span class="label">Jitter</span>
+					<span class="value">
+						{{ currentMeasure?.pingJitter | number: "1.3" }} мс
+					</span>
+				</div>
+			</div>
+		</p-card>
+		<p-card>
+			<ng-template pTemplate="header">
+				<div><i class="pi pi-download"></i> Скачивание</div>
+			</ng-template>
+			<div class="main-measure-info-panel">
+				<div class="main-value">
+					{{ currentMeasure?.downloadSpeed | number: "1.3" }} Мбит/с
+				</div>
+				<div class="measure-desc-row">
+					<span class="label">Стабильность</span>
+					<span class="value">
+						{{ currentMeasure?.downloadStability | number: "1.3" }} %
+					</span>
+				</div>
+				<div class="measure-desc-row">
+					<span class="label">Потери</span>
+					<span class="value">
+						{{ currentMeasure?.downloadLoss | number: "1.3" }} %
+					</span>
+				</div>
+			</div>
+		</p-card>
+		<p-card>
+			<ng-template pTemplate="header">
+				<div><i class="pi pi-upload"></i> Загрузка</div>
+			</ng-template>
+			<div class="main-measure-info-panel">
+				<div class="main-value">
+					{{ currentMeasure?.uploadSpeed | number: "1.3" }} Мбит/с
+				</div>
+				<div class="measure-desc-row">
+					<span class="label">Стабильность</span>
+					<span class="value">
+						{{ currentMeasure?.uploadStability | number: "1.3" }} %
+					</span>
+				</div>
+				<div class="measure-desc-row">
+					<span class="label">Потери</span>
+					<span class="value">
+						{{ currentMeasure?.uploadLoss | number: "1.3" }} %
+					</span>
+				</div>
+			</div>
+		</p-card>
+	</div>
+	<p-card>
+		<ng-template pTemplate="header">
+			<div><i class="pi pi-chart-bar"></i> Графики</div>
+		</ng-template>
+		<p-tabView (onChange)="updateCharts($event)" class="chart">
+			<p-tabPanel header="Скачивание">
+				<app-speed-chart
+					[chartData]="[currentMeasure?.downloadSpeedChart ?? []]"
+					[stroke]="['#37d9e3']"
+					[fill]="['#37d9e3']"
+					sized="width"
+					#downloadSpeedChart
+				></app-speed-chart>
+			</p-tabPanel>
+			<p-tabPanel header="Загрузка">
+				<app-speed-chart
+					[chartData]="[currentMeasure?.uploadSpeedChart ?? []]"
+					[stroke]="['#ba46f0']"
+					[fill]="['#ba46f0']"
+					sized="width"
+					#uploadSpeedChart
+				></app-speed-chart>
+			</p-tabPanel>
+		</p-tabView>
+	</p-card>
+</div>

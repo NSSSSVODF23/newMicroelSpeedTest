@@ -1,0 +1,24 @@
+@import "../../../styles/variables.scss";
+@import "../../../styles/theme.scss";
+
+.panel {
+	padding: 1rem;
+	background-color: $primary-color-contrast;
+	border-bottom: 1px solid $surface-border;
+	display: grid;
+	grid-template-columns: max-content 1fr max-content;
+	align-items: center;
+}
+
+.account-panel {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+
+	.name {
+		font-size: 1.1em;
+		color: $text-color;
+		// font-weight: 500;
+		margin-left: 0.5rem;
+	}
+}

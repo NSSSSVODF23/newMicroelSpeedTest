@@ -1,0 +1,72 @@
+@import "/src/app/styles/variables.scss";
+.content-wrapper {
+	display: grid;
+	grid: min-content/700px;
+	gap: 1rem;
+	padding: 1rem 0;
+	justify-content: center;
+}
+
+.create-user-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+}
+
+.user-item {
+	display: flex;
+	width: 100%;
+	height: 70px;
+	padding: 0.5em;
+
+	align-items: center;
+	gap: 1rem;
+
+	.main-info {
+		display: grid;
+		gap: 0.3em;
+		margin-bottom: 0.3em;
+		.name {
+			font-size: 1.2em;
+			font-weight: 500;
+			color: $text-color;
+		}
+		.username {
+			color: $text-color-secondary;
+		}
+	}
+}
+
+.create-dialog-content {
+	display: grid;
+	grid: min-content / max-content;
+	gap: 1rem;
+	padding: 1rem;
+}
+
+.preview-user {
+	display: grid;
+	justify-content: center;
+	gap: 0.3rem;
+	text-align: center;
+	.name-preview {
+		font-size: 1.2rem;
+		color: $text-color;
+	}
+	.username-preview {
+		color: $text-color-secondary;
+	}
+}
+
+label {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	font-weight: 500;
+	color: $text-color-secondary;
+}
+.field {
+	display: grid;
+}

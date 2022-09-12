@@ -1,0 +1,85 @@
+@import "../../../styles/variables.scss";
+
+.wrapper {
+	display: grid;
+	grid: auto-flow min-content / max-content;
+	gap: 0.5em;
+	font-size: 1rem;
+	justify-items: center;
+	opacity: 0.7;
+	transition: opacity 0.3s ease-in-out;
+
+	.title-group {
+		display: flex;
+		gap: 0.5em;
+		align-items: center;
+
+		img {
+			height: 1.5em;
+		}
+
+		.title {
+			font-size: 1.5em;
+			color: $text-color;
+		}
+
+		.sub-title {
+			font-size: 0.8em;
+			color: $text-color-secondary;
+			place-self: baseline;
+		}
+	}
+	.speed {
+		font-size: 3em;
+		color: $text-color;
+	}
+	.stability {
+		font-size: 1em;
+		color: $primary-color;
+		span {
+			font-size: 1em;
+			color: $text-color-secondary;
+			margin: 0.2em;
+		}
+	}
+	.loss {
+		font-size: 1em;
+		color: $primary-color;
+		span {
+			font-size: 1em;
+			color: $text-color-secondary;
+			margin: 0.2em;
+		}
+	}
+}
+
+.tested {
+	opacity: 1;
+}
+
+@media (max-width: 767px) {
+	.wrapper {
+		font-size: 0.7rem;
+	}
+}
+
+/* Устройства с маленьким экраном (планшеты, 768px и выше) */
+@media (min-width: 768px) {
+	.wrapper {
+		font-size: 0.75rem;
+	}
+}
+
+/* Устройства со средним экраном (ноутбуки и компьютеры, 992px и выше) */
+@media (min-width: 992px) {
+	.wrapper {
+		font-size: 0.8rem;
+	}
+}
+
+/* Устройства с большим экраном (компьютеры, 1200px и выше) */
+@media (min-width: 1200px) {
+	.wrapper {
+		font-size: 0.9rem;
+	}
+}

@@ -1,0 +1,75 @@
+@import "../../../styles/variables.scss";
+
+.content-wrapper {
+	display: grid;
+	grid: min-content / minmax(max-content, 70vw);
+	padding: 1rem 0;
+	justify-content: center;
+	gap: 1rem;
+}
+
+.main-measure-info-panel {
+	display: grid;
+	gap: 0.4rem;
+}
+
+.measure-desc-row {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	.label {
+		font-weight: 500;
+		color: $text-color-light;
+	}
+	.value {
+		color: $text-color;
+	}
+}
+
+.measured-values-wrapper {
+	display: flex;
+	gap: 1rem;
+	justify-items: stretch;
+	align-items: stretch;
+	justify-content: stretch;
+	align-content: stretch;
+	p-card {
+		flex: 1;
+		height: 100%;
+	}
+}
+
+.another-measure-row {
+	height: 75px;
+}
+
+.main-value {
+	font-size: 2rem;
+}
+
+.chart {
+	height: 300px;
+}
+
+.highlight-current-measure {
+	background-color: #{$primary-color}30 !important;
+}
+
+.extend {
+	display: grid;
+	grid: min-content min-content/1fr;
+	overflow: hidden;
+
+	.extend-label {
+		padding: 0.5em;
+		text-align: center;
+		font-weight: 500;
+		color: $primary-color;
+		cursor: pointer;
+		user-select: none;
+		transition: background-color 0.2s ease-out;
+	}
+}
+.extend-label:hover {
+	background-color: #{$primary-color}30;
+}

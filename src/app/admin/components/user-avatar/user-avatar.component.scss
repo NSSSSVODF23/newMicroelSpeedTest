@@ -1,0 +1,23 @@
+@import "/src/app/styles/variables.scss";
+.image {
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	background-position: center;
+	image-rendering: crisp-edges;
+}
+.change-button {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #00000060;
+	color: #dfdfdf;
+	.pi {
+		font-size: 1.5rem;
+	}
+}

@@ -1,0 +1,10 @@
+<div class="error-msg-wrapper">
+	<ng-template ngFor let-item [ngForOf]="errors | keyvalue">
+		<small
+			class="p-error block"
+			*ngIf="control?.errors?.[item.key] && control?.invalid && control?.dirty"
+		>
+			{{ item.value }}
+		</small>
+	</ng-template>
+</div>

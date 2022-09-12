@@ -1,0 +1,9 @@
+@import "../../../styles/variables.scss";
+
+div {
+	padding: 1rem;
+	background-color: $primary-color-contrast;
+	border-bottom: 1px solid $surface-border;
+	display: flex;
+	align-items: center;
+}

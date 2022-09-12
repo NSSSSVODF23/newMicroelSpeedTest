@@ -1,0 +1,31 @@
+@import "../../../styles/variables.scss";
+
+.content-wrapper {
+	display: grid;
+	grid: min-content/ max-content max-content;
+	padding: 1rem 0;
+	justify-content: center;
+	gap: 1rem;
+}
+
+.search-fields-container {
+	display: grid;
+	grid: auto min-content/ max-content;
+	gap: 1rem;
+	justify-content: center;
+}
+
+.beginning {
+	animation: beginningMeasureEntry 1s ease-in-out infinite alternate;
+}
+
+@keyframes beginningMeasureEntry {
+	0% {
+		opacity: 0.5;
+		background-color: $white-color;
+	}
+	100% {
+		opacity: 1;
+		background-color: #{$primary-color}25;
+	}
+}

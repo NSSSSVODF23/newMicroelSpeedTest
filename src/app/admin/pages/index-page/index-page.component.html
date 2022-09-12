@@ -1,0 +1,125 @@
+<div class="content-wrapper">
+    <p-card>
+        <ng-template pTemplate="header">
+            <div><i class="pi pi-list"></i> Замеры</div>
+        </ng-template>
+        <p-table
+                (onLazyLoad)="loadMeasures($event)"
+                (onRowSelect)="selectMeasure($event)"
+                [(first)]="first"
+                [(selection)]="selectedMeasure"
+                [lazy]="true"
+                [loading]="loading"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                [rows]="rows"
+                [showCurrentPageReport]="true"
+                [totalRecords]="totalRecords"
+                [value]="allMeasures"
+                currentPageReportTemplate="Показано с {first} по {last} из {totalRecords} замеров"
+                dataKey="measureId"
+                responsiveLayout="scroll"
+                selectionMode="single"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Соед.</th>
+                    <th>Дата замера</th>
+                    <th>Логин</th>
+                    <th>Адрес</th>
+                    <th>IP Адрес</th>
+                    <th>MAC Адрес</th>
+                    <th>Скачивание</th>
+                    <th>Загрузка</th>
+                </tr>
+            </ng-template>
+            <ng-template let-measure pTemplate="body">
+                <tr
+                        [ngClass]="{ beginning: measure.isBeginning }"
+                        [pSelectableRow]="measure"
+                >
+                    <td>
+                        <img
+                                [src]="measure.connectionType | connectionType"
+                                alt=""
+                                srcset=""
+                        />
+                    </td>
+                    <td>{{ measure.created | date: "dd-MM-yyyy HH:mm:ss" }}</td>
+                    <td>{{ measure.session.login }}</td>
+                    <td>{{ measure.session.house.address }}</td>
+                    <td>{{ measure.session.ip }}</td>
+                    <td>{{ measure.session.mac }}</td>
+                    <td>{{ measure.downloadSpeed | number: "1.3" }}</td>
+                    <td>{{ measure.uploadSpeed | number: "1.3" }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+    <p-card>
+        <ng-template pTemplate="header">
+            <div><i class="pi pi-search"></i> Поиск</div>
+        </ng-template>
+        <div class="search-fields-container">
+            <p-calendar
+                    (ngModelChange)="filterChangeDateRangeHandler($event)"
+                    [(ngModel)]="filterDateRangeValue"
+                    [readonlyInput]="true"
+                    [showClear]="true"
+                    class="p-inputtext-sm"
+                    dateFormat="dd-mm-yy"
+                    placeholder="Дата замера"
+                    selectionMode="range"
+            ></p-calendar>
+            <input
+                    (ngModelChange)="filterChangeHandler($event)"
+                    [(ngModel)]="searchFilters.login"
+                    class="p-inputtext-sm"
+                    pInputText
+                    placeholder="Логин"
+                    type="text"
+            />
+            <p-dropdown
+                    (ngModelChange)="filterChangeHandler($event)"
+                    (onClear)="addressResetFunction($event)"
+                    [(ngModel)]="searchFilters.address"
+                    [filter]="true"
+                    [options]="houseList"
+                    [showClear]="true"
+                    class="p-inputtext-sm"
+                    filterBy="address"
+                    filterBy="address"
+                    optionLabel="address"
+                    optionValue="houseId"
+                    placeholder="Адрес"
+            >
+            </p-dropdown>
+            <input
+                    (ngModelChange)="filterChangeHandler($event)"
+                    [(ngModel)]="searchFilters.ip"
+                    [pKeyFilter]="ipInputFilter"
+                    class="p-inputtext-sm"
+                    pInputText
+                    placeholder="IP Адрес"
+                    type="text"
+            />
+            <input
+                    (ngModelChange)="filterChangeHandler($event)"
+                    [(ngModel)]="searchFilters.mac"
+                    [pKeyFilter]="macInputFilter"
+                    class="p-inputtext-sm"
+                    id="float-input"
+                    pInputText
+                    placeholder="MAC Адрес"
+                    type="text"
+            />
+            <button
+                    (click)="resetFilters()"
+                    class="p-button-sm"
+                    icon="pi pi-filter-slash"
+                    label="Сбросить"
+                    pButton
+            ></button>
+        </div>
+    </p-card>
+</div>

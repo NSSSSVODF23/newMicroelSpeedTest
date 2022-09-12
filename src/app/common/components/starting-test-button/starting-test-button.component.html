@@ -1,0 +1,12 @@
+<div
+	[ngClass]="{
+		rounded: round && icon == '',
+		'rounded-with-icon': round && icon !== '',
+		'wrapper-accent': !primaryStyle,
+		'wrapper-primary': primaryStyle
+	}"
+	(click)="start()"
+>
+	<img *ngIf="icon != ''" [src]="icon" alt="" srcset="" />
+	<span>{{ label }}</span>
+</div>

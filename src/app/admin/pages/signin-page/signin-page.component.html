@@ -1,0 +1,40 @@
+<p-toast></p-toast>
+<div class="content-wrapper">
+	<div class="logo">
+		<img src="../../../../assets/images/logo.svg" alt="" />
+	</div>
+	<form class="form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+		<p-card>
+			<ng-template pTemplate="header">
+				<div class="title">Авторизация</div>
+			</ng-template>
+			<div class="content">
+				<div class="p-inputgroup">
+					<span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+					<input id="login" type="text" pInputText formControlName="username" />
+				</div>
+				<div class="p-inputgroup">
+					<span class="p-inputgroup-addon"><i class="pi pi-key"></i></span>
+					<input
+						id="password"
+						type="password"
+						pInputText
+						formControlName="password"
+					/>
+				</div>
+			</div>
+			<ng-template pTemplate="footer">
+				<div class="footer">
+					<button
+						pButton
+						type="submit"
+						icon="pi pi-sign-in"
+						label="Войти"
+						class="p-button-success"
+						[disabled]="loginForm.invalid"
+					></button>
+				</div>
+			</ng-template>
+		</p-card>
+	</form>
+</div>

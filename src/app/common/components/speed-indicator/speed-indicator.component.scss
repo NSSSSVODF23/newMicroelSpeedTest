@@ -1,0 +1,74 @@
+@import "../../../styles/variables.scss";
+
+:host {
+	width: max-content;
+	height: min-content;
+}
+
+.wrapper {
+	display: grid;
+	grid: auto-flow min-content / max-content;
+	width: 250px;
+	height: 250px;
+	font-size: 1rem;
+	justify-items: center;
+	box-shadow: $card-shadow;
+	border-radius: 50%;
+	.wrapper-indicator {
+		display: flex;
+		width: 250px;
+		aspect-ratio: 2;
+		overflow: hidden;
+		justify-content: center;
+
+		.indicator {
+			width: 250px;
+			height: 250px;
+			border-radius: 50%;
+			border: 1.2em solid;
+			transform: rotate(135deg);
+			transition: transform 0.3s ease-in-out;
+		}
+	}
+	.current-test-title {
+		font-size: 1em;
+		position: absolute;
+		align-self: center;
+		color: $text-color;
+		justify-items: center;
+		transform: translateY(-125%);
+		span {
+			display: flex;
+			align-items: center;
+			gap: 0.2em;
+			img {
+				height: 1em;
+			}
+		}
+	}
+	.wrapper-values {
+		position: absolute;
+		align-self: center;
+		display: grid;
+		justify-items: center;
+		transform: translateY(75%);
+		.speed-value {
+			font-size: 1.8em;
+			color: $text-color;
+		}
+		.unit {
+			font-size: 1em;
+			font-weight: 500;
+			color: $text-color-light;
+		}
+	}
+}
+
+.download-indicator {
+	border-color: $download-color $download-color $text-color-light
+		$text-color-light !important;
+}
+
+.upload-indicator {
+	border-color: $upload-color $upload-color $text-color-light $text-color-light !important;
+}

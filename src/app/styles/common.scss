@@ -1,0 +1,37 @@
+.mat-card-purify {
+	border-radius: 0.7rem !important;
+	box-shadow: $card-shadow !important;
+	overflow: hidden;
+}
+
+.main-value-label {
+	font-size: 1.5rem;
+	font-weight: 100;
+	color: blue;
+	margin-bottom: 0.3rem;
+}
+
+.flex-centered {
+	display: flex;
+	gap: 1rem;
+	padding: 1rem;
+	box-sizing: border-box;
+	justify-content: center;
+	align-items: center;
+}
+
+.grid-container {
+	display: grid;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	box-sizing: border-box;
+}
+
+.right-aligned {
+	justify-items: flex-end;
+}
+
+.self-center {
+	align-self: center;
+	justify-self: center;
+}

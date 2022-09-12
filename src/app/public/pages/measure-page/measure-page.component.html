@@ -1,0 +1,55 @@
+<div class="content-wrapper">
+	<div class="result-mobile" *ngIf="isMobile">
+		<ng-component *ngTemplateOutlet="resultTemplate"></ng-component>
+	</div>
+	<p-card class="result-desktop" *ngIf="!isMobile">
+		<ng-template pTemplate="header">
+			<div class="header">
+				<img src="../../../../assets/icons/gauge-dark.svg" alt="" />
+				Тестирование
+			</div>
+		</ng-template>
+		<ng-component *ngTemplateOutlet="resultTemplate"></ng-component>
+	</p-card>
+</div>
+
+<ng-template #resultTemplate>
+	<div class="wrapper-result-panels">
+		<app-speed-result-values-panel
+			@flow
+			testType="download"
+			[speed]="this.downloadResult.speed"
+			[stability]="this.downloadResult.stability"
+			[loss]="this.downloadResult.loss"
+		></app-speed-result-values-panel>
+		<app-speed-result-values-panel
+			@flow
+			testType="upload"
+			[speed]="this.uploadResult.speed"
+			[stability]="this.uploadResult.stability"
+			[loss]="this.uploadResult.loss"
+		></app-speed-result-values-panel>
+	</div>
+	<div class="wrapper-ping-result-panel">
+		<app-ping-result-values-panel
+			@flow
+			[ping]="ping"
+			[jitter]="jitter"
+		></app-ping-result-values-panel>
+	</div>
+	<div class="wrapper-testing-chart">
+		<app-speed-chart
+			[chartData]="this.chart"
+			[fill]="['#37d9e3', '#ba46f0']"
+			[stroke]="['#37d9e3', '#ba46f0']"
+		></app-speed-chart>
+	</div>
+	<div class="wrapper-current-test-panel">
+		<app-speed-indicator
+			@fade
+			*ngIf="this.service.testStage !== 5"
+			[speed]="indicatorSpeed"
+			[testType]="testType"
+		></app-speed-indicator>
+	</div>
+</ng-template>

@@ -1,0 +1,50 @@
+@import "../../../styles/variables.scss";
+.wrapper {
+	display: flex;
+	gap: 2em;
+	align-items: center;
+	justify-content: center;
+	font-size: 1rem;
+	color: $text-color;
+
+	.value-wrapper {
+		display: flex;
+		gap: 0.2em;
+		align-items: center;
+		img {
+			height: 1.2em;
+		}
+		.value {
+			min-width: 2em;
+			width: max-content;
+			text-align: end;
+		}
+	}
+}
+
+@media (max-width: 767px) {
+	.wrapper {
+		font-size: 0.7rem;
+	}
+}
+
+/* Устройства с маленьким экраном (планшеты, 768px и выше) */
+@media (min-width: 768px) {
+	.wrapper {
+		font-size: 0.8rem;
+	}
+}
+
+/* Устройства со средним экраном (ноутбуки и компьютеры, 992px и выше) */
+@media (min-width: 992px) {
+	.wrapper {
+		font-size: 0.9rem;
+	}
+}
+
+/* Устройства с большим экраном (компьютеры, 1200px и выше) */
+@media (min-width: 1200px) {
+	.wrapper {
+		font-size: 1rem;
+	}
+}
