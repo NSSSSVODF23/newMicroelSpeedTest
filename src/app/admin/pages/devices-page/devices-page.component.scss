@@ -1,14 +1,21 @@
 .content-wrapper {
-	display: grid;
-	grid: min-content/ max-content max-content;
-	padding: 1rem 0;
-	justify-content: center;
-	gap: 1rem;
+  display: grid;
+  grid: min-content/ max-content max-content;
+  padding: 1rem 0;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .search-fields-container {
-	display: grid;
-	grid: auto min-content/ max-content;
-	gap: 1rem;
-	justify-content: center;
+  display: grid;
+  grid: auto min-content/ max-content;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.device-id-cell {
+  max-width: 6rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

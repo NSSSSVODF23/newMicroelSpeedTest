@@ -4,22 +4,23 @@
             <div><i class="pi pi-list"></i> Замеры</div>
         </ng-template>
         <p-table
-                (onLazyLoad)="loadMeasures($event)"
-                (onRowSelect)="selectMeasure($event)"
-                [(first)]="first"
-                [(selection)]="selectedMeasure"
-                [lazy]="true"
-                [loading]="loading"
-                [paginator]="true"
-                [rowsPerPageOptions]="[10, 25, 50]"
-                [rows]="rows"
-                [showCurrentPageReport]="true"
-                [totalRecords]="totalRecords"
-                [value]="allMeasures"
-                currentPageReportTemplate="Показано с {first} по {last} из {totalRecords} замеров"
-                dataKey="measureId"
-                responsiveLayout="scroll"
-                selectionMode="single"
+            #measureTable
+            (onLazyLoad)="pageLoader.limitUpdate($event)"
+            (onRowSelect)="selectMeasure($event)"
+            [(first)]="pageLoader.param()['offset']"
+            [(selection)]="selectedMeasure"
+            [lazy]="true"
+            [loading]="pageLoader.loading"
+            [paginator]="true"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            [rows]="pageLoader.param()['limit']"
+            [showCurrentPageReport]="true"
+            [totalRecords]="pageLoader.totalElements"
+            [value]="pageLoader.elements"
+            currentPageReportTemplate="Показано с {first} по {last} из {totalRecords} замеров"
+            dataKey="measureId"
+            responsiveLayout="scroll"
+            selectionMode="single"
         >
             <ng-template pTemplate="header">
                 <tr>
@@ -34,22 +35,15 @@
                 </tr>
             </ng-template>
             <ng-template let-measure pTemplate="body">
-                <tr
-                        [ngClass]="{ beginning: measure.isBeginning }"
-                        [pSelectableRow]="measure"
-                >
+                <tr @fade [ngClass]="{ beginning: measure.isStarted }" [pSelectableRow]="measure">
                     <td>
-                        <img
-                                [src]="measure.connectionType | connectionType"
-                                alt=""
-                                srcset=""
-                        />
+                        <img [src]="measure.connectionType | connectionType" alt=""/>
                     </td>
                     <td>{{ measure.created | date: "dd-MM-yyyy HH:mm:ss" }}</td>
-                    <td>{{ measure.session.login }}</td>
-                    <td>{{ measure.session.house.address }}</td>
-                    <td>{{ measure.session.ip }}</td>
-                    <td>{{ measure.session.mac }}</td>
+                    <td>{{ measure.session?.login }}</td>
+                    <td>{{ measure.session?.house?.address }}</td>
+                    <td>{{ measure.session?.ip }}</td>
+                    <td>{{ measure.session?.mac }}</td>
                     <td>{{ measure.downloadSpeed | number: "1.3" }}</td>
                     <td>{{ measure.uploadSpeed | number: "1.3" }}</td>
                 </tr>
@@ -62,8 +56,8 @@
         </ng-template>
         <div class="search-fields-container">
             <p-calendar
-                    (ngModelChange)="filterChangeDateRangeHandler($event)"
-                    [(ngModel)]="filterDateRangeValue"
+                    (ngModelChange)="pageLoader.update($event,'created')"
+                    [(ngModel)]="pageLoader.param()['created']"
                     [readonlyInput]="true"
                     [showClear]="true"
                     class="p-inputtext-sm"
@@ -72,22 +66,20 @@
                     selectionMode="range"
             ></p-calendar>
             <input
-                    (ngModelChange)="filterChangeHandler($event)"
-                    [(ngModel)]="searchFilters.login"
+                    (ngModelChange)="pageLoader.update($event,'login')"
+                    [(ngModel)]="pageLoader.param()['login']"
                     class="p-inputtext-sm"
                     pInputText
                     placeholder="Логин"
                     type="text"
             />
             <p-dropdown
-                    (ngModelChange)="filterChangeHandler($event)"
-                    (onClear)="addressResetFunction($event)"
-                    [(ngModel)]="searchFilters.address"
+                    (ngModelChange)="pageLoader.update($event,'address')"
+                    [(ngModel)]="pageLoader.param()['address']"
                     [filter]="true"
                     [options]="houseList"
                     [showClear]="true"
                     class="p-inputtext-sm"
-                    filterBy="address"
                     filterBy="address"
                     optionLabel="address"
                     optionValue="houseId"
@@ -95,8 +87,8 @@
             >
             </p-dropdown>
             <input
-                    (ngModelChange)="filterChangeHandler($event)"
-                    [(ngModel)]="searchFilters.ip"
+                    (ngModelChange)="pageLoader.update($event,'ip' )"
+                    [(ngModel)]="pageLoader.param()['ip']"
                     [pKeyFilter]="ipInputFilter"
                     class="p-inputtext-sm"
                     pInputText
@@ -104,8 +96,8 @@
                     type="text"
             />
             <input
-                    (ngModelChange)="filterChangeHandler($event)"
-                    [(ngModel)]="searchFilters.mac"
+                    (ngModelChange)="pageLoader.update($event,'mac')"
+                    [(ngModel)]="pageLoader.param()['mac']"
                     [pKeyFilter]="macInputFilter"
                     class="p-inputtext-sm"
                     id="float-input"
@@ -114,7 +106,7 @@
                     type="text"
             />
             <button
-                    (click)="resetFilters()"
+                    (click)="pageLoader.filterClean()"
                     class="p-button-sm"
                     icon="pi pi-filter-slash"
                     label="Сбросить"

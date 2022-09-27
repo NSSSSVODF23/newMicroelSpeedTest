@@ -1,48 +1,50 @@
 <div class="btn-container">
-	<div *ngIf="!isMobile; then desktopButton; else mobileButton"></div>
-	<app-starting-test-button
-		label="Радар"
-		icon="../../../../assets/icons/gauge.svg"
-		class="self-center"
-		[round]="false"
-		[primaryStyle]="false"
-	></app-starting-test-button>
+    <div *ngIf="!isMobile; then desktopButton; else mobileButton"></div>
+    <app-starting-test-button
+            *ngIf="measure.isProMode"
+            [primaryStyle]="false"
+            [round]="false"
+            class="self-center"
+            icon="../../../../assets/icons/gauge.svg"
+            label="Радар"
+    ></app-starting-test-button>
 </div>
 
 <ng-template #desktopButton>
-	<div class="btn-container">
-		<app-label class="self-center"
-			>Как подключено данное устройство к интернету?</app-label
-		>
-		<div class="desktop-btn-wrapper flex-centered">
-			<app-starting-test-button
-				label="Без проводов"
-				icon="../../../../assets/icons/wifi.svg"
-				class="self-center"
-				[round]="true"
-				[primaryStyle]="true"
-				[connectionType]="1"
-			></app-starting-test-button>
-			<app-label>или</app-label>
-			<app-starting-test-button
-				label="Кабелем"
-				icon="../../../../assets/icons/ethernet.svg"
-				class="self-center"
-				[round]="true"
-				[primaryStyle]="true"
-				[connectionType]="0"
-			>
-			</app-starting-test-button>
-		</div>
-	</div>
+    <div class="btn-container">
+        <app-label class="self-center"
+        >Как подключено данное устройство к интернету?
+        </app-label
+        >
+        <div class="desktop-btn-wrapper flex-centered">
+            <app-starting-test-button
+                    [connectionType]="1"
+                    [primaryStyle]="true"
+                    [round]="true"
+                    class="self-center"
+                    icon="../../../../assets/icons/wifi.svg"
+                    label="Без проводов"
+            ></app-starting-test-button>
+            <app-label>или</app-label>
+            <app-starting-test-button
+                    [connectionType]="0"
+                    [primaryStyle]="true"
+                    [round]="true"
+                    class="self-center"
+                    icon="../../../../assets/icons/ethernet.svg"
+                    label="Кабелем"
+            >
+            </app-starting-test-button>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #mobileButton>
-	<app-starting-test-button
-		label="Начать"
-		class="self-center"
-		[round]="true"
-		[primaryStyle]="true"
-		[connectionType]="1"
-	></app-starting-test-button>
+    <app-starting-test-button
+            [connectionType]="1"
+            [primaryStyle]="true"
+            [round]="true"
+            class="self-center"
+            label="Начать"
+    ></app-starting-test-button>
 </ng-template>

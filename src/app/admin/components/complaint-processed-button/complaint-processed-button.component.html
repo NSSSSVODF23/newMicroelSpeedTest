@@ -1,0 +1,11 @@
+<div (click)="processedComplaint($event,complaint)" *ngIf="!loading"
+     [ngClass]="{'processed-input-active':!complaint?.processed}"
+     [pTooltip]="complaint?.processed ? 'Жалоба обработана' : 'Нажмите чтобы подтвердить обработку жалобы'"
+     class="processed-input"
+     tooltipPosition="left">
+    <app-user-avatar *ngIf="complaint?.processed" [user]="complaint?.processed" shape="circle"
+                     size="small"></app-user-avatar>
+    <span *ngIf="!complaint?.processed" class="processed-user">Не обработана</span>
+    <span *ngIf="complaint?.processed" class="processed-user">{{complaint?.processed?.name}}</span>
+</div>
+<p-skeleton *ngIf="loading" borderRadius="36px" height="36px" width="92px"></p-skeleton>

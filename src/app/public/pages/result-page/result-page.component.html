@@ -1,68 +1,71 @@
 <div class="content-wrapper">
-	<p-card @flowResult *ngIf="!isMobile">
-		<ng-template pTemplate="header">
-			<div class="header">
-				<i class="pi pi-chart-bar"></i>
-				Результат измерения
-				<div class="empty"></div>
-				<span class="timestamp">
+    <p-card *ngIf="!isMobile" @flowResult>
+        <ng-template pTemplate="header">
+            <div class="header">
+                <i class="pi pi-chart-bar"></i>
+                Результат измерения
+                <div class="empty"></div>
+                <span class="timestamp">
 					<i class="pi pi-clock timestamp"></i>
-					{{ this.measure?.created | date: "dd.MM.yyyy HH:mm:ss" }}
+                    {{ this.measure?.created | date: "dd.MM.yyyy HH:mm:ss" }}
 				</span>
-			</div>
-		</ng-template>
-		<ng-component *ngTemplateOutlet="resultTemplate"></ng-component>
-	</p-card>
-	<p-card @flowControl *ngIf="!isMobile">
-		<ng-component *ngTemplateOutlet="controlsTemplate"></ng-component>
-	</p-card>
-	<div @fade class="mobile-content" *ngIf="isMobile">
-		<ng-component *ngTemplateOutlet="resultTemplate"></ng-component>
-		<ng-component *ngTemplateOutlet="controlsTemplate"></ng-component>
-	</div>
+            </div>
+        </ng-template>
+        <ng-component *ngTemplateOutlet="resultTemplate"></ng-component>
+    </p-card>
+    <p-card *ngIf="!isMobile" @flowControl>
+        <ng-component *ngTemplateOutlet="controlsTemplate"></ng-component>
+    </p-card>
+    <div *ngIf="isMobile" @fade class="mobile-content">
+        <ng-component *ngTemplateOutlet="resultTemplate"></ng-component>
+        <ng-component *ngTemplateOutlet="controlsTemplate"></ng-component>
+    </div>
 </div>
 
 <ng-template #resultTemplate>
-	<div class="card-content">
-		<div class="result-content">
-			<div class="speed-result-wrapper">
-				<app-speed-result-values-panel
-					testType="download"
-					[speed]="this.getDownloadResult().speed"
-					[stability]="this.getDownloadResult().stability"
-					[loss]="this.getDownloadResult().loss"
-				></app-speed-result-values-panel>
-				<app-speed-result-values-panel
-					testType="upload"
-					[speed]="this.getUploadResult().speed"
-					[stability]="this.getUploadResult().stability"
-					[loss]="this.getUploadResult().loss"
-				></app-speed-result-values-panel>
-			</div>
-			<app-ping-result-values-panel
-				[ping]="this.getPing()"
-				[jitter]="this.getJitter()"
-			></app-ping-result-values-panel>
-			<app-speed-chart
-				[chartData]="getChartData()"
-				[fill]="['#37d9e3', '#ba46f0']"
-				[stroke]="['#37d9e3', '#ba46f0']"
-				sized="width"
-			></app-speed-chart>
-		</div>
-	</div>
+    <div class="card-content">
+        <div class="result-content">
+            <div class="speed-result-wrapper">
+                <app-speed-result-values-panel
+                        [isPro]="this.testing.isProMode"
+                        [loss]="this.getDownloadResult().loss"
+                        [speed]="this.testing.isProMode ? this.getDownloadResult().speed : this.getDownloadResult().slowSpeed"
+                        [stability]="this.getDownloadResult().stability"
+                        testType="download"
+                ></app-speed-result-values-panel>
+                <app-speed-result-values-panel
+                        [isPro]="this.testing.isProMode"
+                        [loss]="this.getUploadResult().loss"
+                        [speed]="this.testing.isProMode ? this.getUploadResult().speed : this.getUploadResult().slowSpeed"
+                        [stability]="this.getUploadResult().stability"
+                        testType="upload"
+                ></app-speed-result-values-panel>
+            </div>
+            <app-ping-result-values-panel
+                    [isPro]="this.testing.isProMode"
+                    [jitter]="this.getJitter()"
+                    [ping]="this.getPing()"
+            ></app-ping-result-values-panel>
+            <app-speed-chart
+                    [chartData]="getChartData()"
+                    [fill]="['#37d9e3', '#ba46f0']"
+                    [stroke]="['#37d9e3', '#ba46f0']"
+                    sized="width"
+            ></app-speed-chart>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #controlsTemplate>
-	<div class="controls-content">
-		<button
-			pButton
-			icon="pi pi-replay"
-			iconPos="left"
-			type="button"
-			label="Заново"
-			class="p-button-outlined"
-			routerLink="/measure"
-		></button>
-	</div>
+    <div class="controls-content">
+        <button
+                class="p-button-outlined"
+                icon="pi pi-replay"
+                iconPos="left"
+                label="Заново"
+                pButton
+                routerLink="/measure"
+                type="button"
+        ></button>
+    </div>
 </ng-template>

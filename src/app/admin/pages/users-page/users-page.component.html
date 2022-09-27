@@ -1,220 +1,219 @@
 <div class="content-wrapper">
-	<p-card>
-		<ng-template pTemplate="header">
-			<div class="create-user-header">
-				<span> Пользователи </span>
-				<button
-					pButton
-					icon="pi pi-plus"
-					iconPos="right"
-					class="p-button-text p-button-sm"
-					label="Добавить"
-					(click)="openCreateDialog()"
-				></button>
-			</div>
-		</ng-template>
-		<p-virtualScroller
-			[value]="users"
-			scrollHeight="500px"
-			[itemSize]="70"
-			[lazy]="true"
-		>
-			<ng-template pTemplate="item" let-user let-scrollOptions="options">
-				<div class="user-item">
-					<app-user-avatar [user]="user" shape="square"></app-user-avatar>
-					<div class="main-info">
+    <p-card>
+        <ng-template pTemplate="header">
+            <div class="create-user-header">
+                <span> Пользователи </span>
+                <button
+                        (click)="openCreateDialog()"
+                        class="p-button-text p-button-sm"
+                        icon="pi pi-plus"
+                        iconPos="right"
+                        label="Добавить"
+                        pButton
+                ></button>
+            </div>
+        </ng-template>
+        <p-virtualScroller
+                [itemSize]="70"
+                [lazy]="true"
+                [value]="users"
+                scrollHeight="500px">
+            <ng-template let-scrollOptions="options" let-user pTemplate="item">
+                <div class="user-item">
+                    <app-user-avatar [user]="user" shape="square"></app-user-avatar>
+                    <div class="main-info">
 						<span class="name">
 							{{ user.name }}
 						</span>
-						<span class="username">
+                        <span class="username">
 							{{ user.role?.description }}
 						</span>
-					</div>
-					<div class="empty"></div>
-					<div class="controls">
-						<button
-							pButton
-							class="p-button-text"
-							label="Редактировать"
-							icon="pi pi-pencil"
-							(click)="editUserOpen(user)"
-						></button>
-						<button
-							pButton
-							class="p-button-text p-button-danger"
-							label="Удалить"
-							icon="pi pi-trash"
-							(click)="deleteUser(user.userId)"
-						></button>
-					</div>
-				</div>
-			</ng-template>
-			<ng-template let-product pTemplate="loadingItem">
-				<div class="user-item">
-					<p-skeleton width="48px" height="48px"></p-skeleton>
-					<div class="main-info">
-						<p-skeleton width="150px" height="1rem"></p-skeleton>
-						<p-skeleton width="90px" height="0.8rem"></p-skeleton>
-					</div>
-					<div class="empty"></div>
-				</div>
-			</ng-template>
-		</p-virtualScroller>
-	</p-card>
+                    </div>
+                    <div class="empty"></div>
+                    <div class="controls">
+                        <button
+                                (click)="editUserOpen(user)"
+                                class="p-button-text"
+                                icon="pi pi-pencil"
+                                label="Редактировать"
+                                pButton
+                        ></button>
+                        <button
+                                (click)="deleteUser(user.userId)"
+                                class="p-button-text p-button-danger"
+                                icon="pi pi-trash"
+                                label="Удалить"
+                                pButton
+                        ></button>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template let-product pTemplate="loadingItem">
+                <div class="user-item">
+                    <p-skeleton height="48px" width="48px"></p-skeleton>
+                    <div class="main-info">
+                        <p-skeleton height="1rem" width="150px"></p-skeleton>
+                        <p-skeleton height="0.8rem" width="90px"></p-skeleton>
+                    </div>
+                    <div class="empty"></div>
+                </div>
+            </ng-template>
+        </p-virtualScroller>
+    </p-card>
 </div>
 
 <p-dialog
-	header="Добавить пользователя"
-	[modal]="true"
-	[(visible)]="showCreateDialog"
+        [(visible)]="showCreateDialog"
+        [modal]="true"
+        header="Добавить пользователя"
 >
-	<div class="preview-user">
-		<p-avatar
-			size="xlarge"
-			shape="circle"
-			[label]="getAvatarLabel(this.createFormGroup.value.name)"
-		></p-avatar>
-		<span class="name-preview">
+    <div class="preview-user">
+        <p-avatar
+                [label]="getAvatarLabel(this.createFormGroup.value.name)"
+                shape="circle"
+                size="xlarge"
+        ></p-avatar>
+        <span class="name-preview">
 			{{ getNameLabel(this.createFormGroup.value.name) }}
 		</span>
-		<span class="username-preview">
+        <span class="username-preview">
 			{{ getRoleLabel(this.createFormGroup.value.role) }}
 		</span>
-	</div>
-	<form [formGroup]="createFormGroup" class="create-dialog-content">
-		<div class="field">
-			<label>
-				Имя
-				<input pInputText placeholder="" formControlName="name" />
-			</label>
-			<app-input-error-message
-				[control]="createFormGroup.controls['name']"
-				[errors]="errorMessages"
-			></app-input-error-message>
-		</div>
-		<div class="field">
-			<label>
-				Группа
-				<p-dropdown
-					formControlName="role"
-					appendTo="body"
-					[options]="roleOptions"
-					optionLabel="description"
-					optionValue="roleId"
-				></p-dropdown>
-			</label>
-			<app-input-error-message
-				[control]="createFormGroup.controls['role']"
-				[errors]="errorMessages"
-			></app-input-error-message>
-		</div>
-		<div class="field">
-			<label>
-				Логин
-				<input pInputText formControlName="username" />
-			</label>
-			<app-input-error-message
-				[control]="createFormGroup.controls['username']"
-				[errors]="errorMessages"
-			></app-input-error-message>
-		</div>
-		<div class="field">
-			<label>
-				Пароль
-				<p-password
-					formControlName="password"
-					[toggleMask]="true"
-					appendTo="body"
-				></p-password>
-			</label>
-			<app-input-error-message
-				[control]="createFormGroup.controls['password']"
-				[errors]="errorMessages"
-			></app-input-error-message>
-		</div>
-	</form>
-	<ng-template pTemplate="footer">
-		<button
-			pButton
-			label="Добавить"
-			(click)="createUser()"
-			[disabled]="!this.createFormGroup.valid"
-		></button>
-	</ng-template>
+    </div>
+    <form [formGroup]="createFormGroup" class="create-dialog-content">
+        <div class="field">
+            <label>
+                Имя
+                <input formControlName="name" pInputText placeholder=""/>
+            </label>
+            <app-input-error-message
+                    [control]="createFormGroup.controls['name']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+        <div class="field">
+            <label>
+                Группа
+                <p-dropdown
+                        [options]="roleOptions"
+                        appendTo="body"
+                        formControlName="role"
+                        optionLabel="description"
+                        optionValue="roleId"
+                ></p-dropdown>
+            </label>
+            <app-input-error-message
+                    [control]="createFormGroup.controls['role']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+        <div class="field">
+            <label>
+                Логин
+                <input formControlName="username" pInputText/>
+            </label>
+            <app-input-error-message
+                    [control]="createFormGroup.controls['username']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+        <div class="field">
+            <label>
+                Пароль
+                <p-password
+                        [toggleMask]="true"
+                        appendTo="body"
+                        formControlName="password"
+                ></p-password>
+            </label>
+            <app-input-error-message
+                    [control]="createFormGroup.controls['password']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <button
+                (click)="createUser()"
+                [disabled]="!this.createFormGroup.valid"
+                label="Добавить"
+                pButton
+        ></button>
+    </ng-template>
 </p-dialog>
 
 <p-dialog
-	header="Редактирование пользователя"
-	[modal]="true"
-	[(visible)]="showEditDialog"
+        [(visible)]="showEditDialog"
+        [modal]="true"
+        header="Редактирование пользователя"
 >
-	<div class="preview-user">
-		<app-user-avatar
-			[formGroup]="editFormGroup"
-			size="xlarge"
-			[editable]="true"
-		></app-user-avatar>
-		<span class="name-preview">
+    <div class="preview-user">
+        <app-user-avatar
+                [editable]="true"
+                [formGroup]="editFormGroup"
+                size="xlarge"
+        ></app-user-avatar>
+        <span class="name-preview">
 			{{ getNameLabel(this.editFormGroup.value.name) }}
 		</span>
-		<span class="username-preview">
+        <span class="username-preview">
 			{{ getRoleLabel(this.editFormGroup.value.role) }}
 		</span>
-	</div>
-	<form [formGroup]="editFormGroup" class="create-dialog-content">
-		<div class="field">
-			<label>
-				Имя
-				<input pInputText placeholder="" formControlName="name" />
-			</label>
-			<app-input-error-message
-				[control]="createFormGroup.controls['name']"
-				[errors]="errorMessages"
-			></app-input-error-message>
-		</div>
-		<div class="field">
-			<label>
-				Группа
-				<p-dropdown
-					formControlName="role"
-					appendTo="body"
-					[options]="roleOptions"
-					optionLabel="description"
-					optionValue="roleId"
-				></p-dropdown>
-			</label>
-			<app-input-error-message
-				[control]="createFormGroup.controls['role']"
-				[errors]="errorMessages"
-			></app-input-error-message>
-		</div>
-		<div class="field">
-			<label>
-				Пароль
-				<p-password
-					formControlName="password"
-					[toggleMask]="true"
-					appendTo="body"
-				></p-password>
-			</label>
-			<app-input-error-message
-				[control]="createFormGroup.controls['password']"
-				[errors]="errorMessages"
-			></app-input-error-message>
-		</div>
-	</form>
-	<ng-template pTemplate="footer">
-		<button
-			pButton
-			label="Сохранить"
-			(click)="editUser()"
-			[disabled]="!this.editFormGroup.valid"
-		></button>
-	</ng-template>
+    </div>
+    <form [formGroup]="editFormGroup" class="create-dialog-content">
+        <div class="field">
+            <label>
+                Имя
+                <input formControlName="name" pInputText placeholder=""/>
+            </label>
+            <app-input-error-message
+                    [control]="createFormGroup.controls['name']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+        <div class="field">
+            <label>
+                Группа
+                <p-dropdown
+                        [options]="roleOptions"
+                        appendTo="body"
+                        formControlName="role"
+                        optionLabel="description"
+                        optionValue="roleId"
+                ></p-dropdown>
+            </label>
+            <app-input-error-message
+                    [control]="createFormGroup.controls['role']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+        <div class="field">
+            <label>
+                Пароль
+                <p-password
+                        [toggleMask]="true"
+                        appendTo="body"
+                        formControlName="password"
+                ></p-password>
+            </label>
+            <app-input-error-message
+                    [control]="createFormGroup.controls['password']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <button
+                (click)="editUser()"
+                [disabled]="!this.editFormGroup.valid"
+                label="Сохранить"
+                pButton
+        ></button>
+    </ng-template>
 </p-dialog>
 
 <p-toast></p-toast>
 <p-confirmDialog
-	header="Confirmation"
-	icon="pi pi-exclamation-triangle"
+        header="Confirmation"
+        icon="pi pi-exclamation-triangle"
 ></p-confirmDialog>

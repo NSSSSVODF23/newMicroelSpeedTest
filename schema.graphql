@@ -6,6 +6,10 @@ schema {
     subscription: Subscription
 }
 
+interface Page {
+    totalElements: Long
+}
+
 type AcpHouse {
     address: String
     houseId: Int
@@ -23,28 +27,23 @@ type AcpSession {
     vlan: Int
 }
 
-type Device {
+type ActiveSession {
+    address: String
     deviceId: String
-    hostname: String
-    ip: String
+    hasInfo: Boolean
+    id: String
     isMobile: Boolean
-    measures: [Measure]
-    platform: String
-    system: String
-    userAgent: String
+    isStarted: Boolean
+    login: String
 }
 
-type FloatChartPoint {
-    x: String
-    y: Float
+type ActiveSessionsUpdateProvider {
+    object: ActiveSession
+    updateType: ListMutationTypes
 }
 
-type LongChartPoint {
-    x: String
-    y: Int
-}
-
-type Measure {
+type BeginningMeasure {
+    beginningId: String
     connectionType: MeasureConnectionTypes
     created: String
     device: Device
@@ -65,33 +64,154 @@ type Measure {
     uploadStability: Float
 }
 
+type BeginningMeasureUpdateProvider {
+    object: BeginningMeasure
+    updateType: ListMutationTypes
+}
+
+type Complaint {
+    complaintId: Int
+    created: String
+    description: String
+    phone: String
+    processed: User
+    processedTime: String
+    session: AcpSession
+}
+
+type ComplaintUpdateProvider {
+    object: Complaint
+    updateType: ListMutationTypes
+}
+
+type CpuUtil {
+    cpuUtilId: Int
+    load: Float
+    stamp: String
+}
+
+type Device {
+    deviceId: String
+    hostname: String
+    ip: String
+    isMobile: Boolean
+    isPro: Boolean
+    lastSession: AcpSession
+    measures: [Measure]
+    platform: String
+    system: String
+    userAgent: String
+}
+
+type DevicePage implements Page {
+    content: [Device]
+    totalElements: Long
+}
+
+type DeviceUpdateProvider {
+    object: Device
+    updateType: ListMutationTypes
+}
+
+type GroupedCTypeDayIntegerPoint {
+    g: MeasureConnectionTypes
+    x: String
+    y: Int
+}
+
+type GroupedCTypeStringIntegerPoint {
+    g: MeasureConnectionTypes
+    x: String
+    y: Int
+}
+
+type Measure {
+    connectionType: MeasureConnectionTypes
+    created: String
+    device: Device
+    downloadLoss: Float
+    downloadSpeed: Float
+    downloadSpeedChart: [SpeedChartPoint]
+    downloadSpeedChartUser: [SpeedChartPoint]
+    downloadSpeedUser: Float
+    downloadStability: Float
+    isFailed: Boolean
+    isStarted: Boolean
+    isUsed: Boolean
+    measureId: Int
+    ping: Float
+    pingJitter: Float
+    session: AcpSession
+    uploadLoss: Float
+    uploadSpeed: Float
+    uploadSpeedChart: [SpeedChartPoint]
+    uploadSpeedChartUser: [SpeedChartPoint]
+    uploadSpeedUser: Float
+    uploadStability: Float
+}
+
+type MeasurePage implements Page {
+    content: [Measure]
+    totalElements: Long
+}
+
+type MeasureUpdateProvider {
+    object: Measure
+    updateType: ListMutationTypes
+}
+
 type Mutation {
     createUser(user: IUser): User
     deleteUser(userId: Int): User
+    doProcessedComplaint(id: Int, username: String): Boolean
     editUser(user: IUser): User
+    setDeviceMode(deviceId: String, mode: Boolean): Boolean
+}
+
+type NetworkUtil {
+    networkUtilId: Int
+    rx: Float
+    stamp: String
+    tx: Float
 }
 
 type PerformanceInfo {
-    cpuChartData: [FloatChartPoint]
-    memoryChartData: [LongChartPoint]
-    receivedChartData: [FloatChartPoint]
-    totalMemoryChartData: [LongChartPoint]
-    transceivedChartData: [FloatChartPoint]
+    cpuChartData: [TimeDoublePoint]
+    memoryChartData: [TimeLongPoint]
+    receivedChartData: [TimeDoublePoint]
+    totalMemoryChartData: [TimeLongPoint]
+    transceivedChartData: [TimeDoublePoint]
 }
 
 type Query {
+    getActiveSession: [ActiveSession]
     getAllHouses: [AcpHouse]
     getAllMeasures: [Measure]
     getAllRoles: [RoleGroup]
     getAllUsers: [User]
-    getBeginningMeasures: [Measure]
-    getFilteredDevices(filter: DeviceFilter): [Device]
-    getFilteredMeasures(filter: MeasureFilter): [Measure]
+    getBeginningMeasures: [BeginningMeasure]
+    getComplaints(filter: ComplaintsFilter): [Complaint]
+    getCpuStatistic(timeRange: ITimeRange): [CpuUtil]
+    getDevices(limit: IPagination, matchingObject: IDevice): DevicePage
     getMeasure(id: Int): Measure
-    getTotalDevices(filter: DeviceFilter): Int
+    getMeasures(dateFilter: ITimeRange, limits: IPagination, matchingObject: IMeasure): MeasurePage
+    getMeasuringCountsFromPeriod(timeRange: ITimeRange): Int
+    getMeasuringCountsInAddresses(timeRange: ITimeRange): [GroupedCTypeStringIntegerPoint]
+    getMeasuringCountsInDays(timeRange: ITimeRange): [GroupedCTypeDayIntegerPoint]
+    getNetworkStatistic(timeRange: ITimeRange): [NetworkUtil]
+    getRamStatistic(timeRange: ITimeRange): [RamUtil]
+    getTotalComplaints(filter: ComplaintsFilter): Int
+    getTotalDevices(matchingObject: IDevice): Int
     getTotalMeasures(filter: MeasureFilter): Int
     getUserByUsername(username: String): User
     validateLogin(login: String): Boolean
+}
+
+type RamUtil {
+    ramUtilId: Int
+    stamp: String
+    total: Int
+    utilized: Int
 }
 
 type RoleGroup {
@@ -106,11 +226,23 @@ type SpeedChartPoint {
 }
 
 type Subscription {
-    getBeginningMeasures: [Measure]
-    getFilteredMeasures(filter: MeasureFilter): [Measure]
     getPerformance: PerformanceInfo
-    getTotalMeasures(filter: MeasureFilter): Int
+    updateActiveSession: ActiveSessionsUpdateProvider
+    updateBeginningMeasures: BeginningMeasureUpdateProvider
+    updateComplaints: ComplaintUpdateProvider
+    updateDevices: DeviceUpdateProvider
+    updateMeasures: MeasureUpdateProvider
     updateUsers: UserUpdateProvider
+}
+
+type TimeDoublePoint {
+    x: String
+    y: Float
+}
+
+type TimeLongPoint {
+    x: String
+    y: Int
 }
 
 type User {
@@ -140,20 +272,96 @@ enum MeasureConnectionTypes {
     WIFI
 }
 
-input DeviceFilter {
+"scalar JSON"
+scalar Long
+
+input ComplaintsFilter {
     address: Int
-    deviceId: String
+    end: String
     first: Int
-    hostname: String
     ip: String
     login: String
+    mac: String
+    phone: String
+    processed: Boolean
     rows: Int
+    start: String
+}
+
+input IAcpHouse {
+    address: String
+    houseId: Int
+    sessions: [IAcpSession]
+    vlan: Int
+}
+
+input IAcpSession {
+    house: IAcpHouse
+    ip: String
+    login: String
+    mac: String
+    measures: [IMeasure]
+    sessionId: Int
+    vlan: Int
+}
+
+input IDevice {
+    deviceId: String
+    hostname: String
+    ip: String
+    isMobile: Boolean
+    isPro: Boolean
+    lastSession: IAcpSession
+    measures: [IMeasure]
+    platform: String
+    system: String
+    userAgent: String
+}
+
+input IMeasure {
+    connectionType: MeasureConnectionTypes
+    created: String
+    device: IDevice
+    downloadLoss: Float
+    downloadSpeed: Float
+    downloadSpeedChart: [ISpeedChartPoint]
+    downloadSpeedChartUser: [ISpeedChartPoint]
+    downloadSpeedUser: Float
+    downloadStability: Float
+    isFailed: Boolean
+    isStarted: Boolean
+    isUsed: Boolean
+    measureId: Int
+    ping: Float
+    pingJitter: Float
+    session: IAcpSession
+    uploadLoss: Float
+    uploadSpeed: Float
+    uploadSpeedChart: [ISpeedChartPoint]
+    uploadSpeedChartUser: [ISpeedChartPoint]
+    uploadSpeedUser: Float
+    uploadStability: Float
+}
+
+input IPagination {
+    limit: Int
+    offset: Int
 }
 
 input IRoleGroup {
     description: String
     groupName: String
     roleId: Int
+}
+
+input ISpeedChartPoint {
+    speed: Float
+    stamp: Int
+}
+
+input ITimeRange {
+    end: String
+    start: String
 }
 
 input IUser {

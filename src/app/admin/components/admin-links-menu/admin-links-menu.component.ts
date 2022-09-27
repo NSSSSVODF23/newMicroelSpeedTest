@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {IsActiveMatchOptions} from '@angular/router';
 
 @Component({
   selector: 'app-admin-links-menu',
@@ -7,7 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminLinksMenuComponent implements OnInit {
 
-  constructor() { }
+  matchOpt: IsActiveMatchOptions = {
+    queryParams: "ignored",
+    paths: "exact",
+    fragment: "exact",
+    matrixParams: "exact"
+  }
+
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

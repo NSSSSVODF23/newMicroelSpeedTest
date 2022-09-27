@@ -1,11 +1,11 @@
 <div class="wrapper">
 	<span class="value-wrapper">
-		<img src="../../../../assets/icons/ping.svg" alt="" />
+		<img alt="" src="../../../../assets/icons/ping.svg"/>
 		<span class="label">Задержка</span>
         <span class="value">{{ ping }} мс</span>
 	</span>
-	<span class="value-wrapper">
-		<img src="../../../../assets/icons/jitter.svg" alt="" />
+    <span *ngIf="isPro" class="value-wrapper">
+		<img alt="" src="../../../../assets/icons/jitter.svg"/>
 		<span class="label">Дрожание</span>
         <span class="value">{{ jitter }} мс</span>
 	</span>

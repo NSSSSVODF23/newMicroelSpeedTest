@@ -9,6 +9,7 @@ import { StartingTestButtonComponent } from "./components/starting-test-button/s
 import { TopPanelComponent } from "./components/top-panel/top-panel.component";
 import { InputErrorMessageComponent } from "./components/input-error-message/input-error-message.component";
 import { AvatarModule } from "primeng/avatar";
+import { StopPropagationDirective } from './directivies/stop-propagation.directive';
 
 @NgModule({
 	declarations: [
@@ -20,6 +21,7 @@ import { AvatarModule } from "primeng/avatar";
 		StartingTestButtonComponent,
 		TopPanelComponent,
 		InputErrorMessageComponent,
+  StopPropagationDirective,
 	],
 	imports: [CommonModule],
 	exports: [
@@ -31,6 +33,7 @@ import { AvatarModule } from "primeng/avatar";
 		StartingTestButtonComponent,
 		TopPanelComponent,
 		InputErrorMessageComponent,
+  StopPropagationDirective,
 	],
 })
 export class CommonComponentModule {}

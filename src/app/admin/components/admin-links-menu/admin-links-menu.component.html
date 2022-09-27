@@ -1,18 +1,25 @@
 <div class="menu">
-	<a routerLink="/admin/dashboard" routerLinkActive="active">
-		<i class="pi pi-chart-line"></i>
-		Мониторинг
-	</a>
-	<a routerLink="/admin/measures" routerLinkActive="active">
-		<i class="pi pi-list"></i>
-		Замеры
-	</a>
-	<a routerLink="/admin/devices" routerLinkActive="active">
-		<i class="pi pi-mobile"></i>
-		Устройства
-	</a>
-	<a routerLink="/admin/users" routerLinkActive="active">
-		<i class="pi pi-users"></i>
-		Пользователи
-	</a>
+    <a [routerLinkActiveOptions]="matchOpt" routerLink="/admin/dashboard" routerLinkActive="active">
+        <i class="pi pi-chart-line"></i>
+        Мониторинг
+    </a>
+    <a [queryParams]="{offset:'0',limit:'10'}" [routerLinkActiveOptions]="matchOpt" routerLink="/admin/measures"
+       routerLinkActive="active">
+        <i class="pi pi-list"></i>
+        Замеры
+    </a>
+    <a [queryParams]="{offset:'0',limit:'10'}" [routerLinkActiveOptions]="matchOpt" routerLink="/admin/devices"
+       routerLinkActive="active">
+        <i class="pi pi-mobile"></i>
+        Устройства
+    </a>
+    <a [routerLinkActiveOptions]="matchOpt" routerLink="/admin/users" routerLinkActive="active">
+        <i class="pi pi-users"></i>
+        Пользователи
+    </a>
+    <a [routerLinkActiveOptions]="matchOpt" routerLink="/admin/complaints"
+       routerLinkActive="active">
+        <i class="pi pi-exclamation-triangle"></i>
+        Жалобы
+    </a>
 </div>

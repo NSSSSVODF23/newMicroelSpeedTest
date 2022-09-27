@@ -1,0 +1,104 @@
+@import "src/app/styles/variables";
+
+.content-wrapper {
+  display: grid;
+  grid: min-content/700px min-content;
+  gap: 1rem;
+  padding: 1rem 0;
+  justify-content: center;
+}
+
+.complaint-item {
+  padding: 1rem;
+  display: grid;
+  gap: .2rem;
+  height: 160px;
+  cursor: pointer;
+  transition: background-color .1s ease-in-out;
+
+  .complaint-item-header {
+    display: flex;
+    gap: .8rem;
+
+    .main-info {
+      display: grid;
+
+      .login {
+        color: $text-color;
+      }
+
+      .address {
+        color: $text-color-secondary;
+        font-size: .9rem;
+      }
+    }
+
+    .phone {
+      color: $primary-color;
+    }
+  }
+
+
+  .complaint-item-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .date {
+    text-align: right;
+    color: $text-color-secondary;
+    font-size: .8rem;
+  }
+}
+
+.complaint-item:hover {
+  background-color: $surface-border;
+}
+
+.complaint-dialog-body {
+  display: flex;
+  gap: 0.2rem;
+  flex-direction: column;
+  min-height: 100%;
+
+  .info-row {
+    display: flex;
+    gap: 0.4rem;
+
+    .label {
+      color: $text-color-light;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .value {
+
+    }
+  }
+
+  .description {
+    flex: 1;
+    padding-top: 1rem;
+
+    .label {
+      color: $text-color-secondary;
+      font-weight: 500;
+      font-size: 0.8rem;
+    }
+
+    .text {
+      padding: 0.3rem 0.5rem 0 0.5rem;
+    }
+  }
+
+  .date {
+    text-align: right;
+    color: $text-color-secondary;
+    font-size: .8rem;
+  }
+}
+
+.search-fields-container {
+  display: grid;
+  gap: 1rem;
+}

@@ -1,21 +1,23 @@
-<span
-	(mouseenter)="editAvatarShow = editable ? true : false"
-	(mouseleave)="editAvatarShow = false"
-	(click)="openFileSelector()"
+<div
+        (click)="openFileSelector()"
+        (mouseenter)="editAvatarShow = editable ? true : false"
+        (mouseleave)="editAvatarShow = false"
+
 >
-	<p-avatar
-		[size]="size"
-		[shape]="shape"
-		styleClass="avatar-overflow"
-		[label]="letter"
-	>
-		<div
-			*ngIf="this.imageStyle !== ''"
-			class="image"
-			[style.backgroundImage]="this.imageStyle"
-		></div>
-		<div @fade *ngIf="editAvatarShow" class="change-button">
-			<i class="pi pi-folder-open"></i>
-		</div>
-	</p-avatar>
-</span>
+    <p-avatar
+            [label]="letter"
+            [shape]="shape"
+            [size]="size"
+            [style.display]="'flex'"
+            styleClass="avatar-overflow"
+    >
+        <div
+                *ngIf="this.imageStyle !== ''"
+                [style.backgroundImage]="this.imageStyle"
+                class="image"
+        ></div>
+        <div *ngIf="editAvatarShow" @fade class="change-button">
+            <i class="pi pi-folder-open"></i>
+        </div>
+    </p-avatar>
+</div>

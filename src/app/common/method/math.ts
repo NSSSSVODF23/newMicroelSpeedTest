@@ -5,8 +5,8 @@
  * @returns Rounded number
  */
 export function roundToPrecision(value: number, precision: number): number {
-	const divider = Math.pow(10, precision);
-	return Math.round((value + Number.EPSILON) * divider) / divider;
+    const divider = Math.pow(10, precision);
+    return Math.round((value + Number.EPSILON) * divider) / divider;
 }
 
 /**
@@ -17,35 +17,37 @@ export function roundToPrecision(value: number, precision: number): number {
  * @param {number} endDatetime Date and time when the load is over
  */
 export function speedCalc(
-	loadedBytes: number,
-	prevBytesCount: number,
-	startDatetime: number,
-	endDatetime?: number,
+    loadedBytes: number,
+    prevBytesCount: number,
+    startDatetime: number,
+    endDatetime?: number,
 ) {
-	const now = endDatetime !== undefined ? endDatetime : performance.now();
-	const deltaSec = (now - startDatetime) / 1000;
-	return ((loadedBytes - prevBytesCount) * 8) / 1000000 / deltaSec;
+    const now = endDatetime !== undefined ? endDatetime : performance.now();
+    const deltaSec = (now - startDatetime) / 1000;
+    return ((loadedBytes - prevBytesCount) * 8) / 1000000 / deltaSec;
 }
 
-export function getChartOptions(suffix: string) {
-	return {
-		animation: false,
-		elements: {
-			point: {
-				radius: 0,
-			},
-		},
-		scales: {
-			x: {
-				display: false,
-			},
-			y: {
-				ticks: {
-					callback: (value: string, index: number, values: string[]) => {
-						return value + " " + suffix;
-					},
-				},
-			},
-		},
-	};
+/**
+ * Принимает строку, конвертирует в число, если числом не является, то устанавливает значение по умолчанию
+ */
+export function stringToInt(value: string, def: number) {
+    const converted = parseInt(value)
+    if (isNaN(converted)) {
+        return def;
+    } else {
+        return converted;
+    }
+}
+
+export function getAvgMaxFromArray(array: number[], windowSize: number = 30, percentFall: number = 10) {
+    const preparedArray = array
+        .sort((a, b) => b - a)
+        .filter((value, index, array) => {
+            const startIndex = Math.round(array.length * (percentFall / 100));
+            const endIndex = Math.round(array.length * (1 - percentFall / 100));
+            return index >= startIndex && index <= endIndex;
+        })
+        .slice(0, windowSize)
+
+    return preparedArray.reduce((prev, curr) => prev + curr, 0) / preparedArray.length;
 }

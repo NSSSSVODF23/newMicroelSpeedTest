@@ -1,0 +1,154 @@
+<div class="content-wrapper">
+    <p-card>
+        <ng-template pTemplate="header">
+            <div><i class="pi pi-list"></i> Жалобы</div>
+        </ng-template>
+        <p-virtualScroller
+            #scroller
+            (onLazyLoad)="loadComplaints($event)"
+            [itemSize]="160"
+            [lazy]="true"
+            [rows]="rows"
+            [value]="complaints"
+            scrollHeight="500px">
+            <ng-template let-complaint let-scrollOptions="options" pTemplate="item">
+                <div (click)="selectComplaint(complaint)" class="complaint-item">
+                    <div class="complaint-item-header">
+                        <div class="main-info">
+                            <span class="login">
+                                {{complaint.session?.login}}
+                            </span>
+                            <span class="address">
+                                {{complaint.session?.house?.address ?? "Квартал В25 (Правая часть)"}}
+                            </span>
+                        </div>
+                        <div class="phone">
+                            {{complaint.phone}}
+                        </div>
+                        <div class="empty"></div>
+                        <app-complaint-processed-button [complaint]="complaint"></app-complaint-processed-button>
+                    </div>
+                    <div class="complaint-item-description">
+                        {{complaint.description}}
+                    </div>
+                    <div class="date">
+                        {{complaint.created | date:"dd-MM-YYYY HH:mm:ss"}}
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template let-product pTemplate="loadingItem">
+                <div style="height: 42px">
+                    <p-skeleton height="24px" width="48px"></p-skeleton>
+                </div>
+            </ng-template>
+        </p-virtualScroller>
+    </p-card>
+    <p-card>
+        <ng-template pTemplate="header">
+            <div><i class="pi pi-search"></i> Поиск</div>
+        </ng-template>
+        <div class="search-fields-container">
+            <p-calendar
+                    (ngModelChange)="filterChangeDateRangeHandler($event)"
+                    [(ngModel)]="filterDateRangeValue"
+                    [readonlyInput]="true"
+                    [showClear]="true"
+                    class="p-inputtext-sm"
+                    dateFormat="dd-mm-yy"
+                    placeholder="Дата замера"
+                    selectionMode="range"
+            ></p-calendar>
+            <input
+                    (ngModelChange)="filterChangeHandler($event)"
+                    [(ngModel)]="searchFilters.login"
+                    class="p-inputtext-sm"
+                    pInputText
+                    placeholder="Логин"
+                    type="text"
+            />
+            <input
+                    (ngModelChange)="filterChangeHandler($event)"
+                    [(ngModel)]="searchFilters.phone"
+                    class="p-inputtext-sm"
+                    pInputText
+                    placeholder="Телефон"
+                    type="text"
+            />
+            <p-dropdown
+                    (ngModelChange)="filterChangeHandler($event)"
+                    (onClear)="addressResetFunction($event)"
+                    [(ngModel)]="searchFilters.address"
+                    [filter]="true"
+                    [options]="houseList"
+                    [showClear]="true"
+                    class="p-inputtext-sm"
+                    filterBy="address"
+                    filterBy="address"
+                    optionLabel="address"
+                    optionValue="houseId"
+                    placeholder="Адрес"
+            >
+            </p-dropdown>
+            <input
+                    (ngModelChange)="filterChangeHandler($event)"
+                    [(ngModel)]="searchFilters.ip"
+                    [pKeyFilter]="ipInputFilter"
+                    class="p-inputtext-sm"
+                    pInputText
+                    placeholder="IP Адрес"
+                    type="text"
+            />
+            <input
+                    (ngModelChange)="filterChangeHandler($event)"
+                    [(ngModel)]="searchFilters.mac"
+                    [pKeyFilter]="macInputFilter"
+                    class="p-inputtext-sm"
+                    id="float-input"
+                    pInputText
+                    placeholder="MAC Адрес"
+                    type="text"
+            />
+            <p-selectButton (ngModelChange)="filterChangeHandler($event)" [(ngModel)]="searchFilters.processed"
+                            [options]="processedStatuses"
+                            optionLabel="name" optionValue="status" styleClass="processed-status"></p-selectButton>
+            <button
+                    (click)="resetFilters()"
+                    class="p-button-sm"
+                    icon="pi pi-filter-slash"
+                    label="Сбросить"
+                    pButton
+            ></button>
+        </div>
+    </p-card>
+</div>
+<p-dialog [(visible)]="complaintDialogVisible" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [modal]="true"
+          [resizable]="false" [responsive]="true" [style]="{width: '550px', height:'80vh'}">
+    <ng-template pTemplate="header">
+        <div>
+            Жалоба #{{selectedComplaint?.complaintId}}
+        </div>
+    </ng-template>
+    <div class="complaint-dialog-body">
+        <div class="info-row">
+            <span class="label">Логин</span>
+            <span class="value">{{selectedComplaint?.session?.login}}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Адрес</span>
+            <span class="value">{{selectedComplaint?.session?.house?.address}}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Контактный телефон</span>
+            <span class="value">{{selectedComplaint?.phone}}</span>
+        </div>
+        <div class="description">
+            <div class="label">Описание проблемы</div>
+            <div class="text">
+                {{selectedComplaint?.description}}
+            </div>
+        </div>
+        <div class="date">
+            {{selectedComplaint?.created | date:"dd-MM-YYYY HH:mm:ss"}}
+        </div>
+    </div>
+</p-dialog>

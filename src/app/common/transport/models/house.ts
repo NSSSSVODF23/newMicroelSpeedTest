@@ -1,5 +1,5 @@
 export interface House {
-	houseId: number | undefined;
-	vlan: number;
-	address: string;
+    houseId?: number;
+    vlan?: number;
+    address?: string;
 }

@@ -1,74 +1,140 @@
 <div class="page-wrapper">
-	<div class="common-statistic">
-		<app-statistic-card
-			title="Новые замеры"
-			firstSuffix="за сутки"
-			secondSuffix="за месяц"
-		></app-statistic-card>
-		<app-statistic-card
-			title="Новые жалобы"
-			firstSuffix="за сутки"
-			secondSuffix="за месяц"
-		></app-statistic-card>
-		<app-statistic-card
-			title="Рейтинг"
-			firstSuffix="из 5"
-			secondSuffix="отзывов"
-		></app-statistic-card>
-	</div>
-	<p-card>
-		<ng-template pTemplate="header">
-			<div>Нагрузка</div>
-		</ng-template>
-		<p-tabView>
-			<p-tabPanel header="Сеть">
-				<p-chart
-					type="line"
-					[data]="networkChartData"
-					[responsive]="true"
-					[options]="networkChartOptions"
-					height="305px"
-				></p-chart>
-			</p-tabPanel>
-			<p-tabPanel header="Процессор">
-				<p-chart
-					type="line"
-					[data]="cpuChartData"
-					[options]="cpuChartOptions"
-					height="305px"
-				></p-chart>
-			</p-tabPanel>
-			<p-tabPanel header="Память">
-				<p-chart
-					type="line"
-					[data]="memoryChartData"
-					[options]="memoryChartOptions"
-					height="305px"
-				></p-chart>
-			</p-tabPanel>
-		</p-tabView>
-	</p-card>
-	<p-card>
-		<ng-template pTemplate="header">
-			<div>
-				Статистика: {{ statisticName }}
-				<div class="empty"></div>
-				<button
-					pButton
-					label="Выбрать"
-					(click)="statisticMenu.toggle($event)"
-					class="p-button-text p-button-success"
-				></button>
-			</div>
-			<p-tieredMenu
-				#statisticMenu
-				[model]="statisticMenuItems"
-				[popup]="true"
-			></p-tieredMenu>
-		</ng-template>
-		<p-chart
-			[data]="statisticChartData"
-			[options]="statisticChartOptions"
-		></p-chart>
-	</p-card>
+    <div class="common-statistic">
+        <app-statistic-card
+                [firstValue]="FSDayMeasurementCount"
+                [secondValue]="FSMonthMeasurementCount"
+                firstSuffix="за сутки"
+                secondSuffix="за месяц"
+                title="Новые замеры"
+        ></app-statistic-card>
+        <app-statistic-card
+                [firstValue]="FSDayComplaintCount"
+                [secondValue]="FSMonthComplaintCount"
+                firstSuffix="за сутки"
+                secondSuffix="за месяц"
+                title="Новые жалобы"
+        ></app-statistic-card>
+        <app-statistic-card
+                firstSuffix="из 5"
+                secondSuffix="отзывов"
+                title="Рейтинг"
+        ></app-statistic-card>
+    </div>
+    <p-card>
+        <ng-template pTemplate="header">
+            <div>Нагрузка</div>
+        </ng-template>
+        <p-tabView>
+            <p-tabPanel header="Сеть">
+                <p-chart
+                        [data]="networkChartData"
+                        [options]="networkChartOptions"
+                        [responsive]="true"
+                        height="305px"
+                        type="line"
+                ></p-chart>
+            </p-tabPanel>
+            <p-tabPanel header="Процессор">
+                <p-chart
+                        [data]="cpuChartData"
+                        [options]="cpuChartOptions"
+                        height="305px"
+                        type="line"
+                ></p-chart>
+            </p-tabPanel>
+            <p-tabPanel header="Память">
+                <p-chart
+                        [data]="memoryChartData"
+                        [options]="memoryChartOptions"
+                        height="305px"
+                        type="line"
+                ></p-chart>
+            </p-tabPanel>
+        </p-tabView>
+    </p-card>
+    <p-card>
+        <ng-template pTemplate="header">
+            <div>
+                Статистика
+                <div class="empty"></div>
+                <button
+                        (click)="statisticMenu.toggle($event)"
+                        class="p-button-text p-button-success"
+                        label="Выбрать"
+                        pButton
+                ></button>
+            </div>
+            <div class="subtitle">
+                {{statisticName}}
+            </div>
+            <p-tieredMenu
+                #statisticMenu
+                [model]="statisticMenuItems"
+                [popup]="true"
+            ></p-tieredMenu>
+        </ng-template>
+        <p-chart
+                [data]="statisticChartData"
+                [options]="statisticChartOptions"
+                [plugins]="chartsPlugins"
+                [type]="statisticChartType"
+        ></p-chart>
+    </p-card>
+    <p-card>
+        <ng-template pTemplate="header">
+            <div>Пользователи на сайте
+                <div class="empty"></div>
+                <span class="online-status"> Онлайн: {{activeSessions.length}}</span>
+            </div>
+        </ng-template>
+        <div *ngIf="activeSessions.length===0" class="empty-message">
+            <i class="pi pi-exclamation-circle"></i> &nbsp; Нет подключенных пользователей
+        </div>
+        <p-virtualScroller
+                *ngIf="activeSessions.length>0"
+                [itemSize]="73"
+                [value]="activeSessions"
+                scrollHeight="500px">
+            <ng-template let-scrollOptions="options" let-session pTemplate="item">
+                <div @fade class="session-item">
+                    <img [src]="session.isMobile | deviceType" alt="" class="session-device-icon">
+                    <div class="session-info-wrapper">
+                        <div class="location-info">
+                            <span *ngIf="session.login !== '' ">
+                                {{session.login}}
+                            </span>
+                            <span *ngIf="session.address !== '' " class="address">
+                                {{session.address}}
+                            </span>
+                            <p-skeleton *ngIf="session.login === '' " height="1.2rem" width="10rem"></p-skeleton>
+                            <p-skeleton *ngIf="session.address === '' " height="1.2rem" width="7rem"></p-skeleton>
+                        </div>
+                        <div class="device-id">
+                            {{session.deviceId}}
+                        </div>
+                    </div>
+                    <div class="testing-status">
+                        {{session.isStarted | testingStatus}}
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template let-product pTemplate="loadingItem">
+                <div class="user-item">
+                    <p-skeleton height="48px" width="48px"></p-skeleton>
+                    <div class="main-info">
+                        <p-skeleton height="1rem" width="150px"></p-skeleton>
+                        <p-skeleton height="0.8rem" width="90px"></p-skeleton>
+                    </div>
+                    <div class="empty"></div>
+                </div>
+            </ng-template>
+        </p-virtualScroller>
+    </p-card>
 </div>
+<p-dialog [(visible)]="statisticCalendarDialogVisible" [modal]="true" [resizable]="false" header="Выберите день">
+    <ng-template pTemplate="content">
+        <p-calendar (ngModelChange)="setCustomTimeRange($event)" [(ngModel)]="statisticCalendarValue"
+                    [inline]="true"
+                    [selectionMode]="statisticCalendarMode"></p-calendar>
+    </ng-template>
+</p-dialog>

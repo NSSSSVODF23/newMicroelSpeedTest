@@ -1,19 +1,18 @@
 import {Injectable} from "@angular/core";
 import {v4, validate} from "uuid";
 import {Measure} from "../transport/models/measure";
+import {Session} from "../transport/models/session";
 
-export interface DeviceInfo {
-    deviceId: string;
+export interface Device {
+    deviceId?: string;
     ip?: String;
     hostname?: string;
-    system: string;
-    platform: string;
-    userAgent: string;
-    isMobile: boolean;
+    system?: string;
+    platform?: string;
+    userAgent?: string;
+    isMobile?: boolean;
     measures?: Measure[];
-    avgDownload?: number;
-    avgUpload?: number;
-    measureCount?: number;
+    lastSession?: Session;
 }
 
 @Injectable({
@@ -49,7 +48,7 @@ export class DeviceInfoService {
     };
 
     // Function get device info object
-    getDeviceInfo = (): DeviceInfo => {
+    getDeviceInfo = (): Device => {
         return {
             deviceId: this.deviceId,
             platform: this.platform,
