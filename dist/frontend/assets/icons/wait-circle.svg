@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="11" fill="none" stroke-width="2" stroke-miterlimit="10" stroke="#2A77C9"
+        stroke-linecap="round" stroke-dasharray="40, 40" stroke-dashoffset="0">
+        <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur=".75s" from="0 12 12"
+            to="360 12 12" />
+        <animate attributeName="stroke-dasharray" dur="2.55s" repeatCount="indefinite" begin="0s"
+            values="5, 100; 60, 60; 5, 100" />
+    </circle>
+</svg>
