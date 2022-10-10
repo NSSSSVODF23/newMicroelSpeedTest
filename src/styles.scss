@@ -5,6 +5,43 @@ html,
 body {
   height: 100%;
   background-color: $background-color;
+  letter-spacing: 0.02rem;
+}
+
+@media screen and (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+@media screen and (min-width: 481px) {
+  html {
+    font-size: 12.5px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  html {
+    font-size: 13.5px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  html {
+    font-size: 16px;
+  }
 }
 
 body {
@@ -12,14 +49,12 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* ===== Scrollbar CSS ===== */
-/* Firefox */
 * {
   scrollbar-width: 6px;
   scrollbar-color: $text-color-light transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -85,5 +120,83 @@ body {
 
   .p-button {
     border-radius: 0;
+  }
+}
+
+.p-sidebar-content {
+  padding: 0 !important;
+}
+
+.p-ripple.primary-ripple .p-ink {
+  background: $primary-color;
+}
+
+.p-ripple.alt-ripple .p-ink {
+  background: $alt-color;
+}
+
+.p-ripple.disabled .p-ink {
+  display: none;
+}
+
+.pi-star-fill {
+  color: $alt-color !important;
+}
+
+.big-chip {
+  font-size: 1.2rem !important;
+  padding: 0.3rem 0.75rem !important;
+
+  span {
+    font-size: inherit !important;
+  }
+}
+
+.input-label-container {
+  display: grid;
+  grid: min-content min-content/100%;
+  gap: 0.2rem;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: $text-color-secondary;
+  }
+}
+
+.hovered:hover {
+  background-color: $hover-highlight;
+}
+
+.grow {
+  flex-grow: 1;
+
+  div {
+    width: 100%;
+  }
+}
+
+.main-logo {
+  height: 56px;
+}
+
+.with-icon > i {
+  font-size: inherit !important;
+  color: inherit !important;
+}
+
+.complaint-dialog {
+  width: max-content !important;
+  height: max-content !important;
+  max-height: 100vh !important;
+  max-width: 80vw !important;
+  min-width: 40rem !important;
+}
+
+@media screen and (max-width: 640px) {
+  .complaint-dialog {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
   }
 }

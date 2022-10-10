@@ -1,17 +1,11 @@
 import {
-    AfterContentChecked,
-    AfterContentInit,
-    AfterViewChecked,
-    AfterViewInit,
     Component,
-    DoCheck,
-    OnChanges,
-    OnDestroy,
     OnInit,
-    SimpleChanges,
 } from "@angular/core";
 import {DeviceInfoService} from "src/app/common/service/device-info.service";
-import {TestingService} from "../../service/measure/testing.service";
+import {TestingService} from "../../service/testing.service";
+import {Title} from "@angular/platform-browser";
+import {PublicApiService} from "../../service/public-api.service";
 
 @Component({
     templateUrl: "./index-page.component.html",
@@ -22,27 +16,15 @@ export class IndexPageComponent
     isMobile: boolean = false;
 
     constructor(
-        readonly device: DeviceInfoService,
-        readonly measure: TestingService,
+        readonly deviceInfoService: DeviceInfoService,
+        readonly testingService: TestingService,
+        readonly titleService: Title,
+        readonly api: PublicApiService
     ) {
     }
 
     ngOnInit(): void {
-        console.log("IndexPageComponent.ngOnInit");
-        this.isMobile = this.device.isMobile; // Это мобильное устройство?
-
-        // setInterval(() => {
-        // 	const request = new XMLHttpRequest();
-        // 	request.open(
-        // 		"POST",
-        // 		`http://${location.hostname}:8080/upload?deviceId=test`,
-        // 		true,
-        // 	);
-        // 	request.send(
-        // 		new Blob([new ArrayBuffer(50)], {
-        // 			type: "application/octet-stream",
-        // 		}),
-        // 	);
-        // }, 1000);
+        this.titleService.setTitle("Microel.МЕТР")
+        this.isMobile = this.deviceInfoService.isMobile; // Это мобильное устройство?
     }
 }

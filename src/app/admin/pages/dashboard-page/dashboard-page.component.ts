@@ -12,13 +12,11 @@ import {
     getLineDataset
 } from "../../../common/method/chart";
 import {MeasureConnectionTypes} from "../../../common/transport/enums/connection-types";
-import {postcss} from "@angular-devkit/build-angular/src/webpack/plugins/postcss-cli-resources";
 import {ActiveSession, GroupCTypeStringIntegerPoint} from "../../../common/transport/models/statistics";
-import {count, Subscription} from "rxjs";
-import {Measure} from "../../../common/transport/models/measure";
-import {ListMutationTypes} from "src/app/common/transport/enums/list-mutation-types";
+import {Subscription} from "rxjs";
 import {updateListResolver} from "../../../common/method/update_resolver";
 import {animate, style, transition, trigger} from "@angular/animations";
+import {Title} from "@angular/platform-browser";
 
 const fade = trigger("fade", [
     transition(":enter", [
@@ -198,16 +196,19 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     FSMonthMeasurementCount = 0;
     FSDayComplaintCount = 0;
     FSMonthComplaintCount = 0;
+    FSFeedbackCount = 0;
+    FSAvgAllFeedback = 0;
 
     subscriptions: Subscription[] = [];
 
-    constructor(readonly dashboard: DashboardService, readonly statistic: StatisticService) {
+    constructor(readonly dashboard: DashboardService, readonly statistic: StatisticService, readonly titleService: Title) {
     }
 
     statisticCustomTimeRangeCallback = (timeRange: TimeRange) => {
     };
 
     ngOnInit(): void {
+        this.titleService.setTitle("Microel.МЕТР - Мониторинг")
         this.subscriptions.push(
             this.dashboard.getPerformance().subscribe((info) => {
                 this.networkChartData = {
@@ -245,6 +246,8 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
             Calendar.getMonthRelativeNow(0).getEndMonth().getEndDay()]).subscribe(
             count => this.FSMonthComplaintCount = count
         )
+        this.statistic.feedbackCounts().subscribe(n => this.FSFeedbackCount = n);
+        this.statistic.feedbackAllAvg().subscribe(n => this.FSAvgAllFeedback = n);
         this.statistic.activeSessions().subscribe(
             sessions => this.activeSessions = [...sessions]
         )
@@ -314,6 +317,11 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     }
 
     private loadMeasurementsCountsInAddresses(timeRange: TimeRange) {
+
+        const mapper = (address: string, data: GroupCTypeStringIntegerPoint[], type: MeasureConnectionTypes) => {
+            return data.filter(point => point.x === address && point.g === type).reduce((prev, o) => prev + o.y, 0)
+        }
+
         this.statisticName = 'Кол-во замеров топ-10 адресов'
         this.statisticChartType = 'bar'
         this.statistic.measuresCountsInAddresses(timeRange).subscribe(data => {
@@ -321,21 +329,17 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
             labels = labels.filter((item, pos) => {
                 return labels.indexOf(item) == pos;
             })
-            let mappedData: GroupCTypeStringIntegerPoint[][] = [];
-            labels.forEach(label => {
-                mappedData.push(data.filter(point => point.x === label));
-            })
             this.statisticChartData = {
                 labels,
                 datasets: [
                     {
                         label: "Ethernet",
-                        data: mappedData.map(address => address.filter(point => point.g === MeasureConnectionTypes.ETHERNET)).flat(1).map(point => point.y),
+                        data: labels.map(a => mapper(a, data, MeasureConnectionTypes.ETHERNET)),
                         backgroundColor: "#ff961f",
                     },
                     {
                         label: "Wifi",
-                        data: mappedData.map(address => address.filter(point => point.g === MeasureConnectionTypes.WIFI)).flat(1).map(point => point.y),
+                        data: labels.map(a => mapper(a, data, MeasureConnectionTypes.WIFI)),
                         backgroundColor: "#c31fff",
                     },
                 ],

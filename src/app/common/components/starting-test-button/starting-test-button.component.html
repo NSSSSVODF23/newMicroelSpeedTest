@@ -1,12 +1,13 @@
 <div
-	[ngClass]="{
+        (click)="start()"
+        [ngClass]="{
 		rounded: round && icon == '',
 		'rounded-with-icon': round && icon !== '',
-		'wrapper-accent': !primaryStyle,
-		'wrapper-primary': primaryStyle
-	}"
-	(click)="start()"
->
-	<img *ngIf="icon != ''" [src]="icon" alt="" srcset="" />
-	<span>{{ label }}</span>
+		'wrapper-accent alt-ripple': !primaryStyle,
+		'wrapper-primary primary-ripple': primaryStyle,
+		'disabled':disabled}"
+        pRipple>
+    <img *ngIf="icon != '' && !loading" [src]="icon" alt="" srcset=""/>
+    <i *ngIf="icon != '' && loading" class="pi pi-spin pi-spinner"></i>
+    <span>{{ label }}</span>
 </div>

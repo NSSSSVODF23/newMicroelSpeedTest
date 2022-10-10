@@ -1,20 +1,20 @@
 <div class="wrapper">
-	<div class="wrapper-indicator">
-		<div class="indicator" [@testType]="testType" #indicator></div>
-	</div>
-	<div class="current-test-title" [ngSwitch]="this.service.testStage">
-		<span *ngSwitchCase="2">Подключение</span>
-		<span *ngSwitchCase="3">
-			<img src="../../../../assets/icons/download.svg" alt="" />
+    <div class="wrapper-indicator">
+        <div #indicator [@testType]="testType" class="indicator"></div>
+    </div>
+    <div [ngSwitch]="this.service.testStage" class="current-test-title">
+        <span *ngSwitchDefault>Подключение</span>
+        <span *ngSwitchCase="3">
+			<img alt="" src="../../../../assets/icons/download.svg"/>
 			Скачивание
 		</span>
-		<span *ngSwitchCase="4">
-			<img src="../../../../assets/icons/upload.svg" alt="" />
+        <span *ngSwitchCase="4">
+			<img alt="" src="../../../../assets/icons/upload.svg"/>
 			Загрузка
 		</span>
-	</div>
-	<div class="wrapper-values">
-		<span class="speed-value">{{ value }}</span>
-		<span class="unit">Мбит/с</span>
-	</div>
+    </div>
+    <div class="wrapper-values">
+        <span class="speed-value">{{ value }}</span>
+        <span class="unit">Мбит/с</span>
+    </div>
 </div>

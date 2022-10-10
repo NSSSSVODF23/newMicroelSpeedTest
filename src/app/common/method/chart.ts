@@ -64,6 +64,9 @@ export function configureHorizontalLabelStatisticChart(stacked?: boolean) {
     return {
         indexAxis: 'y',
         scales: {
+            x: {
+                stacked
+            },
             y: {
                 stacked
             },
@@ -88,6 +91,32 @@ export function configureOnlineChart(suffix: string) {
                 ticks: {
                     callback: (value: string, index: number, values: string[]) => {
                         return value + " " + suffix;
+                    },
+                },
+            },
+        },
+    };
+}
+
+export function configureMeasurementChart() {
+    return {
+        elements: {
+            point: {
+                radius: 1,
+            },
+        },
+        scales: {
+            x: {
+                display: false,
+                type: 'linear',
+                min: 0,
+                max: 15000
+            },
+            y: {
+                min: 0,
+                ticks: {
+                    callback: (value: string, index: number, values: string[]) => {
+                        return value + " Мбит/c";
                     },
                 },
             },

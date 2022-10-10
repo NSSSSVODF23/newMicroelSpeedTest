@@ -1,0 +1,23 @@
+<p-virtualScroller
+        (onLazyLoad)="service.limitUpdate($event)"
+        *ngIf="service.elements.length > 0"
+        [@fade]="service.elements.length"
+        [itemSize]="itemSize"
+        [lazy]="true"
+        [rows]="30"
+        [scrollHeight]="scrollHeight"
+        [value]="service.elements"
+
+>
+    <ng-template let-item pTemplate="item">
+        <ng-container *ngTemplateOutlet="itemRef; context:{$implicit:item}"></ng-container>
+    </ng-template>
+    <ng-template pTemplate="loadingItem">
+        <ng-container *ngTemplateOutlet="loadingRef"></ng-container>
+    </ng-template>
+</p-virtualScroller>
+<div *ngIf="service.elements.length === 0" [style]="{height:scrollHeight}" class="empty-msg">
+    <div class="with-icon">
+        <i class="pi pi-info-circle"></i> Не найдено
+    </div>
+</div>

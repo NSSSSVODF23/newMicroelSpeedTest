@@ -1,75 +1,183 @@
 @import "../../../styles/variables.scss";
 
 .content-wrapper {
-	display: grid;
-	grid: min-content / minmax(max-content, 70vw);
-	padding: 1rem 0;
-	justify-content: center;
-	gap: 1rem;
+  display: grid;
+  grid: auto-flow min-content / minmax(max-content, 800px);
+  padding: 1rem 0;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 835px) {
+  .content-wrapper {
+    grid: repeat(4, min-content) 30rem/100%;
+    background-color: $white-color;
+    padding: 1rem;
+  }
+}
+
+.info-title {
+  color: $text-color-secondary;
+  font-weight: 500;
 }
 
 .main-measure-info-panel {
-	display: grid;
-	gap: 0.4rem;
+  display: grid;
+  gap: 0.4rem;
+  color: $text-color;
 }
 
 .measure-desc-row {
-	display: flex;
-	gap: 0.5rem;
-	align-items: center;
-	.label {
-		font-weight: 500;
-		color: $text-color-light;
-	}
-	.value {
-		color: $text-color;
-	}
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .label {
+    font-weight: 500;
+    color: $text-color-light;
+  }
+
+  .value {
+    color: $text-color;
+  }
 }
 
 .measured-values-wrapper {
-	display: flex;
-	gap: 1rem;
-	justify-items: stretch;
-	align-items: stretch;
-	justify-content: stretch;
-	align-content: stretch;
-	p-card {
-		flex: 1;
-		height: 100%;
-	}
+  display: flex;
+  gap: 1rem;
+  justify-items: stretch;
+  align-items: stretch;
+  justify-content: stretch;
+  align-content: stretch;
+
+  p-card {
+    flex: 1;
+    height: 100%;
+  }
 }
 
 .another-measure-row {
-	height: 75px;
+  height: 75px;
 }
 
 .main-value {
-	font-size: 2rem;
+  font-size: 2rem;
 }
 
 .chart {
-	height: 300px;
+  height: 300px;
 }
 
 .highlight-current-measure {
-	background-color: #{$primary-color}30 !important;
+  background-color: #{$alt-color}10 !important;
 }
 
 .extend {
-	display: grid;
-	grid: min-content min-content/1fr;
-	overflow: hidden;
+  display: grid;
+  grid: min-content min-content/1fr;
+  overflow: hidden;
 
-	.extend-label {
-		padding: 0.5em;
-		text-align: center;
-		font-weight: 500;
-		color: $primary-color;
-		cursor: pointer;
-		user-select: none;
-		transition: background-color 0.2s ease-out;
-	}
+  .extend-label {
+    height: 37px;
+    padding: 0.5em;
+    font-weight: 500;
+    color: $primary-color;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
+
 .extend-label:hover {
-	background-color: #{$primary-color}30;
+  background-color: #{$primary-color}30;
+}
+
+.measure-item {
+  display: grid;
+  height: 135px;
+  padding: 1rem;
+  gap: .6rem;
+  align-content: center;
+  align-items: center;
+  grid-template-areas: 'login address address'
+                        'si si mi'
+                        'created created created';
+  grid-template-rows: repeat(3, min-content);
+  grid-template-columns: max-content max-content 1fr;
+
+  .session-info {
+    grid-area: si;
+    display: flex;
+    gap: .3rem;
+
+    .connection-type {
+      width: 2rem;
+      height: 2rem;
+      place-self: center;
+    }
+
+    .im {
+      display: grid;
+      align-items: center;
+      gap: .3rem;
+
+      .ip {
+        font-size: 1rem;
+        font-weight: 400;
+        color: $text-color-secondary;
+      }
+
+      .mac {
+        font-size: 1rem;
+        font-weight: 400;
+        color: $text-color-secondary;
+      }
+    }
+  }
+
+
+  .created {
+    grid-area: created;
+    font-size: .8rem;
+    font-weight: 500;
+    color: $text-color-light;
+    justify-self: end;
+  }
+
+  .login {
+    grid-area: login;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: $text-color;
+  }
+
+  .address {
+    grid-area: address;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: $text-color-secondary;
+  }
+
+  .measurement-info {
+    display: grid;
+    grid-area: mi;
+    gap: .3rem;
+
+    .download {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: $text-color;
+      justify-self: end;
+    }
+
+    .upload {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: $text-color;
+      justify-self: end;
+    }
+  }
 }

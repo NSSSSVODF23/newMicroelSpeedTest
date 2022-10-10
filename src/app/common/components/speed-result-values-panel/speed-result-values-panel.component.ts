@@ -6,7 +6,7 @@ import {
     trigger,
 } from "@angular/animations";
 import {Component, Input, OnInit, Output} from "@angular/core";
-import {TestingResultValues} from "../../class/speed-test-controller";
+import {TestingResultValues} from "../../class/speed-counter";
 
 @Component({
     selector: "app-speed-result-values-panel",

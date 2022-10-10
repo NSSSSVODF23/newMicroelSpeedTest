@@ -1,4 +1,4 @@
-import {FilterRequestParams, Pageable} from "../../interfaces/pageable";
+import {FilterChipsValue, FilterRequestParams, Pageable} from "../../interfaces/pageing/pageable";
 import {Device} from "../../service/device-info.service";
 import {Observable} from "rxjs";
 import {Page} from "../../transport/models/page";
@@ -8,13 +8,38 @@ import {QueryLimit} from "../../transport/models/query-limit";
 import {UpdateProvider} from "../../transport/models/update-provider";
 import {ListMutationTypes} from "../../transport/enums/list-mutation-types";
 import {ExtendDate} from "../../method/time";
+import {HouseService} from "../../../admin/service/house.service";
 
-export class DevicePageLoader implements Pageable<Device> {
+export class DevicePageable implements Pageable<Device> {
 
-    constructor(readonly deviceService: DeviceService) {
+    constructor(readonly deviceService: DeviceService, readonly houseService: HouseService) {
     }
 
-    inputValues(params: Params): { [key: string]: any; } {
+    queryToChips(params: Params, removeFilter: (name: string) => void): FilterChipsValue[] {
+        const chipsValues = [];
+        if (params['deviceId']) {
+            chipsValues.push({name: "ID", value: params['deviceId'], remove: () => removeFilter('deviceId')})
+        }
+        if (params['login']) {
+            chipsValues.push({name: "Логин", value: params['login'], remove: () => removeFilter('login')})
+        }
+        if (params['address']) {
+            chipsValues.push({
+                name: "Адрес",
+                value: this.houseService.houses.find(h => h.houseId === parseInt(params['address']))?.address,
+                remove: () => removeFilter('address')
+            })
+        }
+        if (params['ip']) {
+            chipsValues.push({name: "IP Адрес", value: params['ip'], remove: () => removeFilter('ip')})
+        }
+        if (params['hostname']) {
+            chipsValues.push({name: "Имя хоста", value: params['hostname'], remove: () => removeFilter('hostname')})
+        }
+        return chipsValues;
+    }
+
+    queryToInputModels(params: Params): { [key: string]: any; } {
         return {
             deviceId: params['deviceId'],
             login: params['login'],
@@ -26,11 +51,11 @@ export class DevicePageLoader implements Pageable<Device> {
         }
     }
 
-    pageLoader(filter: FilterRequestParams<Device>): Observable<Page<Device>> {
+    loader(filter: FilterRequestParams<Device>): Observable<Page<Device>> {
         return this.deviceService.get(filter)
     }
 
-    matchingObject(params: Params): FilterRequestParams<Device> {
+    queryToMatchingObject(params: Params): FilterRequestParams<Device> {
         return {
             matchingObject: {
                 deviceId: params['deviceId'],
@@ -47,7 +72,7 @@ export class DevicePageLoader implements Pageable<Device> {
         }
     }
 
-    updateHandlers(): { [p: string]: (value: any) => string } {
+    inputModelToQueryParamHandlers(): { [p: string]: (value: any) => string } {
         return {
             deviceId: value => value,
             login: value => value,
@@ -57,7 +82,7 @@ export class DevicePageLoader implements Pageable<Device> {
         };
     }
 
-    listUpdaters(): Observable<UpdateProvider<Device>>[] {
+    liveUpdateProvides(): Observable<UpdateProvider<Device>>[] {
         return [this.deviceService.update()];
     }
 
@@ -77,7 +102,7 @@ export class DevicePageLoader implements Pageable<Device> {
         ];
     }
 
-    updateIds(): string[] {
+    liveUpdateIdentificationFields(): string[] {
         return ['deviceId'];
     }
 }

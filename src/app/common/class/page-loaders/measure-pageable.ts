@@ -1,20 +1,58 @@
-import {FilterRequestParams, Pageable} from "../../interfaces/pageable";
+import {FilterChipsValue, FilterRequestParams, Pageable} from "../../interfaces/pageing/pageable";
 import {Measure} from "../../transport/models/measure";
 import {Params} from "@angular/router";
-import {Observable} from "rxjs";
+import {forkJoin, map, Observable} from "rxjs";
 import {Page} from "../../transport/models/page";
 import {QueryLimit} from "../../transport/models/query-limit";
 import {Calendar, ExtendDate} from "../../method/time";
 import {MeasureService} from "../../../admin/service/measure.service";
 import {UpdateProvider} from "../../transport/models/update-provider";
 import {ListMutationTypes} from "../../transport/enums/list-mutation-types";
+import {HouseService} from "../../../admin/service/house.service";
 
-export class MeasurePageLoader implements Pageable<Measure> {
+export class MeasurePageable implements Pageable<Measure> {
 
-    constructor(readonly measures: MeasureService) {
+    constructor(readonly measures: MeasureService, readonly houseService: HouseService) {
     }
 
-    inputValues(params: Params): { [key: string]: any; } {
+    queryToChips(params: Params, removeFilter: (name: string) => void): FilterChipsValue[] {
+        const chipsValues = [];
+        const created = params['created'] ? JSON.parse(params['created']) : undefined;
+        if (params['created']) {
+            const deltaTime = Math.ceil((new Date(created[1]).getTime() - new Date(created[0]).getTime()) / (24 * 60 * 60 * 1000)).toString()
+            chipsValues.push(
+                {
+                    name: "Дата создания", value: deltaTime + " д.", remove: () => removeFilter('created')
+                }
+            )
+        }
+        if (params['ip']) chipsValues.push(
+            {
+                name: "IP Адрес", value: params['ip'], remove: () => removeFilter('ip')
+            }
+        )
+        if (params['login']) chipsValues.push(
+            {
+                name: "Логин", value: params['login'], remove: () => removeFilter('login')
+            }
+        )
+        if (params['address']) chipsValues.push(
+            {
+                name: "Адрес",
+                value: this.houseService.houses.find(h => h.houseId === parseInt(params['address']))?.address,
+                remove: () => removeFilter('address')
+            }
+        )
+        if (params['mac']) chipsValues.push(
+            {
+                name: "Мак", value: params['mac'], remove: () => removeFilter('mac')
+            }
+        )
+
+        return chipsValues
+    }
+
+    queryToInputModels(params: Params): { [key: string]: any; } {
         const created = params['created'] ? JSON.parse(params['created']) : undefined;
         return {
             created: created ? [new Date(created[0]), new Date(created[1])] : undefined,
@@ -27,7 +65,7 @@ export class MeasurePageLoader implements Pageable<Measure> {
         }
     }
 
-    matchingObject(params: Params): FilterRequestParams<Measure> {
+    queryToMatchingObject(params: Params): FilterRequestParams<Measure> {
         return {
             matchingObject: {
                 session: {
@@ -44,11 +82,15 @@ export class MeasurePageLoader implements Pageable<Measure> {
         }
     }
 
-    pageLoader(filter: FilterRequestParams<Measure>): Observable<Page<Measure>> {
-        return this.measures.get(filter);
+    loader(filter: FilterRequestParams<Measure>): Observable<Page<Measure>> {
+        return forkJoin({done: this.measures.get(filter), begin: this.measures.getBeginning()}).pipe(map(obj => {
+            const copy = {...obj.done}
+            copy.content = [...obj.begin, ...obj.done.content]
+            return copy;
+        }))
     }
 
-    listUpdaters(): Observable<UpdateProvider<Measure>>[] {
+    liveUpdateProvides(): Observable<UpdateProvider<Measure>>[] {
         return [
             this.measures.update(),
             this.measures.updateBeginning()
@@ -76,14 +118,18 @@ export class MeasurePageLoader implements Pageable<Measure> {
         ];
     }
 
-    updateIds() {
+    liveUpdateIdentificationFields() {
         return ["measureId", "beginningId"]
     }
 
-    updateHandlers(): { [p: string]: (value: any) => string | undefined } {
+    inputModelToQueryParamHandlers(): { [p: string]: (value: any) => string | undefined } {
         return {
             created: (value: Date[]) => {
-                return value ? JSON.stringify([ExtendDate.of(value[0]).getStartDay().getFormatted(), ExtendDate.of(value[0]).getEndDay().getFormatted()]) : undefined
+                if (value && value[0] && value[1]) {
+                    return JSON.stringify([ExtendDate.of(value[0]).getStartDay().getFormatted(), ExtendDate.of(value[1]).getEndDay().getFormatted()])
+                } else {
+                    return undefined
+                }
             },
             ip: value => value,
             login: value => value,

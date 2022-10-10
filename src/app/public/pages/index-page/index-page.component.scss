@@ -1,6 +1,18 @@
 .btn-container {
-	display: grid;
-	gap: 2rem;
-	padding: 2rem;
-	box-sizing: border-box;
+  display: grid;
+  gap: 3rem;
+  box-sizing: border-box;
+  margin-top: 4rem;
+}
+
+.connection-lost-message {
+  display: grid;
+  grid:  min-content /minmax(min-content,max-content);
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 1rem;
+}
+
+:host {
+  flex-grow: 1;
 }

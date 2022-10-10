@@ -81,16 +81,38 @@ export class StatisticService {
     complaintCountsFromPeriod(timeRange: TimeRange): Observable<number> {
         return this.apollo.query<any>({
             query: gql`
-                query getComplaints($filter: ComplaintsFilter){
-                    getComplaints(filter: $filter){
-                        complaintId
+                query getComplaints($matchingObject: IComplaint, $dateFilter: ITimeRange, $limits: IPagination){
+                    getComplaints(matchingObject: $matchingObject, dateFilter: $dateFilter, limits: $limits){
+                        totalElements
                     }
                 }
             `, fetchPolicy: 'network-only',
             variables: {
-                filter: {start: timeRange[0], end: timeRange[1]}
+                matchingObject: {},
+                dateFilter: {start: timeRange[0], end: timeRange[1]},
+                limits: {offset: 0, limit: 1}
             }
-        }).pipe(map(data => data.data.getComplaints.length))
+        }).pipe(map(data => data.data.getComplaints.totalElements))
+    }
+
+    feedbackCounts(): Observable<number> {
+        return this.apollo.query<any>({
+            query: gql`
+                query {
+                    getTotalFeedbacks
+                }
+            `, fetchPolicy: "network-only"
+        }).pipe(map(o => o.data.getTotalFeedbacks))
+    }
+
+    feedbackAllAvg(): Observable<number> {
+        return this.apollo.query<any>({
+            query: gql`
+                query {
+                    getAvgAllFeedbacks
+                }
+            `, fetchPolicy: "network-only"
+        }).pipe(map(o => o.data.getAvgAllFeedbacks))
     }
 
     activeSessions(): Observable<ActiveSession[]> {

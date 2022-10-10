@@ -1,13 +1,9 @@
 import {Injectable} from "@angular/core";
 import {Apollo, gql} from "apollo-angular";
 import {map, Observable} from "rxjs";
-import {ApolloQueryResult, FetchResult} from "@apollo/client/core";
-import {ResultPageComponent} from "src/app/public/pages/result-page/result-page.component";
 import {Measure} from "../../common/transport/models/measure";
-import {MeasureFilter} from "src/app/common/transport/filters/measure-filter";
-import {AuthService} from "./auth.service";
 import {UpdateProvider} from "../../common/transport/models/update-provider";
-import {FilterRequestParams} from "../../common/interfaces/pageable";
+import {FilterRequestParams} from "../../common/interfaces/pageing/pageable";
 import {Page} from "../../common/transport/models/page";
 
 @Injectable({

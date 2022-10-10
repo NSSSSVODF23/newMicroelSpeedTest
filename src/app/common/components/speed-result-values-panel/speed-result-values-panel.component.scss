@@ -1,85 +1,64 @@
 @import "../../../styles/variables.scss";
 
 .wrapper {
-	display: grid;
-	grid: auto-flow min-content / max-content;
-	gap: 0.5em;
-	font-size: 1rem;
-	justify-items: center;
-	opacity: 0.7;
-	transition: opacity 0.3s ease-in-out;
+  display: grid;
+  grid: auto-flow min-content / max-content;
+  justify-items: center;
+  opacity: 0.7;
+  transition: opacity 0.3s ease-in-out;
 
-	.title-group {
-		display: flex;
-		gap: 0.5em;
-		align-items: center;
+  .title-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 
-		img {
-			height: 1.5em;
-		}
+    img {
+      height: 1.2rem;
+    }
 
-		.title {
-			font-size: 1.5em;
-			color: $text-color;
-		}
+    .title {
+      font-size: 1.2rem;
+      color: $text-color;
+    }
 
-		.sub-title {
-			font-size: 0.8em;
-			color: $text-color-secondary;
-			place-self: baseline;
-		}
-	}
-	.speed {
-		font-size: 3em;
-		color: $text-color;
-	}
-	.stability {
-		font-size: 1em;
-		color: $primary-color;
-		span {
-			font-size: 1em;
-			color: $text-color-secondary;
-			margin: 0.2em;
-		}
-	}
-	.loss {
-		font-size: 1em;
-		color: $primary-color;
-		span {
-			font-size: 1em;
-			color: $text-color-secondary;
-			margin: 0.2em;
-		}
-	}
+    .sub-title {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: $text-color-light;
+      place-self: baseline;
+    }
+  }
+
+  .speed {
+    font-size: 2.3rem;
+    color: $text-color;
+  }
+
+  .stability {
+    padding-top: 0.5rem;
+    font-size: .8rem;
+    color: $primary-color;
+
+    span {
+      font-size: .8rem;
+      color: $text-color-secondary;
+      margin: 0.2rem;
+    }
+  }
+
+  .loss {
+    padding-top: 0.5rem;
+    font-size: .8rem;
+    color: $primary-color;
+
+    span {
+      font-size: .8rem;
+      color: $text-color-secondary;
+      margin: 0.2rem;
+    }
+  }
 }
 
 .tested {
-	opacity: 1;
-}
-
-@media (max-width: 767px) {
-	.wrapper {
-		font-size: 0.7rem;
-	}
-}
-
-/* Устройства с маленьким экраном (планшеты, 768px и выше) */
-@media (min-width: 768px) {
-	.wrapper {
-		font-size: 0.75rem;
-	}
-}
-
-/* Устройства со средним экраном (ноутбуки и компьютеры, 992px и выше) */
-@media (min-width: 992px) {
-	.wrapper {
-		font-size: 0.8rem;
-	}
-}
-
-/* Устройства с большим экраном (компьютеры, 1200px и выше) */
-@media (min-width: 1200px) {
-	.wrapper {
-		font-size: 0.9rem;
-	}
+  opacity: 1;
 }

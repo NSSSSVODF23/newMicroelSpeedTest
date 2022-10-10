@@ -79,6 +79,11 @@ type Complaint {
     session: AcpSession
 }
 
+type ComplaintPage implements Page {
+    content: [Complaint]
+    totalElements: Long
+}
+
 type ComplaintUpdateProvider {
     object: Complaint
     updateType: ListMutationTypes
@@ -189,8 +194,9 @@ type Query {
     getAllMeasures: [Measure]
     getAllRoles: [RoleGroup]
     getAllUsers: [User]
+    getAvgAllFeedbacks: Float
     getBeginningMeasures: [BeginningMeasure]
-    getComplaints(filter: ComplaintsFilter): [Complaint]
+    getComplaints(dateFilter: ITimeRange, isProcessed: Boolean, limits: IPagination, matchingObject: IComplaint): ComplaintPage
     getCpuStatistic(timeRange: ITimeRange): [CpuUtil]
     getDevices(limit: IPagination, matchingObject: IDevice): DevicePage
     getMeasure(id: Int): Measure
@@ -202,6 +208,7 @@ type Query {
     getRamStatistic(timeRange: ITimeRange): [RamUtil]
     getTotalComplaints(filter: ComplaintsFilter): Int
     getTotalDevices(matchingObject: IDevice): Int
+    getTotalFeedbacks: Long
     getTotalMeasures(filter: MeasureFilter): Int
     getUserByUsername(username: String): User
     validateLogin(login: String): Boolean
@@ -303,6 +310,16 @@ input IAcpSession {
     measures: [IMeasure]
     sessionId: Int
     vlan: Int
+}
+
+input IComplaint {
+    complaintId: Int
+    created: String
+    description: String
+    phone: String
+    processed: IUser
+    processedTime: String
+    session: IAcpSession
 }
 
 input IDevice {

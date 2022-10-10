@@ -2,15 +2,62 @@
 
 .page-wrapper {
   display: grid;
+  grid-template-areas: 'quick stat'
+                        'perf stat'
+                        'perf online';
   padding: 1rem 0;
   gap: 1rem;
   justify-content: center;
 }
 
+@media screen and (min-width: 0px) {
+  .page-wrapper {
+    grid-template-areas: ' quick'
+                         'perf'
+                        'stat'
+                        'online';
+    grid-template-rows: min-content min-content min-content min-content;
+    grid-template-columns: 100%;
+  }
+}
+
+@media screen and (min-width: 991px) {
+  .page-wrapper {
+    grid-template-areas: ' quick'
+                         'perf'
+                        'stat'
+                        'online';
+    grid-template-rows: min-content min-content min-content min-content;
+    grid-template-columns: 990px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .page-wrapper {
+    grid-template-areas: 'stat quick'
+                        'stat quick'
+                        'perf online';
+    grid-template-rows: min-content min-content min-content;
+    grid-template-columns: 620px 530px;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .page-wrapper {
+    grid-template-areas: 'stat quick'
+                        'stat online'
+                        'perf online';
+    grid-template-rows: min-content min-content min-content;
+    grid-template-columns: 900px 630px;
+  }
+}
+
 .common-statistic {
+  grid-area: quick;
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  width: 700px;
+  //height: min-content;
 }
 
 .common-statistic > * {
@@ -23,6 +70,7 @@
   height: 73px;
   padding: 1rem;
   align-items: center;
+  max-width: 100%;
 }
 
 .session-device-icon {
@@ -40,6 +88,13 @@
     font-size: 1.2rem;
     display: flex;
     gap: .5rem;
+
+    .login {
+      max-width: 12rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
 
     .address {
       overflow: hidden;
@@ -64,7 +119,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 500px;
+  height: 400px;
   color: $text-color-secondary;
   font-size: 1rem;
 }

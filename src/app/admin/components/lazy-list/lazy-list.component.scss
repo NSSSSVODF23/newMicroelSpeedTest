@@ -1,0 +1,12 @@
+@import "src/app/styles/variables";
+
+.empty-msg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  div {
+    font-size: 1.4rem;
+    color: $text-color-secondary;
+  }
+}

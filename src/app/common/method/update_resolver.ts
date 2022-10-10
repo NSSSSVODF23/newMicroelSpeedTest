@@ -1,11 +1,12 @@
 import {UpdateProvider} from "../transport/models/update-provider";
 import {ListMutationTypes} from "../transport/enums/list-mutation-types";
 
-export function updateListResolver(list: any[], idFieldName: string, updateProviderItem: UpdateProvider<any>): any[] {
+export function updateListResolver(list: any[], idFieldName: string, updateProviderItem: UpdateProvider<any>, lastReplace: boolean = false): any[] {
     switch (updateProviderItem.updateType) {
         case ListMutationTypes.ADD:
-            if (list.every(value => value[idFieldName] !== updateProviderItem.object[idFieldName])) {
+            if (list.filter(value => value).every(value => value[idFieldName] !== updateProviderItem.object[idFieldName])) {
                 list.unshift(updateProviderItem.object)
+                if (lastReplace) list.splice(-1, 1)
                 return [...list];
             }
             return list;
@@ -20,6 +21,7 @@ export function updateListResolver(list: any[], idFieldName: string, updateProvi
             })
         case ListMutationTypes.DELETE:
             return list.filter(value => {
+                if (!value) return true;
                 return value[idFieldName] !== updateProviderItem.object[idFieldName]
             });
     }

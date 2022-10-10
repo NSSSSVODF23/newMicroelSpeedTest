@@ -5,14 +5,20 @@ import {
     transition,
     trigger,
 } from "@angular/animations";
-import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
+import {Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LazyLoadEvent} from "primeng/api";
 import {Table} from "primeng/table";
 import {SpeedChartComponent} from "src/app/common/components/speed-chart/speed-chart.component";
-import {MeasureFilter} from "src/app/common/transport/filters/measure-filter";
 import {Measure} from "src/app/common/transport/models/measure";
 import {MeasureService} from "../../service/measure.service";
+import {BreakpointObserver} from "@angular/cdk/layout";
+import {Subscription} from "rxjs";
+import {configureMeasurementChart, getLineDataset} from "../../../common/method/chart";
+import {PagingLoadService} from "../../../common/class/paging-load-service";
+import {MeasurePageable} from "../../../common/class/page-loaders/measure-pageable";
+import {ListLoader} from "../../../common/class/page-loaders/controllers/list-loader";
+import {HouseService} from "../../service/house.service";
 
 const extendAnimation = trigger("anotherMeasureExtend", [
     state(
@@ -35,108 +41,65 @@ const extendAnimation = trigger("anotherMeasureExtend", [
     styleUrls: ["./measure-page.component.scss"],
     animations: [extendAnimation],
 })
-export class MeasurePageComponent implements OnInit {
+export class MeasurePageComponent implements OnInit, OnDestroy {
     currentMeasure?: Measure;
-    @ViewChild("downloadSpeedChart")
-    downloadSpeedChart?: SpeedChartComponent;
-    @ViewChild("uploadSpeedChart")
-    uploadSpeedChart?: SpeedChartComponent;
-    @ViewChild("#anotherMeasuresTable")
-    anotherMeasureTable?: Table;
+    anotherLoader = new ListLoader(new MeasurePageable(this.measureService, this.houseService), {})
 
-    selectedMeasure?: Measure;
-    anotherMeasureByLogin: Measure[] = [];
-    anotherMeasureFilter: MeasureFilter = {
-        first: 0,
-        rows: 20,
-    };
     anotherMeasureExtend: "show" | "hide" = "hide";
 
     totalRecords = 0;
     loading = true;
 
-    lastLoadEvent!: any;
+    isMobile = false;
+
+    subscriptions: Subscription[] = [];
+
+    downloadDataset: any = {};
+    uploadDataset: any = {};
+
+    chartOptions = configureMeasurementChart();
 
     constructor(
         readonly route: ActivatedRoute,
         readonly router: Router,
-        readonly measure: MeasureService,
+        readonly measureService: MeasureService,
+        readonly houseService: HouseService,
+        readonly breakpoint: BreakpointObserver
     ) {
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.forEach(s => s.unsubscribe());
     }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params) => {
             const measureId = params["id"];
             if (measureId) {
-                this.measure.getMeasureById(measureId).subscribe((measure) => {
+                this.measureService.getMeasureById(measureId).subscribe((measure) => {
                     this.currentMeasure = measure;
-                    this.anotherMeasureFilter.login = this.currentMeasure?.session?.login;
+                    this.anotherLoader.load({login: this.currentMeasure.session?.login})
+                    this.downloadDataset = getLineDataset("Скачивание", "#37d9e3", this.currentMeasure?.downloadSpeedChart?.map(p => {
+                        return {x: p.stamp, y: p.speed}
+                    }))
+                    this.uploadDataset = getLineDataset("Загрузка", "#ba46f0", this.currentMeasure?.uploadSpeedChart?.map(p => {
+                        return {x: p.stamp, y: p.speed}
+                    }))
                 });
             }
         });
-    }
-
-    updateCharts(event: any): void {
-        setTimeout(() => {
-            this.downloadSpeedChart?.redraw();
-            this.uploadSpeedChart?.redraw();
-        });
+        this.subscriptions.push(
+            this.breakpoint.observe('(max-width:835px)').subscribe(b => this.isMobile = b.matches)
+        )
     }
 
     selectMeasure(event: any): void {
-        this.selectedMeasure = event.data;
-        if (this.selectedMeasure) {
-            this.anotherMeasureFilter.first = event.first;
-            this.anotherMeasureFilter.rows = event.rows;
+        if (event.measureId) {
             this.router.navigate(["/admin/measure"], {
                 queryParams: {
-                    id: this.selectedMeasure.measureId,
+                    id: event.measureId
                 },
-            });
-        }
-    }
-
-    loadMeasures(event: LazyLoadEvent): void {
-        this.loading = true;
-        if (this.currentMeasure) {
-            this.lastLoadEvent = event;
-            this.anotherMeasureFilter.first = event.first;
-            this.anotherMeasureFilter.rows = event.rows;
-            // this.measure
-            //     .get(this.anotherMeasureFilter)
-            //     .subscribe((measure) => {
-            //         if (event.first !== undefined && event.rows !== undefined) {
-            //             if (this.anotherMeasureByLogin.length === 0) {
-            //                 this.anotherMeasureByLogin = Array.from({
-            //                     length: measure[1],
-            //                 });
-            //             } else if (
-            //                 this.anotherMeasureByLogin.length < measure[1]
-            //             ) {
-            //                 this.anotherMeasureByLogin = this.anotherMeasureByLogin.concat(
-            //                     Array.from({
-            //                         length:
-            //                             measure[1] -
-            //                             this.anotherMeasureByLogin.length,
-            //                     }),
-            //                 );
-            //             } else if (
-            //                 this.anotherMeasureByLogin.length > measure[1]
-            //             ) {
-            //                 this.anotherMeasureByLogin = this.anotherMeasureByLogin.slice(
-            //                     0,
-            //                     measure[1],
-            //                 );
-            //             }
-            //             this.anotherMeasureByLogin.splice(
-            //                 event.first,
-            //                 event.rows,
-            //                 ...measure[0],
-            //             );
-            //             this.anotherMeasureByLogin = [...this.anotherMeasureByLogin];
-            //             this.loading = false;
-            //         }
-            //     });
+            }).then();
         }
     }
 

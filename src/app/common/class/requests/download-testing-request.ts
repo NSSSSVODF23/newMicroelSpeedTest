@@ -5,18 +5,37 @@ const HOSTNAME = location.hostname;
 const PORT = "8080";
 
 export class DownloadTestingRequest implements TestingRequest {
+    private request = new XMLHttpRequest();
     private updater = new Subject<number>();
-    private byteCounter = 0;
-    private prevLoadedBytes = 0;
+    private byteCounterBuffer: number[] = [];
+    private requestIndex = 0;
+    private run = true;
+    private first = true;
+    private endTime?: number;
+    private intervalIndex: any;
+    private testingTime;
+
+    constructor(testingTime = 15300) {
+        this.testingTime = testingTime;
+    }
+
+    getName(): string {
+        return "DownloadTestingRequest"
+    }
 
     getObserver(): Observable<number> {
         return this.updater.asObservable();
     }
 
     sendRequest(): void {
-        const request = new XMLHttpRequest(); // Создаем запрос
+        if (!this.first && this.endTime && this.endTime < Date.now()) {
+            this.onEndTest()
+            this.abort()
+        }
+        if (!this.run) return;
+        this.request = new XMLHttpRequest(); // Создаем запрос
 
-        request.open(
+        this.request.open(
             "POST",
             `http://${HOSTNAME}:${PORT}/public/download?deviceId=${localStorage.getItem(
                 "deviceId",
@@ -24,21 +43,44 @@ export class DownloadTestingRequest implements TestingRequest {
         ); // Устанавливаем параметры запроса
 
         // Обработчик получения количества загруженных байт
-        request.onprogress = (event) => {
-            this.byteCounter += event.loaded - this.prevLoadedBytes; // Устанавливаем количество загруженных байт
-            this.updater.next(this.byteCounter);
+        this.request.onprogress = (event) => {
+            this.byteCounterBuffer[this.requestIndex] = event.loaded;
         };
 
-        request.onloadend = () => {
-            if (!this.updater.closed) {
-                this.sendRequest();
-            }
+        this.request.onloadend = () => {
+            this.requestIndex++;
+            this.sendRequest();
         }
 
-        request.onerror = () => {
-            this.updater.error("Ошибка теста на скачивание");
+        this.request.onerror = () => {
+            this.updater.error("Произошла ошибка в соединении с сервером тестирования скорости скачивания.");
         } // Обработчик ошибки
 
-        request.send(); // Отправляем запрос
+        this.request.send(); // Отправляем запрос
+        if (this.first) {
+            this.first = false;
+            this.endTime = Date.now() + this.testingTime;
+            this.intervalIndex = setInterval(() => {
+                this.updater.next(this.byteCounterBuffer.reduce((a, b) => a + b, 0))
+                if (!this.first && this.endTime && this.endTime < Date.now()) {
+                    this.onEndTest()
+                    this.abort();
+                }
+            }, 150)
+        }
     }
+
+    abort(): void {
+        this.run = false;
+        this.request.abort();
+        if (!this.updater.closed) this.updater.complete();
+        clearInterval(this.intervalIndex);
+    }
+
+    setEndTestHandler(handler: () => void): void {
+        this.onEndTest = handler;
+    }
+
+    private onEndTest = () => {
+    };
 }

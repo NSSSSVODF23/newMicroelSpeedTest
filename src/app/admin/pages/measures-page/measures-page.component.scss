@@ -1,31 +1,167 @@
 @import "../../../styles/variables.scss";
 
 .content-wrapper {
-	display: grid;
-	grid: min-content/ max-content max-content;
-	padding: 1rem 0;
-	justify-content: center;
-	gap: 1rem;
+  display: grid;
+  padding: 1rem 0;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media screen and (min-width: 0px) {
+  .content-wrapper {
+    grid-template-areas:  'filter'
+                          'table';
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, min-content);
+    background-color: $white-color;
+  }
+  .search-fields-container {
+    flex-direction: column;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .search-fields-container {
+    flex-direction: row;
+  }
+}
+
+@media screen and (min-width: 1121px) {
+  .content-wrapper {
+    grid-template-areas:  'filter'
+                          'table';
+    grid-template-columns: max-content;
+    grid-template-rows: repeat(2, min-content);
+    background-color: transparent;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .content-wrapper {
+    grid-template-areas: 'table filter';
+    grid-template-columns: max-content min-content;
+    grid-template-rows: min-content;
+    background-color: transparent;
+  }
 }
 
 .search-fields-container {
-	display: grid;
-	grid: auto min-content/ max-content;
-	gap: 1rem;
-	justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-panel {
+  display: grid;
+  grid: min-content/max-content 1fr;
+  padding: 0 1rem;
+  align-items: center;
+  gap: 1rem;
+  width: 100vw;
+}
+
+.measures-list {
+  width: 100%;
+}
+
+.measure-item {
+  display: grid;
+  height: 135px;
+  padding: 1rem;
+  gap: .6rem;
+  align-content: center;
+  align-items: center;
+  grid-template-areas: 'login address address'
+                        'si si mi'
+                        'created created created';
+  grid-template-rows: repeat(3, min-content);
+  grid-template-columns: max-content max-content 1fr;
+
+  .session-info {
+    grid-area: si;
+    display: flex;
+    gap: .3rem;
+
+    .connection-type {
+      width: 2rem;
+      height: 2rem;
+      place-self: center;
+    }
+
+    .im {
+      display: grid;
+      align-items: center;
+      gap: .3rem;
+
+      .ip {
+        font-size: 1rem;
+        font-weight: 400;
+        color: $text-color-secondary;
+      }
+
+      .mac {
+        font-size: 1rem;
+        font-weight: 400;
+        color: $text-color-secondary;
+      }
+    }
+  }
+
+
+  .created {
+    grid-area: created;
+    font-size: .8rem;
+    font-weight: 500;
+    color: $text-color-light;
+    justify-self: end;
+  }
+
+  .login {
+    grid-area: login;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: $text-color;
+  }
+
+  .address {
+    grid-area: address;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: $text-color-secondary;
+  }
+
+  .measurement-info {
+    display: grid;
+    grid-area: mi;
+    gap: .3rem;
+
+    .download {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: $text-color;
+      justify-self: end;
+    }
+
+    .upload {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: $text-color;
+      justify-self: end;
+    }
+  }
 }
 
 .beginning {
-	animation: beginningMeasureEntry 1s ease-in-out infinite alternate;
+  animation: beginningMeasureEntry 1s ease-in-out infinite alternate;
 }
 
 @keyframes beginningMeasureEntry {
-	0% {
-		opacity: 0.5;
-		background-color: $white-color;
-	}
-	100% {
-		opacity: 1;
-		background-color: #{$primary-color}25;
-	}
+  0% {
+    opacity: 0.5;
+    background-color: $white-color;
+  }
+  100% {
+    opacity: 1;
+    background-color: #{$primary-color}25;
+  }
 }

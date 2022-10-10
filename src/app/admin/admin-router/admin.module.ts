@@ -47,8 +47,12 @@ import {
 import {SelectButtonModule} from "primeng/selectbutton";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {InputSwitchModule} from "primeng/inputswitch";
-import { ArrayLengthPipe } from '../pipes/array-length.pipe';
-import { AvgOfFieldPipe } from '../pipes/avg-of-field.pipe';
+import {ArrayLengthPipe} from '../pipes/array-length.pipe';
+import {AvgOfFieldPipe} from '../pipes/avg-of-field.pipe';
+import {DurationPipe} from '../pipes/duration.pipe';
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {ChipsModule} from "primeng/chips";
+import {RippleModule} from "primeng/ripple";
 
 @NgModule({
     declarations: [
@@ -65,6 +69,7 @@ import { AvgOfFieldPipe } from '../pipes/avg-of-field.pipe';
         ComplaintProcessedButtonComponent,
         ArrayLengthPipe,
         AvgOfFieldPipe,
+        DurationPipe,
     ],
     imports: [
         CommonModule,
@@ -100,9 +105,16 @@ import { AvgOfFieldPipe } from '../pipes/avg-of-field.pipe';
         TooltipModule,
         SelectButtonModule,
         ScrollPanelModule,
-        InputSwitchModule
+        InputSwitchModule,
+        OverlayPanelModule,
+        ChipsModule,
+        RippleModule
     ],
     providers: [MessageService, ConfirmationService, NgxImageCompressService],
+    exports: [
+        DurationPipe,
+        ArrayLengthPipe
+    ]
 })
 export class AdminModule {
 }

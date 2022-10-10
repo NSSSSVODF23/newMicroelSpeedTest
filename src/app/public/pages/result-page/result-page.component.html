@@ -13,12 +13,14 @@
         </ng-template>
         <ng-component *ngTemplateOutlet="resultTemplate"></ng-component>
     </p-card>
-    <p-card *ngIf="!isMobile" @flowControl>
+    <p-card *ngIf="!isMobile && ratingVisible" @flowControl>
         <ng-component *ngTemplateOutlet="controlsTemplate"></ng-component>
     </p-card>
     <div *ngIf="isMobile" @fade class="mobile-content">
         <ng-component *ngTemplateOutlet="resultTemplate"></ng-component>
-        <ng-component *ngTemplateOutlet="controlsTemplate"></ng-component>
+        <div *ngIf="ratingVisible" @flowControl>
+            <ng-component *ngTemplateOutlet="controlsTemplate"></ng-component>
+        </div>
     </div>
 </div>
 
@@ -49,23 +51,41 @@
             <app-speed-chart
                     [chartData]="getChartData()"
                     [fill]="['#37d9e3', '#ba46f0']"
+                    [ratio]="4"
                     [stroke]="['#37d9e3', '#ba46f0']"
                     sized="width"
             ></app-speed-chart>
+            <div class="controls-content">
+                <button
+                        class="p-button-text"
+                        icon="pi pi-replay"
+                        iconPos="left"
+                        label="Измерить ещё раз"
+                        pButton
+                        routerLink="/measure"
+                ></button>
+                <button
+                        class="p-button-text p-button-danger"
+                        icon="pi pi-send"
+                        iconPos="left"
+                        label="Связаться с тех. поддержкой"
+                        pButton
+                        routerLink="/complaint"
+                ></button>
+            </div>
         </div>
     </div>
 </ng-template>
 
 <ng-template #controlsTemplate>
-    <div class="controls-content">
-        <button
-                class="p-button-outlined"
-                icon="pi pi-replay"
-                iconPos="left"
-                label="Заново"
-                pButton
-                routerLink="/measure"
-                type="button"
-        ></button>
+    <div class="rating-panel">
+        <div [@ratingInputFade]="ratingState" class="rating-label"><i class="pi pi-star"></i> Оцените качество связи
+        </div>
+        <p-rating [(ngModel)]="rating" [@ratingInputFade]="ratingState" [cancel]="false"
+                  class="rating-input"></p-rating>
+        <button (click)="sendRating()" [@ratingInputFade]="ratingState" [disabled]="rating===0 || ratingBtnDisabled"
+                class="p-button-success rating-button" label="Оценить"
+                pButton></button>
+        <div [@thanksRise]="ratingState" class="congratulation">Спасибо за отзыв!</div>
     </div>
 </ng-template>

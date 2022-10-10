@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from "@angular/core";
-import {TestingService} from "src/app/public/service/measure/testing.service";
+import {TestingService} from "src/app/public/service/testing.service";
 
 @Component({
     selector: "app-ping-result-values-panel",

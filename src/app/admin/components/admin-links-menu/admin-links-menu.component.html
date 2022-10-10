@@ -13,11 +13,13 @@
         <i class="pi pi-mobile"></i>
         Устройства
     </a>
-    <a [routerLinkActiveOptions]="matchOpt" routerLink="/admin/users" routerLinkActive="active">
+    <a *ngIf="authService.isAdmin()" [routerLinkActiveOptions]="matchOpt" routerLink="/admin/users"
+       routerLinkActive="active">
         <i class="pi pi-users"></i>
         Пользователи
     </a>
-    <a [routerLinkActiveOptions]="matchOpt" routerLink="/admin/complaints"
+    <a [queryParams]="{offset:'0',limit:'30'}" [routerLinkActiveOptions]="matchOpt"
+       routerLink="/admin/complaints"
        routerLinkActive="active">
         <i class="pi pi-exclamation-triangle"></i>
         Жалобы

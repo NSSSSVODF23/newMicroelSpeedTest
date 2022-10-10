@@ -15,7 +15,7 @@ import {
     ValidationErrors,
     Validators,
 } from "@angular/forms";
-import {DomSanitizer} from "@angular/platform-browser";
+import {DomSanitizer, Title} from "@angular/platform-browser";
 import {MutationResult} from "apollo-angular";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {
@@ -33,6 +33,7 @@ import {UpdateProvider} from "src/app/common/transport/models/update-provider";
 import {User} from "src/app/common/transport/models/user";
 import {UserService} from "../../service/user.service";
 import {updateListResolver} from "../../../common/method/update_resolver";
+import {BreakpointObserver} from "@angular/cdk/layout";
 
 @Component({
     templateUrl: "./users-page.component.html",
@@ -72,12 +73,15 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         required: "Заполните поле",
         minlength: "Минимальная длина 8 символов",
     };
+    isMobile = false;
     private subscription: Subscription[] = [];
 
     constructor(
         readonly user: UserService,
         readonly messageService: MessageService,
         readonly confirmation: ConfirmationService,
+        readonly breakpoint: BreakpointObserver,
+        readonly titleService: Title
     ) {
     }
 
@@ -87,6 +91,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.titleService.setTitle("Microel.МЕТР - Пользователи")
         this.user.getAllUsers().subscribe((data) => {
             this.users = data;
         });
@@ -95,6 +100,9 @@ export class UsersPageComponent implements OnInit, OnDestroy {
             this.user.updateUsers().subscribe((data) => {
                 this.users = updateListResolver(this.users, 'userId', data);
             })
+        )
+        this.subscription.push(
+            this.breakpoint.observe('(max-width:720px)').subscribe(o => this.isMobile = o.matches)
         )
     }
 

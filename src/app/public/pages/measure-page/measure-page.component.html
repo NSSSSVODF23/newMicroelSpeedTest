@@ -18,17 +18,17 @@
         <app-speed-result-values-panel
                 @flow
                 [isPro]="service.isProMode"
-                [loss]="this.downloadResult.loss"
-                [speed]="service.isProMode ? this.downloadResult.speed : this.downloadResult.slowSpeed"
-                [stability]="this.downloadResult.stability"
+                [loss]="downloadLoss"
+                [speed]="downloadSpeed"
+                [stability]="downloadStability"
                 testType="download"
         ></app-speed-result-values-panel>
         <app-speed-result-values-panel
                 @flow
                 [isPro]="service.isProMode"
-                [loss]="this.uploadResult.loss"
-                [speed]="service.isProMode ? this.uploadResult.speed : this.uploadResult.slowSpeed"
-                [stability]="this.uploadResult.stability"
+                [loss]="uploadLoss"
+                [speed]="uploadSpeed"
+                [stability]="uploadStability"
                 testType="upload"
         ></app-speed-result-values-panel>
     </div>
@@ -42,14 +42,14 @@
     </div>
     <div class="wrapper-testing-chart">
         <app-speed-chart
-                [chartData]="this.chart"
+                [chartData]="chart"
                 [fill]="['#37d9e3', '#ba46f0']"
                 [stroke]="['#37d9e3', '#ba46f0']"
         ></app-speed-chart>
     </div>
     <div class="wrapper-current-test-panel">
         <app-speed-indicator
-                *ngIf="this.service.testStage !== 5"
+                *ngIf="service.testStage !== 5"
                 @fade
                 [speed]="indicatorSpeed"
                 [testType]="testType"

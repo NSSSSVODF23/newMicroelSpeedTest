@@ -1,15 +1,44 @@
 <div class="panel">
-	<img class="label" src="/assets/images/logo.svg" alt="" srcset="" />
-	<app-admin-links-menu></app-admin-links-menu>
-	<div class="account-panel">
-		<app-user-avatar [user]="currentUser"></app-user-avatar>
-		<div class="name">{{ currentUser?.name }}</div>
-		<button
-			pButton
-			type="button"
-			icon="pi pi-sign-out"
-			class="p-button-danger p-button-text"
-			(click)="this.auth.doLogout()"
-		></button>
-	</div>
+    <img alt="" class="main-logo" src="/assets/images/logo.svg" srcset=""/>
+    <app-admin-links-menu *ngIf="!isMobile"></app-admin-links-menu>
+    <app-user-panel *ngIf="!isMobile"></app-user-panel>
+    <div *ngIf="isMobile"></div>
+    <i (click)="openMenu()" *ngIf="isMobile" class="pi pi-bars menu-button"></i>
 </div>
+<p-sidebar [(visible)]="menuVisible" [position]="'right'">
+    <div class="user-panel-wrapper">
+        <app-user-panel></app-user-panel>
+    </div>
+    <div class="menu-items">
+        <div (click)="closeMenu()" [routerLinkActiveOptions]="matchOpt" routerLink="/admin/dashboard"
+             routerLinkActive="active">
+            <i class="pi pi-chart-line"></i>
+            Мониторинг
+        </div>
+        <div (click)="closeMenu()" [queryParams]="{offset:'0',limit:'10'}" [routerLinkActiveOptions]="matchOpt"
+             routerLink="/admin/measures"
+             routerLinkActive="active">
+            <i class="pi pi-list"></i>
+            Замеры
+        </div>
+        <div (click)="closeMenu()" [queryParams]="{offset:'0',limit:'10'}" [routerLinkActiveOptions]="matchOpt"
+             routerLink="/admin/devices"
+             routerLinkActive="active">
+            <i class="pi pi-mobile"></i>
+            Устройства
+        </div>
+        <div (click)="closeMenu()" *ngIf="authService.isAdmin()" [routerLinkActiveOptions]="matchOpt"
+             routerLink="/admin/users"
+             routerLinkActive="active">
+            <i class="pi pi-users"></i>
+            Пользователи
+        </div>
+        <div (click)="closeMenu()" [routerLinkActiveOptions]="matchOpt" routerLink="/admin/complaints"
+             routerLinkActive="active">
+            <i class="pi pi-exclamation-triangle"></i>
+            Жалобы
+        </div>
+    </div>
+</p-sidebar>
+
+

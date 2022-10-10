@@ -1,16 +1,12 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {TestingService} from "../../service/measure/testing.service";
-import {
-    animate,
-    state,
-    style,
-    transition,
-    trigger,
-} from "@angular/animations";
-import {TestingResultValues} from "src/app/common/class/speed-test-controller";
+import {TestingService} from "../../service/testing.service";
+import {animate, style, transition, trigger,} from "@angular/animations";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {BreakpointObserver} from "@angular/cdk/layout";
+import {MeasureActionTypes} from "../../../common/transport/models/measure-action-message";
+import {Title} from "@angular/platform-browser";
+import {configureMeasurementChart} from "../../../common/method/chart";
 
 const fadeInOut = trigger("fade", [
     transition(":enter", [
@@ -77,28 +73,23 @@ const flowInOut = trigger("flow", [
 })
 export class MeasurePageComponent implements OnInit, OnDestroy {
     isMobile: boolean = false;
+
     chart: any = [[], []];
+
     ping = "-";
     jitter = "-";
-    downloadResult: TestingResultValues = {
-        speed: "-",
-        stability: "-",
-        loss: "-",
-        chartData: [],
-        slowSpeed: "-",
-        slowChartData: []
-    };
-    uploadResult: TestingResultValues = {
-        speed: "-",
-        stability: "-",
-        loss: "-",
-        chartData: [],
-        slowSpeed: "-",
-        slowChartData: []
-    };
-    routeSubscription!: Subscription;
-    testType: "download" | "upload" = "download";
+
+    downloadSpeed = "-";
+    downloadStability = "-";
+    downloadLoss = "-";
+
+    uploadSpeed = "-";
+    uploadStability = "-";
+    uploadLoss = "-";
+
     indicatorSpeed = "0.00";
+
+    testType: "download" | "upload" = "download";
     subscribes: Subscription[] = [];
 
     constructor(
@@ -106,63 +97,60 @@ export class MeasurePageComponent implements OnInit, OnDestroy {
         readonly router: Router,
         readonly route: ActivatedRoute,
         readonly breakpointObserver: BreakpointObserver,
+        readonly titleService: Title
     ) {
     }
 
     ngOnInit(): void {
+        this.titleService.setTitle("Тестирование...")
+        this.service.pingTest.getObserver().subscribe({
+            next: () => {
+                this.ping = this.service.pingTest.pingValue.toFixed(3);
+                this.jitter = this.service.pingTest.jitterValue.toFixed(3);
+            }
+        })
+        this.service.downloadTest.getObserver().subscribe({
+            next: () => {
+                this.chart = this.service.isProMode ? [this.service.downloadTest.chartData, this.service.uploadTest.chartData] : [this.service.downloadTest.slowChartData, this.service.uploadTest.slowChartData]
+                this.indicatorSpeed = this.service.isProMode ? this.service.downloadTest.currentValue.toFixed(2) : this.service.downloadTest.slowCurrentValue.toFixed(2);
+            },
+            complete: () => {
+                this.downloadSpeed = this.service.isProMode ? this.service.downloadTest.currentValue.toFixed(2) : this.service.downloadTest.slowCurrentValue.toFixed(2);
+                this.downloadStability = this.service.downloadTest.stability.toFixed(2);
+                this.downloadLoss = this.service.downloadTest.percentLoss.toFixed(2);
+                this.testType = "upload";
+                this.indicatorSpeed = "0.00";
+            }
+        })
+        this.service.uploadTest.getObserver().subscribe({
+            next: () => {
+                this.chart = this.service.isProMode ? [this.service.downloadTest.chartData, this.service.uploadTest.chartData] : [this.service.downloadTest.slowChartData, this.service.uploadTest.slowChartData]
+                this.indicatorSpeed = this.service.isProMode ? this.service.uploadTest.currentValue.toFixed(2) : this.service.uploadTest.slowCurrentValue.toFixed(2);
+            },
+            complete: () => {
+                this.uploadSpeed = this.service.isProMode ? this.service.uploadTest.currentValue.toFixed(2) : this.service.uploadTest.slowCurrentValue.toFixed(2);
+                this.uploadStability = this.service.uploadTest.stability.toFixed(2);
+                this.uploadLoss = this.service.uploadTest.percentLoss.toFixed(2);
+            }
+        })
+
         this.service.sendStart();
         this.subscribes.push(
             this.breakpointObserver
                 .observe(["(max-width: 992px)"])
                 .subscribe((result) => {
-                    if (result.matches) {
-                        this.isMobile = true;
-                    } else {
-                        this.isMobile = false;
-                    }
+                    this.isMobile = result.matches;
                 }),
-        );
-        this.subscribes.push(
-            this.service.downloadTest.getUpdateTest().subscribe({
-                next: (result) => {
-                    this.chart[0] = this.service.isProMode ? result.chartData : result.slowChartData;
-                    this.chart = this.chart.slice();
-                    this.testType = "download";
-                    this.indicatorSpeed = this.service.isProMode ? result.speed : result.slowSpeed;
-                },
-                error: err => this.router.navigate([''])
-            })
-        );
-
-        this.subscribes.push(
-            this.service.uploadTest.getUpdateTest().subscribe((result) => {
-                this.chart[1] = this.service.isProMode ? result.chartData : result.slowChartData;
-                this.chart = this.chart.slice();
-                this.testType = "upload";
-                this.indicatorSpeed = this.service.isProMode ? result.speed : result.slowSpeed;
-            }),
-        );
-        this.subscribes.push(
-            this.service.downloadTest.getFinishTest().subscribe((result) => {
-                this.downloadResult = result;
-            }),
-        );
-        this.subscribes.push(
-            this.service.uploadTest.getFinishTest().subscribe((result) => {
-                this.uploadResult = result;
-            }),
-        );
-        this.subscribes.push(
-            this.service.pingTest.getFinishTest().subscribe((result) => {
-                this.ping = result.ping;
-                this.jitter = result.jitter;
-            }),
         );
     }
 
     ngOnDestroy(): void {
+        if (!this.service.isEnd) this.service.measureSocket.next({
+            type: MeasureActionTypes.ABORT,
+            deviceInfo: this.service.deviceInfo.getDeviceInfo()
+        })
         this.subscribes.forEach((subscribe) => subscribe.unsubscribe()); // Отписываемся от всех подписок
         this.subscribes = []; // Очищаем массив подписок
-        this.service.stop();
+        this.service.clear()
     }
 }

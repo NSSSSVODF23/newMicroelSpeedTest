@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ApolloQueryResult} from '@apollo/client/core';
 import {Apollo, gql} from 'apollo-angular';
-import {Observable} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {House} from 'src/app/common/transport/models/house';
 
 interface GetAllHouses {
@@ -13,10 +13,14 @@ interface GetAllHouses {
 })
 export class HouseService {
 
-  constructor(readonly apollo: Apollo) { }
+  houses: House[] = [];
 
-  public getAllHouses(): Observable<ApolloQueryResult<GetAllHouses>> {
-    return this.apollo.query<GetAllHouses>({
+  constructor(readonly apollo: Apollo) {
+    this.getAllHouses().subscribe(houses => this.houses = houses)
+  }
+
+  public getAllHouses(): Observable<House[]> {
+    return this.apollo.query<any>({
       query: gql`
         {
           getAllHouses {
@@ -25,6 +29,6 @@ export class HouseService {
           }
         }
       `,
-    });
+    }).pipe(map(o => [...o.data.getAllHouses]));
   }
 }

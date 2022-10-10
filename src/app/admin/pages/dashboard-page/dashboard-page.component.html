@@ -15,12 +15,14 @@
                 title="Новые жалобы"
         ></app-statistic-card>
         <app-statistic-card
+                [firstValue]="FSAvgAllFeedback | number:'1.2'"
+                [secondValue]="FSFeedbackCount"
                 firstSuffix="из 5"
                 secondSuffix="отзывов"
                 title="Рейтинг"
         ></app-statistic-card>
     </div>
-    <p-card>
+    <p-card [ngStyle]="{'grid-area': 'perf'}">
         <ng-template pTemplate="header">
             <div>Нагрузка</div>
         </ng-template>
@@ -52,7 +54,7 @@
             </p-tabPanel>
         </p-tabView>
     </p-card>
-    <p-card>
+    <p-card [ngStyle]="{'grid-area': 'stat'}">
         <ng-template pTemplate="header">
             <div>
                 Статистика
@@ -80,7 +82,7 @@
                 [type]="statisticChartType"
         ></p-chart>
     </p-card>
-    <p-card>
+    <p-card [ngStyle]="{'grid-area': 'online'}">
         <ng-template pTemplate="header">
             <div>Пользователи на сайте
                 <div class="empty"></div>
@@ -94,13 +96,13 @@
                 *ngIf="activeSessions.length>0"
                 [itemSize]="73"
                 [value]="activeSessions"
-                scrollHeight="500px">
+                scrollHeight="400px">
             <ng-template let-scrollOptions="options" let-session pTemplate="item">
                 <div @fade class="session-item">
                     <img [src]="session.isMobile | deviceType" alt="" class="session-device-icon">
                     <div class="session-info-wrapper">
                         <div class="location-info">
-                            <span *ngIf="session.login !== '' ">
+                            <span *ngIf="session.login !== ''" class="login">
                                 {{session.login}}
                             </span>
                             <span *ngIf="session.address !== '' " class="address">
@@ -135,6 +137,7 @@
     <ng-template pTemplate="content">
         <p-calendar (ngModelChange)="setCustomTimeRange($event)" [(ngModel)]="statisticCalendarValue"
                     [inline]="true"
+                    [selectOtherMonths]="true"
                     [selectionMode]="statisticCalendarMode"></p-calendar>
     </ng-template>
 </p-dialog>

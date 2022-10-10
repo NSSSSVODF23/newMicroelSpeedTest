@@ -1,6 +1,8 @@
 import {BehaviorSubject, last, Observable} from "rxjs";
 import {SpeedChartPoint} from "../components/speed-chart/speed-chart.component";
 import {getAvgMaxFromArray, roundToPrecision, speedCalc} from "../method/math";
+import {TestingRequest} from "../interfaces/testing-request";
+import {UploadTestingRequest} from "./requests/upload-testing-request";
 
 /**
  * Интерфейс для описания объекта получаемого от сервера,
@@ -36,9 +38,7 @@ export interface TestingResultValues {
 /**
  * Класс аккумулирующий информацию об измерении скорости обмена данными с сервером.
  */
-export class SpeedTestController {
-    /** Диспетчер обновления данных в объекте. При подписке возвращает ссылку на сам объект. */
-    public observer$: BehaviorSubject<TestingResultValues>;
+export class SpeedCounter {
     /** Текущая скорость */
     public currentValue: number = 0.0;
     /** Текущая медленная скорость */
@@ -51,10 +51,13 @@ export class SpeedTestController {
     public stability: number = 100;
     /** Процент потерь */
     public percentLoss: number = 0;
+    /** Диспетчер обновления данных в объекте. При подписке возвращает ссылку на сам объект. */
+    private testingRequest: TestingRequest;
     /** Массив с размерами окна сглаживания для построения нескольких графиков. */
     private avgWindowSizes: number[] = [15, 30, 50];
     /** Массив массивов со сглаженными значениями для каждого окна сглаживания. */
     private avgValuesArrays: number[][] = [];
+    private slowValuesArray: number[] = [];
     /** Массив сырых значений скорости */
     private rawValues: number[] = [];
     /** Массив разности значений между быстрой и медленной средней */
@@ -84,15 +87,36 @@ export class SpeedTestController {
     /** Время в миллисекундах затраченное на подготовку данных для следующего запроса */
     private breakTestTime: number = 0;
 
-    constructor() {
-        this.observer$ = new BehaviorSubject({
-            speed: "0.00",
-            stability: "0.00",
-            loss: "0.00",
-            chartData: [] as SpeedChartPoint[],
-            slowSpeed: "0.00",
-            slowChartData: [] as SpeedChartPoint[]
-        }); // Создание диспетчера обновления данных
+    constructor(request: TestingRequest) {
+        this.testingRequest = request;
+        this.testingRequest.getObserver().subscribe({
+            next: (value) => {
+                if (typeof value === "number") {
+                    this.appendBytes(value);
+                } else {
+                    this.appendUploadParticle(value);
+                }
+            },
+            complete: () => {
+                this.calculateFinal()
+            }
+        })
+    }
+
+    public getObserver() {
+        return this.testingRequest.getObserver();
+    }
+
+    public onTestEnd(handler: () => void) {
+        this.testingRequest.setEndTestHandler(handler);
+    }
+
+    public run() {
+        this.testingRequest.sendRequest();
+    }
+
+    public abort() {
+        this.testingRequest.abort();
     }
 
     /**
@@ -100,16 +124,7 @@ export class SpeedTestController {
      */
     public calculateFinal() {
         this.currentValue = getAvgMaxFromArray(this.avgValuesArrays[this.smoothLevel], 30, 10);
-        this.slowCurrentValue = getAvgMaxFromArray(this.avgValuesArrays[0], 30, 10)
-        this.observer$.next({
-            speed: this.currentValue.toFixed(2).toString(),
-            stability: this.stability.toFixed(2).toString(),
-            loss: this.percentLoss.toFixed(2).toString(),
-            chartData: this.chartData,
-            slowSpeed: this.slowCurrentValue.toFixed(2).toString(),
-            slowChartData: this.slowChartData
-        }); // Обновляем интерфейс
-        this.observer$.complete(); // Останавливаем диспетчер обновления интерфейса
+        this.slowCurrentValue = getAvgMaxFromArray(this.slowValuesArray, 30, 10)
     }
 
     /**
@@ -135,14 +150,10 @@ export class SpeedTestController {
      * @param {number} decreaseTime Время затраченное на переключение между запросами
      */
     public appendUploadParticle(
-        uploadPacket: UploadParticle,
-        decreaseTime: number = 0,
+        uploadPacket: UploadParticle
     ) {
-        this.breakTestTime -= decreaseTime; // Добавляем время затраченное на переключение между запросами в общий счетчик времени
-        if (decreaseTime > 0) this.uploadPackets = []; // Очищаем массив пакетов если переключение между запросами было произведено
         this.uploadPackets.push(uploadPacket); // Добавляем данные в массив
         const size = this.uploadPackets.length; // Получаем количество пакетов в массиве
-        this.uploadPackets[size - 1].e += this.breakTestTime; // Добавляем время затраченное на переключение между запросами в последний пакет
 
         // Если пакетов больше одного
         if (size > 1) {
@@ -155,30 +166,6 @@ export class SpeedTestController {
             );
             this.updateValues(speed, uploadPacket.e); // Обновляем значения объекта
         }
-    }
-
-    /**
-     * Возвращает последний UploadParticle из массива
-     * @return {UploadParticle} Последний UploadParticle из массива
-     */
-    public getLastParticle(): UploadParticle {
-        return this.uploadPackets[this.uploadPackets.length - 1];
-    }
-
-    /**
-     * Возвращает Observable на окончание теста
-     * @return {Observable<TestingResultValues>} Observable на окончание теста
-     */
-    public getFinishTest(): Observable<TestingResultValues> {
-        return this.observer$.pipe(last());
-    }
-
-    /**
-     * Возвращает Observable на обновление значений теста
-     * @return {Observable<TestingResultValues>} Observable на обновление значений теста
-     */
-    public getUpdateTest(): Observable<TestingResultValues> {
-        return this.observer$;
     }
 
     /**
@@ -210,6 +197,7 @@ export class SpeedTestController {
                 avgValuesArray.push(roundToPrecision(avgValue, 3)); // Округляем значение до 3 знаков после запятой и записываем в массив
             }
         }
+        this.slowValuesArray.push(this.avgValuesArrays[this.smoothLevel].slice(-30).sort((a, b) => b - a)[0]);
     }
 
     /**
@@ -369,6 +357,8 @@ export class SpeedTestController {
                 this.slowCurrentValue
             ),
         );
+        this.chartData = [...this.chartData];
+        this.slowChartData = [...this.slowChartData];
     }
 
     /**
@@ -392,7 +382,8 @@ export class SpeedTestController {
         // Обновляем текущее значение
         this.currentValue =
             this.avgValuesArrays[this.smoothLevel][this.avgValuesArrays[this.smoothLevel].length - 1];
-        this.slowCurrentValue = getAvgMaxFromArray(this.avgValuesArrays[this.smoothLevel].slice(-30), 30, 10);
+        this.slowCurrentValue = this.slowValuesArray[this.slowValuesArray.length - 1];
+
 
         this.calculateDifference(); // Рассчитываем разницу между медленным и быстрым значениями
 
@@ -401,14 +392,5 @@ export class SpeedTestController {
         this.calculateAmplitude(); // Рассчитываем амплитуду
 
         this.calculateStability(); // Рассчитываем стабильность скорости
-
-        this.observer$.next({
-            speed: this.currentValue.toFixed(2).toString(),
-            stability: this.stability.toFixed(2).toString(),
-            loss: this.percentLoss.toFixed(2).toString(),
-            chartData: this.chartData,
-            slowSpeed: this.slowCurrentValue.toFixed(2).toString(),
-            slowChartData: this.slowChartData
-        }); // Отправляем объект на обновление всем подписчикам
     }
 }

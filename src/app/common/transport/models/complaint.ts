@@ -10,3 +10,9 @@ export interface Complaint {
     processed?: User
     processedTime?: Date
 }
+
+export interface CreateComplaintBody {
+    phone: string
+    description: string
+    captchaToken: string
+}

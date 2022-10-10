@@ -31,6 +31,18 @@ export class AuthService {
         return null;
     }
 
+    public getRole(): number {
+        if (this.token) {
+            const decode = decodeJWT(this.token);
+            return decode.role;
+        }
+        return 999;
+    }
+
+    public isAdmin(): boolean {
+        return this.getRole() < 2;
+    }
+
     public doLogin(
         username: string,
         password: string,

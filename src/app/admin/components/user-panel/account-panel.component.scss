@@ -1,0 +1,58 @@
+@import "src/app/styles/variables";
+
+.account-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  justify-content: space-between;
+
+  .name {
+    font-size: 1.1em;
+    color: $text-color;
+    margin-left: 0.3rem;
+  }
+
+  .edit {
+    font-size: .9rem;
+    color: $primary-color;
+    margin-left: 0.4rem;
+    cursor: pointer;
+  }
+}
+
+.create-dialog-content {
+  display: grid;
+  grid: min-content / max-content;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.preview-user {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  gap: 0.3rem;
+  text-align: center;
+
+  .name-preview {
+    font-size: 1.2rem;
+    color: $text-color;
+  }
+
+  .username-preview {
+    color: $text-color-secondary;
+  }
+}
+
+label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+  color: $text-color-secondary;
+}
+
+.field {
+  display: grid;
+}

@@ -1,40 +1,40 @@
 <p-toast></p-toast>
 <div class="content-wrapper">
-	<div class="logo">
-		<img src="../../../../assets/images/logo.svg" alt="" />
-	</div>
-	<form class="form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-		<p-card>
-			<ng-template pTemplate="header">
-				<div class="title">Авторизация</div>
-			</ng-template>
-			<div class="content">
-				<div class="p-inputgroup">
-					<span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
-					<input id="login" type="text" pInputText formControlName="username" />
-				</div>
-				<div class="p-inputgroup">
-					<span class="p-inputgroup-addon"><i class="pi pi-key"></i></span>
-					<input
-						id="password"
-						type="password"
-						pInputText
-						formControlName="password"
-					/>
-				</div>
-			</div>
-			<ng-template pTemplate="footer">
-				<div class="footer">
-					<button
-						pButton
-						type="submit"
-						icon="pi pi-sign-in"
-						label="Войти"
-						class="p-button-success"
-						[disabled]="loginForm.invalid"
-					></button>
-				</div>
-			</ng-template>
-		</p-card>
-	</form>
+    <div class="logo">
+        <img alt="" src="../../../../assets/images/logo.svg"/>
+    </div>
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="form">
+        <p-card [style]="{'width': 'min-content', 'place-self': 'center'}">
+            <ng-template pTemplate="header">
+                <div class="title">Авторизация</div>
+            </ng-template>
+            <div class="content">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                    <input formControlName="username" id="login" pInputText type="text"/>
+                </div>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-key"></i></span>
+                    <input
+                            formControlName="password"
+                            id="password"
+                            pInputText
+                            type="password"
+                    />
+                </div>
+            </div>
+            <ng-template pTemplate="footer">
+                <div class="footer">
+                    <button
+                            [disabled]="loginForm.invalid"
+                            class="p-button-success"
+                            icon="pi pi-sign-in"
+                            label="Войти"
+                            pButton
+                            type="submit"
+                    ></button>
+                </div>
+            </ng-template>
+        </p-card>
+    </form>
 </div>

@@ -1,92 +1,96 @@
 @import "../../../styles/variables.scss";
 
+:host {
+  flex-grow: 1;
+}
+
 .wrapper-result-panels {
-	display: flex;
-	justify-content: space-around;
-	padding: 2rem 2rem 1rem 2rem;
-	background-color: $white-color;
-	gap: 1rem;
+  display: flex;
+  justify-content: space-around;
+  padding: 2rem 2rem 1rem 2rem;
+  background-color: $white-color;
+  gap: 1rem;
 }
 
 .header {
-	font-size: 1.1rem;
-	font-weight: 500;
-	color: $text-color;
-	padding: 1.1rem 1.3rem 0 1.3rem;
-	display: flex;
-	gap: 0.1em;
-	align-items: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: $text-color;
+  padding: 1.1rem 1.3rem 0 1.3rem;
+  display: flex;
+  gap: 0.1em;
+  align-items: center;
 
-	img {
-		width: 1.2em;
-		height: 1.2em;
-	}
+  img {
+    width: 1.2em;
+    height: 1.2em;
+  }
 }
 
 .wrapper-ping-result-panel {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	// padding: 1rem;
-	background-color: $primary-color-contrast;
-	color: $text-color-secondary;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  // padding: 1rem;
+  background-color: $primary-color-contrast;
+  color: $text-color-secondary;
 }
 
 .wrapper-testing-chart {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 1rem;
-	height: 150px;
-	background-color: $primary-color-contrast;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  height: 150px;
+  background-color: $primary-color-contrast;
 }
 
 .wrapper-current-test-panel {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 1rem 1rem 3rem 1rem;
-	gap: 1rem;
-	background-color: $primary-color-contrast;
-	color: $text-color-secondary;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1rem 3rem 1rem;
+  gap: 1rem;
+  background-color: $primary-color-contrast;
+  color: $text-color-secondary;
 }
 
 .content-wrapper {
-	display: grid;
-	justify-content: center;
+  display: grid;
+  justify-content: center;
 }
 
 .result-desktop {
-	margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 @media (max-width: 767px) {
-	.content-wrapper {
-		grid-template-columns: 100%;
-		grid-template-rows: min-content;
-	}
+  .content-wrapper {
+    grid-template-columns: 100%;
+    grid-template-rows: min-content;
+  }
 }
 
 @media (min-width: 768px) {
-	.content-wrapper {
-		grid-template-columns: 100%;
-		grid-template-rows: min-content;
-	}
+  .content-wrapper {
+    grid-template-columns: 100%;
+    grid-template-rows: min-content;
+  }
 }
 
 @media (min-width: 992px) {
-	.content-wrapper {
-		grid-template-columns: 800px;
-		grid-template-rows: min-content;
-	}
+  .content-wrapper {
+    grid-template-columns: 800px;
+    grid-template-rows: min-content;
+  }
 }
 
 @media (min-width: 1200px) {
-	.content-wrapper {
-		grid-template-columns: 1000px;
-		grid-template-rows: min-content;
-	}
+  .content-wrapper {
+    grid-template-columns: 1000px;
+    grid-template-rows: min-content;
+  }
 }

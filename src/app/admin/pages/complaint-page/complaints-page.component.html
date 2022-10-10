@@ -1,128 +1,121 @@
-<div class="content-wrapper">
+<div *ngIf="!isMobile" class="content-wrapper">
     <p-card>
         <ng-template pTemplate="header">
             <div><i class="pi pi-list"></i> Жалобы</div>
         </ng-template>
-        <p-virtualScroller
-            #scroller
-            (onLazyLoad)="loadComplaints($event)"
-            [itemSize]="160"
-            [lazy]="true"
-            [rows]="rows"
-            [value]="complaints"
-            scrollHeight="500px">
-            <ng-template let-complaint let-scrollOptions="options" pTemplate="item">
-                <div (click)="selectComplaint(complaint)" class="complaint-item">
-                    <div class="complaint-item-header">
-                        <div class="main-info">
-                            <span class="login">
-                                {{complaint.session?.login}}
-                            </span>
-                            <span class="address">
-                                {{complaint.session?.house?.address ?? "Квартал В25 (Правая часть)"}}
-                            </span>
-                        </div>
-                        <div class="phone">
-                            {{complaint.phone}}
-                        </div>
-                        <div class="empty"></div>
-                        <app-complaint-processed-button [complaint]="complaint"></app-complaint-processed-button>
-                    </div>
-                    <div class="complaint-item-description">
-                        {{complaint.description}}
-                    </div>
-                    <div class="date">
-                        {{complaint.created | date:"dd-MM-YYYY HH:mm:ss"}}
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template let-product pTemplate="loadingItem">
-                <div style="height: 42px">
-                    <p-skeleton height="24px" width="48px"></p-skeleton>
-                </div>
-            </ng-template>
-        </p-virtualScroller>
+        <ng-container *ngTemplateOutlet="list"></ng-container>
     </p-card>
     <p-card>
         <ng-template pTemplate="header">
             <div><i class="pi pi-search"></i> Поиск</div>
         </ng-template>
-        <div class="search-fields-container">
-            <p-calendar
-                    (ngModelChange)="filterChangeDateRangeHandler($event)"
-                    [(ngModel)]="filterDateRangeValue"
-                    [readonlyInput]="true"
-                    [showClear]="true"
-                    class="p-inputtext-sm"
-                    dateFormat="dd-mm-yy"
-                    placeholder="Дата замера"
-                    selectionMode="range"
-            ></p-calendar>
-            <input
-                    (ngModelChange)="filterChangeHandler($event)"
-                    [(ngModel)]="searchFilters.login"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="Логин"
-                    type="text"
-            />
-            <input
-                    (ngModelChange)="filterChangeHandler($event)"
-                    [(ngModel)]="searchFilters.phone"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="Телефон"
-                    type="text"
-            />
-            <p-dropdown
-                    (ngModelChange)="filterChangeHandler($event)"
-                    (onClear)="addressResetFunction($event)"
-                    [(ngModel)]="searchFilters.address"
-                    [filter]="true"
-                    [options]="houseList"
-                    [showClear]="true"
-                    class="p-inputtext-sm"
-                    filterBy="address"
-                    filterBy="address"
-                    optionLabel="address"
-                    optionValue="houseId"
-                    placeholder="Адрес"
-            >
-            </p-dropdown>
-            <input
-                    (ngModelChange)="filterChangeHandler($event)"
-                    [(ngModel)]="searchFilters.ip"
-                    [pKeyFilter]="ipInputFilter"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="IP Адрес"
-                    type="text"
-            />
-            <input
-                    (ngModelChange)="filterChangeHandler($event)"
-                    [(ngModel)]="searchFilters.mac"
-                    [pKeyFilter]="macInputFilter"
-                    class="p-inputtext-sm"
-                    id="float-input"
-                    pInputText
-                    placeholder="MAC Адрес"
-                    type="text"
-            />
-            <p-selectButton (ngModelChange)="filterChangeHandler($event)" [(ngModel)]="searchFilters.processed"
-                            [options]="processedStatuses"
-                            optionLabel="name" optionValue="status" styleClass="processed-status"></p-selectButton>
-            <button
-                    (click)="resetFilters()"
-                    class="p-button-sm"
-                    icon="pi pi-filter-slash"
-                    label="Сбросить"
-                    pButton
-            ></button>
-        </div>
+        <ng-container *ngTemplateOutlet="filter"></ng-container>
     </p-card>
 </div>
-<p-dialog [(visible)]="complaintDialogVisible" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [modal]="true"
-          [resizable]="false" [responsive]="true" [style]="{width: '550px', height:'80vh'}">
+
+<div *ngIf="isMobile" class="content-wrapper">
+    <div *ngIf="isMobile" class="search-panel">
+        <button (click)="openSearchPanel()" class="p-button-rounded" icon="pi pi-search" label="Поиск" pButton></button>
+        <app-filter-chips [chips]="listLoader.filterChips"></app-filter-chips>
+    </div>
+    <ng-container *ngTemplateOutlet="list"></ng-container>
+</div>
+<p-dialog [(visible)]="searchVisible" [dismissableMask]="true" [draggable]="false" [modal]="true"
+          [showHeader]="false"
+          position="top">
+    <ng-template pTemplate="content">
+        <ng-container *ngTemplateOutlet="filter"></ng-container>
+    </ng-template>
+</p-dialog>
+
+<ng-template #filter>
+    <div class="search-fields-container">
+        <p-calendar
+                (ngModelChange)="listLoader.update($event, 'created')"
+                [(ngModel)]="listLoader.param()['created']"
+                [readonlyInput]="true"
+                [selectOtherMonths]="true"
+                [showClear]="true"
+                [touchUI]="isMobile"
+                appendTo="body"
+                class="p-inputtext-sm"
+                dateFormat="dd-mm-yy"
+                placeholder="Дата создания"
+                selectionMode="range"
+        ></p-calendar>
+        <input
+                (ngModelChange)="listLoader.update($event, 'login')"
+                [(ngModel)]="listLoader.param()['login']"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="Логин"
+                type="text"
+        />
+        <input
+                (ngModelChange)="listLoader.update($event, 'phone')"
+                [(ngModel)]="listLoader.param()['phone']"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="Телефон"
+                type="text"
+        />
+        <p-dropdown
+                (ngModelChange)="listLoader.update($event, 'address')"
+                [(ngModel)]="listLoader.param()['address']"
+                [filter]="true"
+                [itemSize]="28.5"
+                [options]="house.houses"
+                [showClear]="true"
+                [style]="{maxWidth:'14rem', width:'100%'}"
+                [tooltip]="addressName"
+                [virtualScroll]="true"
+                appendTo="body"
+                class="p-inputtext-sm grow"
+                filterBy="address"
+                optionLabel="address"
+                optionValue="houseId"
+                placeholder="Адрес"
+        >
+        </p-dropdown>
+        <input
+                (ngModelChange)="listLoader.update($event, 'ip')"
+                [(ngModel)]="listLoader.param()['ip']"
+                [pKeyFilter]="ipInputFilter"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="IP Адрес"
+                type="text"
+        />
+        <input
+                (ngModelChange)="listLoader.update($event, 'mac')"
+                [(ngModel)]="listLoader.param()['mac']"
+                [pKeyFilter]="macInputFilter"
+                class="p-inputtext-sm"
+                id="float-input"
+                pInputText
+                placeholder="MAC Адрес"
+                type="text"
+        />
+        <p-selectButton
+                (ngModelChange)="listLoader.update($event, 'processed')"
+                [(ngModel)]="listLoader.param()['processed']"
+                [options]="processedStatuses"
+                [styleClass]="!isMobile?'processed-status':''"
+                class="grow" optionLabel="name" optionValue="status"></p-selectButton>
+        <button
+                (click)="listLoader.filterClean()"
+                class="p-button-sm grow"
+                icon="pi pi-filter-slash"
+                label="Сбросить"
+                pButton
+        ></button>
+    </div>
+</ng-template>
+<ng-template #list>
+    <app-lazy-list [dataKey]="'complaintId'" [itemRef]="itemTemp" [itemSize]="160" [loadingRef]="loadingTemp"
+                   [service]="listLoader" scrollHeight="700px"></app-lazy-list>
+</ng-template>
+<p-dialog [(visible)]="complaintDialogVisible" [modal]="true" [resizable]="false" styleClass="complaint-dialog">
     <ng-template pTemplate="header">
         <div>
             Жалоба #{{selectedComplaint?.complaintId}}
@@ -152,3 +145,47 @@
         </div>
     </div>
 </p-dialog>
+
+<ng-template #itemTemp let-complaint>
+    <div (click)="selectComplaint(complaint)" class="complaint-item hovered">
+        <div class="complaint-item-header">
+            <div class="main-info">
+                <span class="login">
+                                {{complaint.session?.login}}
+                            </span>
+                <span class="phone">
+                    {{complaint.phone}}
+                </span>
+            </div>
+            <div class="address">
+                {{complaint.session?.house?.address ?? "Квартал В25 (Правая часть)"}}
+            </div>
+            <app-complaint-processed-button [complaint]="complaint" class="button"></app-complaint-processed-button>
+        </div>
+        <div class="complaint-item-description">
+            {{complaint.description}}
+        </div>
+        <div class="date">
+            {{complaint.created | date:"dd-MM-YYYY HH:mm:ss"}}
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #loadingTemp>
+    <div class="complaint-item">
+        <div class="complaint-item-header">
+            <div class="main-info">
+                <p-skeleton height="1rem" width="5rem"></p-skeleton>
+                <p-skeleton height="1rem" width="8rem"></p-skeleton>
+            </div>
+            <div class="address">
+                <p-skeleton height=".9rem" width="9rem"></p-skeleton>
+            </div>
+            <p-skeleton borderRadius="2.2rem" class="button" height="2.5rem" width="7rem"></p-skeleton>
+        </div>
+        <p-skeleton height="3.5rem" width="100%"></p-skeleton>
+        <div class="date">
+            <p-skeleton height="0.8rem" width="8rem"></p-skeleton>
+        </div>
+    </div>
+</ng-template>

@@ -1,16 +1,51 @@
+@import "src/app/styles/variables";
+
 .content-wrapper {
   display: grid;
-  grid: min-content/ max-content max-content;
   padding: 1rem 0;
   justify-content: center;
   gap: 1rem;
 }
 
+@media screen and (min-width: 0px) {
+  .content-wrapper {
+    grid-template-areas:  'filter'
+                          'table';
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, min-content);
+    background-color: $white-color;
+  }
+  .search-fields-container {
+    flex-direction: column;
+  }
+}
+
+@media screen and (min-width: 1270px) {
+  .content-wrapper {
+    grid-template-areas:  'filter'
+                          'table';
+    grid-template-columns: max-content;
+    grid-template-rows: repeat(2, min-content);
+    background-color: transparent;
+  }
+  .search-fields-container {
+    flex-direction: row;
+  }
+}
+
+@media screen and (min-width: 1520px) {
+  .content-wrapper {
+    grid-template-areas: 'table filter';
+    grid-template-columns: max-content min-content;
+    grid-template-rows: min-content;
+    background-color: transparent;
+  }
+}
+
 .search-fields-container {
-  display: grid;
-  grid: auto min-content/ max-content;
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  justify-content: center;
 }
 
 .device-id-cell {
@@ -18,4 +53,103 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.ip-cell {
+  max-width: 9rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.hostname-cell {
+  max-width: 9rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.device-item {
+  height: 157.25px;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-areas: 'title title title'
+                        '. device measure';
+  grid-template-rows: min-content min-content;
+  grid-template-columns: 1rem max-content 1fr;
+
+  .item-title {
+    grid-area: title;
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+
+    img {
+      width: 2.2rem;
+      height: 2.2rem;
+      margin-right: 1rem;
+    }
+
+    .device-id {
+      font-size: 1.2rem;
+      color: $text-color;
+      margin-right: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .additional-info {
+      font-size: .9rem;
+      font-weight: 500;
+      color: $text-color-light;
+      white-space: nowrap;
+    }
+  }
+
+  .device-info {
+    grid-area: device;
+    display: flex;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: $background-color;
+    width: max-content;
+    gap: 1rem;
+
+    div {
+      display: grid;
+      grid: auto-flow 1fr/ 100%;
+      align-content: center;
+
+      div {
+        max-width: 7rem;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+  }
+
+  .avg-measure-info {
+    grid-area: measure;
+    display: grid;
+    align-items: center;
+    color: $text-color;
+
+    div {
+      display: flex;
+      align-content: center;
+      gap: 0.3rem;
+    }
+  }
+}
+
+.search-panel {
+  display: grid;
+  grid: min-content/max-content 1fr;
+  padding: 0 1rem;
+  align-items: center;
+  gap: 1rem;
+  width: 100vw;
 }

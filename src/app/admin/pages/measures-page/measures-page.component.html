@@ -1,117 +1,160 @@
 <div class="content-wrapper">
-    <p-card>
+    <p-card *ngIf="!isMobile" [ngStyle]="{gridArea:'table'}">
         <ng-template pTemplate="header">
             <div><i class="pi pi-list"></i> Замеры</div>
         </ng-template>
-        <p-table
-            #measureTable
-            (onLazyLoad)="pageLoader.limitUpdate($event)"
-            (onRowSelect)="selectMeasure($event)"
-            [(first)]="pageLoader.param()['offset']"
-            [(selection)]="selectedMeasure"
-            [lazy]="true"
-            [loading]="pageLoader.loading"
-            [paginator]="true"
-            [rowsPerPageOptions]="[10, 25, 50]"
-            [rows]="pageLoader.param()['limit']"
-            [showCurrentPageReport]="true"
-            [totalRecords]="pageLoader.totalElements"
-            [value]="pageLoader.elements"
-            currentPageReportTemplate="Показано с {first} по {last} из {totalRecords} замеров"
-            dataKey="measureId"
-            responsiveLayout="scroll"
-            selectionMode="single"
-        >
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Соед.</th>
-                    <th>Дата замера</th>
-                    <th>Логин</th>
-                    <th>Адрес</th>
-                    <th>IP Адрес</th>
-                    <th>MAC Адрес</th>
-                    <th>Скачивание</th>
-                    <th>Загрузка</th>
-                </tr>
-            </ng-template>
-            <ng-template let-measure pTemplate="body">
-                <tr @fade [ngClass]="{ beginning: measure.isStarted }" [pSelectableRow]="measure">
-                    <td>
-                        <img [src]="measure.connectionType | connectionType" alt=""/>
-                    </td>
-                    <td>{{ measure.created | date: "dd-MM-yyyy HH:mm:ss" }}</td>
-                    <td>{{ measure.session?.login }}</td>
-                    <td>{{ measure.session?.house?.address }}</td>
-                    <td>{{ measure.session?.ip }}</td>
-                    <td>{{ measure.session?.mac }}</td>
-                    <td>{{ measure.downloadSpeed | number: "1.3" }}</td>
-                    <td>{{ measure.uploadSpeed | number: "1.3" }}</td>
-                </tr>
-            </ng-template>
-        </p-table>
+        <ng-container *ngTemplateOutlet="table"></ng-container>
     </p-card>
-    <p-card>
+    <p-card *ngIf="!isMobile" [ngStyle]="{gridArea:'filter'}">
         <ng-template pTemplate="header">
             <div><i class="pi pi-search"></i> Поиск</div>
         </ng-template>
-        <div class="search-fields-container">
-            <p-calendar
-                    (ngModelChange)="pageLoader.update($event,'created')"
-                    [(ngModel)]="pageLoader.param()['created']"
-                    [readonlyInput]="true"
-                    [showClear]="true"
-                    class="p-inputtext-sm"
-                    dateFormat="dd-mm-yy"
-                    placeholder="Дата замера"
-                    selectionMode="range"
-            ></p-calendar>
-            <input
-                    (ngModelChange)="pageLoader.update($event,'login')"
-                    [(ngModel)]="pageLoader.param()['login']"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="Логин"
-                    type="text"
-            />
-            <p-dropdown
-                    (ngModelChange)="pageLoader.update($event,'address')"
-                    [(ngModel)]="pageLoader.param()['address']"
-                    [filter]="true"
-                    [options]="houseList"
-                    [showClear]="true"
-                    class="p-inputtext-sm"
-                    filterBy="address"
-                    optionLabel="address"
-                    optionValue="houseId"
-                    placeholder="Адрес"
-            >
-            </p-dropdown>
-            <input
-                    (ngModelChange)="pageLoader.update($event,'ip' )"
-                    [(ngModel)]="pageLoader.param()['ip']"
-                    [pKeyFilter]="ipInputFilter"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="IP Адрес"
-                    type="text"
-            />
-            <input
-                    (ngModelChange)="pageLoader.update($event,'mac')"
-                    [(ngModel)]="pageLoader.param()['mac']"
-                    [pKeyFilter]="macInputFilter"
-                    class="p-inputtext-sm"
-                    id="float-input"
-                    pInputText
-                    placeholder="MAC Адрес"
-                    type="text"
-            />
-            <button
-                    (click)="pageLoader.filterClean()"
-                    class="p-button-sm"
-                    icon="pi pi-filter-slash"
-                    label="Сбросить"
-                    pButton
-            ></button>
-        </div>
+        <ng-container *ngTemplateOutlet="filter"></ng-container>
     </p-card>
+    <div *ngIf="isMobile" class="search-panel">
+        <button (click)="openSearchPanel()" class="p-button-rounded" icon="pi pi-search" label="Поиск" pButton></button>
+        <app-filter-chips [chips]="listLoader.filterChips"></app-filter-chips>
+    </div>
+    <div *ngIf="isMobile" class="measures-list">
+        <ng-container *ngTemplateOutlet="list"></ng-container>
+    </div>
+    <p-dialog [(visible)]="searchVisible" [dismissableMask]="true" [draggable]="false" [modal]="true"
+              [showHeader]="false"
+              position="top">
+        <ng-template pTemplate="content">
+            <ng-container *ngTemplateOutlet="filter"></ng-container>
+        </ng-template>
+    </p-dialog>
 </div>
+
+<ng-template #table>
+    <app-lazy-table [colNames]="columns" [dataKey]="'measureId'" [onSelect]="selectMeasure.bind(this)"
+                    [rowRef]="rowTemp" [selectionMode]="'single'" [service]="tableLoader"></app-lazy-table>
+</ng-template>
+
+<ng-template #filter>
+    <div class="search-fields-container">
+        <p-calendar
+                (ngModelChange)="tableLoader.update($event,'created')"
+                [(ngModel)]="tableLoader.param()['created']"
+                [readonlyInput]="true"
+                [selectOtherMonths]="true"
+                [showClear]="true"
+                [touchUI]="isMobile"
+                appendTo="body"
+                class="p-inputtext-sm"
+                dateFormat="dd-mm-yy"
+                placeholder="Дата замера"
+                selectionMode="range"
+        ></p-calendar>
+        <input
+                (ngModelChange)="tableLoader.update($event,'login')"
+                [(ngModel)]="tableLoader.param()['login']"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="Логин"
+                type="text"
+        />
+        <p-dropdown
+                (ngModelChange)="tableLoader.update($event,'address')"
+                [(ngModel)]="tableLoader.param()['address']"
+                [filter]="true"
+                [itemSize]="28.5"
+                [options]="house.houses"
+                [showClear]="true"
+                [style]="{maxWidth:'14rem'}"
+                [tooltip]="addressName"
+                [virtualScroll]="true"
+                appendTo="body"
+                class="p-inputtext-sm grow"
+                filterBy="address"
+                optionLabel="address"
+                optionValue="houseId"
+                placeholder="Адрес"
+        ></p-dropdown>
+        <input
+                (ngModelChange)="tableLoader.update($event,'ip' )"
+                [(ngModel)]="tableLoader.param()['ip']"
+                [pKeyFilter]="ipInputFilter"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="IP Адрес"
+                type="text"
+        />
+        <input
+                (ngModelChange)="tableLoader.update($event,'mac')"
+                [(ngModel)]="tableLoader.param()['mac']"
+                [pKeyFilter]="macInputFilter"
+                class="p-inputtext-sm"
+                id="float-input"
+                pInputText
+                placeholder="MAC Адрес"
+                type="text"
+        />
+        <button
+                (click)="tableLoader.filterClean()"
+                class="p-button-sm"
+                icon="pi pi-filter-slash"
+                label="Сбросить"
+                pButton
+        ></button>
+    </div>
+</ng-template>
+
+<ng-template #list>
+    <app-lazy-list [itemRef]="itemTemp" [itemSize]="135" [loadingRef]="loadingTemp" [service]="listLoader"
+                   scrollHeight="650px"></app-lazy-list>
+</ng-template>
+
+<ng-template #rowTemp let-measure>
+    <td [ngClass]="{beginning:measure.beginningId}">
+        <img [src]="measure?.connectionType | connectionType" alt=""/>
+    </td>
+    <td [ngClass]="{beginning:measure.beginningId}">{{ measure?.created | date: "dd-MM-yyyy HH:mm:ss" }}</td>
+    <td [ngClass]="{beginning:measure.beginningId}">{{ measure?.session?.login }}</td>
+    <td [ngClass]="{beginning:measure.beginningId}">{{ measure?.session?.house?.address }}</td>
+    <td [ngClass]="{beginning:measure.beginningId}">{{ measure?.session?.ip }}</td>
+    <td [ngClass]="{beginning:measure.beginningId}">{{ measure?.session?.mac }}</td>
+    <td [ngClass]="{beginning:measure.beginningId}">{{ measure?.downloadSpeed | number: "1.3" }}</td>
+    <td [ngClass]="{beginning:measure.beginningId}">{{ measure?.uploadSpeed | number: "1.3" }}</td>
+</ng-template>
+
+<ng-template #itemTemp let-measure>
+    <div (click)="selectMeasure(measure)" [ngClass]="{beginning:measure.beginningId}"
+         class="measure-item primary-ripple"
+         pRipple>
+        <div class="created">{{ measure.created | date: "dd-MM-yyyy HH:mm:ss" }}</div>
+        <div class="login">{{measure.session?.login}}</div>
+        <div class="address">{{measure.session?.house?.address}}</div>
+        <div class="session-info">
+            <img [src]="measure.connectionType | connectionType" alt="" class="connection-type"/>
+            <div class="im">
+                <div class="ip">{{measure.session?.ip}}</div>
+                <div class="mac">{{measure.session?.mac}}</div>
+            </div>
+        </div>
+        <div class="measurement-info">
+            <div class="download">Скачивание {{measure.downloadSpeed | number:"1.3"}} Мбит/с</div>
+            <div class="upload">Загрузка {{measure.uploadSpeed | number:"1.3"}} Мбит/с</div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #loadingTemp>
+    <div class="measure-item">
+        <p-skeleton class="created" width="10rem"></p-skeleton>
+        <p-skeleton class="login" width="8rem"></p-skeleton>
+        <p-skeleton class="address" width="13rem"></p-skeleton>
+        <div class="session-info">
+            <p-skeleton height="2rem" shape="circle" width="2rem"></p-skeleton>
+            <div class="im">
+                <p-skeleton class="ip" width="12rem"></p-skeleton>
+                <p-skeleton class="mac" width="15rem"></p-skeleton>
+            </div>
+        </div>
+        <div class="measurement-info">
+            <p-skeleton class="download" width="15rem"></p-skeleton>
+            <p-skeleton class="upload" width="12rem"></p-skeleton>
+        </div>
+    </div>
+</ng-template>

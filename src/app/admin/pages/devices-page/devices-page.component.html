@@ -1,120 +1,183 @@
 <div class="content-wrapper">
-    <p-card>
+    <p-card *ngIf="!isMobile" [ngStyle]="{gridArea:'table'}">
         <ng-template pTemplate="header">
             <div><i class="pi pi-mobile"></i> Устройства</div>
         </ng-template>
-        <p-table
-                (onLazyLoad)="pageLoader.limitUpdate($event)"
-                (onRowSelect)="openLastMeasure($event)"
-                [(first)]="pageLoader.first"
-                [(selection)]="selectedMeasure"
-                [lazy]="true"
-                [loading]="pageLoader.loading"
-                [paginator]="true"
-                [rowsPerPageOptions]="[10, 25, 50]"
-                [rows]="pageLoader.rows"
-                [showCurrentPageReport]="true"
-                [totalRecords]="pageLoader.totalElements"
-                [value]="pageLoader.elements"
-                currentPageReportTemplate="Показано с {first} по {last} из {totalRecords} устройств"
-                dataKey="deviceId"
-                responsiveLayout="stack"
-                selectionMode="single"
-        >
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Тип</th>
-                    <th>ID Устройства</th>
-                    <th>IP Адрес</th>
-                    <th>Hostname</th>
-                    <th>Система</th>
-                    <th>Платформа</th>
-                    <th>Сред. скачивание</th>
-                    <th>Сред. загрузка</th>
-                    <th>Кол. замеров</th>
-                    <th>Режим pro <i class="pi pi-question-circle"
-                                     pTooltip="Позволяет пользователю видеть более детальную информацию во время замера."></i>
-                    </th>
-                </tr>
-            </ng-template>
-            <ng-template let-device pTemplate="body">
-                <tr [pSelectableRow]="device">
-                    <td><img [src]="device.isMobile | deviceType" alt="" srcset=""/></td>
-                    <td [pTooltip]="device.deviceId" class="device-id-cell">{{ device.deviceId }}</td>
-                    <td>{{ device.ip }}</td>
-                    <td>{{ device.hostname }}</td>
-                    <td>{{ device.system }}</td>
-                    <td>{{ device.platform }}</td>
-                    <td>{{ device.measures | avgOfField:"downloadSpeed" }}</td>
-                    <td>{{ device.measures | avgOfField: "uploadSpeed" }}</td>
-                    <td>{{ device.measures | arrayLength }}</td>
-                    <td>
-                        <p-inputSwitch (ngModelChange)="setDeviceMode(device.deviceId,$event)"
-                                       [(ngModel)]="device.isPro"
-                                       appStopPropagation></p-inputSwitch>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
+        <app-lazy-table [colNames]="columns" [rowRef]="rowTemp" [service]="tableLoader"></app-lazy-table>
     </p-card>
-    <p-card>
+    <p-card *ngIf="!isMobile" [ngStyle]="{gridArea:'filter'}">
         <ng-template pTemplate="header">
             <div><i class="pi pi-search"></i> Поиск</div>
         </ng-template>
-        <div class="search-fields-container">
-            <input
-                    (ngModelChange)="pageLoader.update($event,'deviceId')"
-                    [(ngModel)]="pageLoader.param()['deviceId']"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="ID Устройства"
-                    type="text"
-            />
-            <input
-                    (ngModelChange)="pageLoader.update($event,'login')"
-                    [(ngModel)]="pageLoader.param()['login']"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="Логин"
-                    type="text"
-            />
-            <p-dropdown
-                    (ngModelChange)="pageLoader.update($event,'address')"
-                    [(ngModel)]="pageLoader.param()['address']"
-                    [filter]="true"
-                    [options]="houseList"
-                    [showClear]="true"
-                    class="p-inputtext-sm"
-                    filterBy="address"
-                    optionLabel="address"
-                    optionValue="houseId"
-                    placeholder="Адрес"
-            ></p-dropdown>
-            <input
-                    (ngModelChange)="pageLoader.update($event,'ip')"
-                    [(ngModel)]="pageLoader.param()['ip']"
-                    [pKeyFilter]="ipInputFilter"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="IP Адрес"
-                    type="text"
-            />
-            <input
-                    (ngModelChange)="pageLoader.update($event,'hostname')"
-                    [(ngModel)]="pageLoader.param()['hostname']"
-                    class="p-inputtext-sm"
-                    pInputText
-                    placeholder="Hostname"
-                    type="text"
-            />
-
-            <button
-                    (click)="pageLoader.filterClean()"
-                    class="p-button-sm"
-                    icon="pi pi-filter-slash"
-                    label="Сбросить"
-                    pButton
-            ></button>
-        </div>
+        <ng-container *ngTemplateOutlet="filter"></ng-container>
     </p-card>
+    <div *ngIf="isMobile" class="search-panel">
+        <button (click)="openSearchPanel()" class="p-button-rounded" icon="pi pi-search" label="Поиск" pButton></button>
+        <app-filter-chips [chips]="listLoader.filterChips"></app-filter-chips>
+    </div>
+    <div *ngIf="isMobile" class="devices-list">
+        <app-lazy-list [itemRef]="itemTemp" [itemSize]="157.25" [loadingRef]="loadingTemp" [service]="listLoader"
+                       scrollHeight="650px"></app-lazy-list>
+    </div>
+    <p-dialog [(visible)]="searchVisible" [dismissableMask]="true" [draggable]="false" [modal]="true"
+              [showHeader]="false"
+              position="top">
+        <ng-template pTemplate="content">
+            <ng-container *ngTemplateOutlet="filter"></ng-container>
+        </ng-template>
+    </p-dialog>
 </div>
+
+<ng-template #filter>
+    <div class="search-fields-container">
+        <input
+                (ngModelChange)="tableLoader.update($event,'deviceId')"
+                [(ngModel)]="tableLoader.param()['deviceId']"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="ID Устройства"
+                type="text"
+        />
+        <input
+                (ngModelChange)="tableLoader.update($event,'login')"
+                [(ngModel)]="tableLoader.param()['login']"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="Логин"
+                type="text"
+        />
+        <p-dropdown
+                (ngModelChange)="tableLoader.update($event,'address')"
+                [(ngModel)]="tableLoader.param()['address']"
+                [filter]="true"
+                [itemSize]="28.5"
+                [options]="house.houses"
+                [showClear]="true"
+                [virtualScroll]="true"
+                appendTo="body"
+                class="p-inputtext-sm grow"
+                filterBy="address"
+                optionLabel="address"
+                optionValue="houseId"
+                placeholder="Адрес"
+        ></p-dropdown>
+        <input
+                (ngModelChange)="tableLoader.update($event,'ip')"
+                [(ngModel)]="tableLoader.param()['ip']"
+                [pKeyFilter]="ipInputFilter"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="IP Адрес"
+                type="text"
+        />
+        <input
+                (ngModelChange)="tableLoader.update($event,'hostname')"
+                [(ngModel)]="tableLoader.param()['hostname']"
+                class="p-inputtext-sm"
+                pInputText
+                placeholder="Hostname"
+                type="text"
+        />
+
+        <button
+                (click)="tableLoader.filterClean()"
+                class="p-button-sm"
+                icon="pi pi-filter-slash"
+                label="Сбросить"
+                pButton
+        ></button>
+    </div>
+</ng-template>
+
+<ng-template #rowTemp let-device>
+    <td><img [src]="device.isMobile | deviceType" alt="" srcset=""/></td>
+    <td [pTooltip]="device.deviceId" class="device-id-cell">{{ device.deviceId }}</td>
+    <td [pTooltip]="device.ip" class="ip-cell">{{ device.ip }}</td>
+    <td [pTooltip]="device.hostname" class="hostname-cell">{{ device.hostname }}</td>
+    <td>{{ device.system }}</td>
+    <td>{{ device.platform }}</td>
+    <td>{{ device.measures | avgOfField:"downloadSpeed" }}</td>
+    <td>{{ device.measures | avgOfField: "uploadSpeed" }}</td>
+    <td>{{ device.measures | arrayLength }}</td>
+    <td>
+        <p-inputSwitch (ngModelChange)="setDeviceMode(device.deviceId,$event)"
+                       [(ngModel)]="device.isPro"
+                       appStopPropagation></p-inputSwitch>
+    </td>
+</ng-template>
+
+<ng-template #itemTemp let-device>
+    <div (click)="openLastMeasure(device)" class="device-item primary-ripple">
+        <div class="item-title">
+            <img [src]="device.isMobile | deviceType" alt="" srcset=""/>
+            <span class="device-id">{{ device.deviceId }}</span>
+            <span class="additional-info">{{ device.system }}</span>
+            <span class="additional-info">{{ device.platform }}</span>
+        </div>
+        <div class="device-info">
+            <div>
+                <div [pTooltip]="device.ip" [tooltipEvent]="isMobile?'focus':'hover'"
+                     appTooltipTouch>{{ device.ip }}</div>
+                <div [pTooltip]="device.hostname" [tooltipEvent]="isMobile?'focus':'hover'" appTooltipTouch>
+                    {{ device.hostname }}</div>
+            </div>
+            <span class="input-label-container">
+                <label>Pro мод</label>
+                <p-inputSwitch (ngModelChange)="setDeviceMode(device.deviceId,$event)" [(ngModel)]="device.isPro"
+                               appStopPropagation></p-inputSwitch>
+            </span>
+        </div>
+        <div class="avg-measure-info">
+            <div>
+                <i class="pi pi-download"></i>
+                {{ device.measures | avgOfField:"downloadSpeed" }} Мбит/с
+            </div>
+            <div>
+                <i class="pi pi-upload"></i>
+                {{ device.measures | avgOfField: "uploadSpeed" }} Мбит/с
+            </div>
+            <div>
+                Замеров
+                {{ device.measures | arrayLength }} шт.
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #loadingTemp>
+    <div (click)="openLastMeasure(device)" class="device-item primary-ripple">
+        <div class="item-title">
+            <p-skeleton [style]="{'margin-right': '1rem'}" height="2.2rem" width="2.2rem"></p-skeleton>
+            <p-skeleton [style]="{'margin-right': '1rem'}" height="1.2rem" width="12rem"></p-skeleton>
+            <p-skeleton height="1rem" width="4rem"></p-skeleton>
+            <p-skeleton height="1rem" width="3rem"></p-skeleton>
+        </div>
+        <div class="device-info">
+            <div>
+                <p-skeleton [style]="{marginBottom:'.4rem'}" height="1rem" width="8rem"></p-skeleton>
+                <p-skeleton height="1rem" width="10rem"></p-skeleton>
+            </div>
+            <span class="input-label-container">
+                <label>Pro мод</label>
+                <p-skeleton height="2rem" width="3rem"></p-skeleton>
+            </span>
+        </div>
+        <div class="avg-measure-info">
+            <div>
+                <i class="pi pi-download"></i>
+                <p-skeleton height="1rem" width="3.5rem"></p-skeleton>
+                Мбит/с
+            </div>
+            <div>
+                <i class="pi pi-upload"></i>
+                <p-skeleton height="1rem" width="4rem"></p-skeleton>
+                Мбит/с
+            </div>
+            <div>
+                Замеров
+                <p-skeleton height="1rem" width="2rem"></p-skeleton>
+                шт.
+            </div>
+        </div>
+    </div>
+</ng-template>

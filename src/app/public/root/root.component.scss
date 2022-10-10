@@ -1,0 +1,43 @@
+@import "src/app/styles/variables";
+
+.wrapper {
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  .footer {
+    margin-top: 2rem;
+    background-color: $white-color;
+    padding: 2rem;
+    border-top: 1px solid $surface-border;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    color: $text-color;
+
+    .about {
+      font-size: .7rem;
+      max-width: 20rem;
+      color: $text-color-secondary;
+    }
+
+    .info-stack {
+      display: flex;
+      gap: .4rem;
+      flex-direction: column;
+
+      .title {
+        font-size: .9rem;
+        color: $text-color-secondary;
+        font-weight: 500;
+      }
+
+      a {
+        font-size: 1rem;
+        color: $primary-color;
+        text-decoration: none;
+      }
+    }
+  }
+}

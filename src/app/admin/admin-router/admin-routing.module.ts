@@ -13,16 +13,16 @@ const routes: Routes = [
         path: "",
         component: RootComponent,
         children: [
-            {path: "", redirectTo: "dashboard", pathMatch: "full"},
             {path: "dashboard", component: DashboardPageComponent},
             {path: "measures", component: MeasuresPageComponent},
             {path: "measure", component: MeasurePageComponent},
             {path: "devices", component: DevicesPageComponent},
             {path: "users", component: UsersPageComponent},
-            {path: "complaints", component: ComplaintsPageComponent}
+            {path: "complaints", component: ComplaintsPageComponent},
+            {path: "", redirectTo: "dashboard", pathMatch: "full"},
         ],
     },
-    {path: "**", redirectTo: "/admin/dashboard", pathMatch: "full"},
+    // {path: "**", redirectTo: "/admin/dashboard", pathMatch: "full"},
 ];
 
 @NgModule({

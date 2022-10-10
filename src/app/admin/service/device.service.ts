@@ -1,18 +1,10 @@
 import {Injectable} from "@angular/core";
-import {ApolloQueryResult} from "@apollo/client/core";
 import {Apollo, gql} from "apollo-angular";
 import {map, Observable} from "rxjs";
 import {Device} from "src/app/common/service/device-info.service";
-import {DeviceFilter} from "src/app/common/transport/filters/device-filter";
 import {UpdateProvider} from "../../common/transport/models/update-provider";
-import {QueryLimit} from "../../common/transport/models/query-limit";
 import {Page} from "../../common/transport/models/page";
-import {FilterRequestParams} from "../../common/interfaces/pageable";
-
-interface GetFilteredDevices {
-    getFilteredDevices: Device[];
-    getTotalDevices: number;
-}
+import {FilterRequestParams} from "../../common/interfaces/pageing/pageable";
 
 @Injectable({
     providedIn: "root",

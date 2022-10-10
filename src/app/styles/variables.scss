@@ -6,13 +6,18 @@ $primary-color-contrast: #ffffff;
 $alt-color: #ff783a;
 $alt-color-contrast: #ffffff;
 
+$success-color: #43D065;
+$error-color: #dc3545;
+
 $surface-border: #dee2e6;
+$hover-highlight: #eff2f5;
 
 $text-color: #556674;
 $text-color-secondary: #768794;
 $text-color-light: #a4b1bb;
 
 $download-color: #37d9e3;
+$download-color-accent: #42c4cc;
 $upload-color: #ba46f0;
 
 $white-color: white;
@@ -23,4 +28,4 @@ $dark-shadow-color-2: #e738552e;
 $light-shadow-color-2: #e7385514;
 
 $card-shadow: 0px 0.1rem 0.5rem 0px rgba(0, 0, 0, 0.1),
-	0px 0px 1px 0px rgba(0, 0, 0, 0.2);
+0px 0px 1px 0px rgba(0, 0, 0, 0.2);

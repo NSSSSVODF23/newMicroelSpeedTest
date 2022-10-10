@@ -40,6 +40,8 @@ export function stringToInt(value: string, def: number) {
 }
 
 export function getAvgMaxFromArray(array: number[], windowSize: number = 30, percentFall: number = 10) {
+    console.log(array)
+    if (!array || array.length === 0) return 0;
     const preparedArray = array
         .sort((a, b) => b - a)
         .filter((value, index, array) => {
@@ -48,6 +50,6 @@ export function getAvgMaxFromArray(array: number[], windowSize: number = 30, per
             return index >= startIndex && index <= endIndex;
         })
         .slice(0, windowSize)
-
+    console.log(preparedArray)
     return preparedArray.reduce((prev, curr) => prev + curr, 0) / preparedArray.length;
 }

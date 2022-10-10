@@ -20,8 +20,15 @@ export class UserService {
             query: gql`
                 query getUserByUsername($username: String) {
                     getUserByUsername(username: $username) {
+                        userId
                         name
                         avatar
+                        password
+                        role {
+                            roleId
+                            description
+                        }
+                        username
                     }
                 }
             `,

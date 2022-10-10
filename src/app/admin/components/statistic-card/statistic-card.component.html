@@ -1,25 +1,25 @@
-<p-card>
-	<ng-template pTemplate="header">
-		<div style="width: max-content">
-			{{ title }}
-		</div>
-	</ng-template>
-	<div class="content">
-		<div class="value">
+<p-card [ngStyle]="{height: '100%'}">
+    <ng-template pTemplate="header">
+        <div style="width: max-content">
+            {{ title }}
+        </div>
+    </ng-template>
+    <div class="content">
+        <div class="value">
 			<span>
 				{{ firstValue }}
 			</span>
-			<span class="suffix">
+            <span class="suffix">
 				{{ firstSuffix }}
 			</span>
-		</div>
-		<div class="value">
+        </div>
+        <div class="value">
 			<span>
 				{{ secondValue }}
 			</span>
-			<span class="suffix">
+            <span class="suffix">
 				{{ secondSuffix }}
 			</span>
-		</div>
-	</div>
+        </div>
+    </div>
 </p-card>

@@ -1,0 +1,84 @@
+<div class="account-panel">
+    <app-user-avatar [user]="currentUser"></app-user-avatar>
+    <div>
+        <div class="name">{{ currentUser?.name }}</div>
+        <a (click)="openEditDialog()" class="edit">Изменить</a>
+    </div>
+    <button
+            (click)="this.auth.doLogout()"
+            class="p-button-danger p-button-text"
+            icon="pi pi-sign-out"
+            pButton
+            type="button"
+    ></button>
+</div>
+
+<p-dialog
+        [(visible)]="showEditDialog"
+        [modal]="true"
+        header="Редактирование пользователя"
+>
+    <div class="preview-user">
+        <app-user-avatar
+                [editable]="true"
+                [formGroup]="editFormGroup"
+                size="xlarge"
+        ></app-user-avatar>
+        <span class="name-preview">
+			{{ getNameLabel(this.editFormGroup.value.name) }}
+		</span>
+        <span class="username-preview">
+			{{ getRoleLabel(this.editFormGroup.value.role) }}
+		</span>
+    </div>
+    <form [formGroup]="editFormGroup" class="create-dialog-content">
+        <div class="field">
+            <label>
+                Имя
+                <input formControlName="name" pInputText placeholder=""/>
+            </label>
+            <app-input-error-message
+                    [control]="editFormGroup.controls['name']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+        <div *ngIf="auth.isAdmin()" class="field">
+            <label>
+                Группа
+                <p-dropdown
+                        [options]="roleOptions"
+                        appendTo="body"
+                        formControlName="role"
+                        optionLabel="description"
+                        optionValue="roleId"
+                ></p-dropdown>
+            </label>
+            <app-input-error-message
+                    [control]="editFormGroup.controls['role']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+        <div class="field">
+            <label>
+                Пароль
+                <p-password
+                        [toggleMask]="true"
+                        appendTo="body"
+                        formControlName="password"
+                ></p-password>
+            </label>
+            <app-input-error-message
+                    [control]="editFormGroup.controls['password']"
+                    [errors]="errorMessages"
+            ></app-input-error-message>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <button
+                (click)="editUser()"
+                [disabled]="!this.editFormGroup.valid"
+                label="Сохранить"
+                pButton
+        ></button>
+    </ng-template>
+</p-dialog>

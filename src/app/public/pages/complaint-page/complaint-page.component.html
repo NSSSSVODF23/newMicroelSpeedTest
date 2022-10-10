@@ -1,0 +1,60 @@
+<div class="content-wrapper">
+    <ng-container *ngTemplateOutlet="infoMsg;  context: {state:isMobile===false}"></ng-container>
+    <p-card *ngIf="!isMobile" class="desktop-wrapper">
+        <ng-template pTemplate="header">
+            <div> Форма обратной связи</div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="formTemplate"></ng-container>
+    </p-card>
+    <div *ngIf="isMobile" class="mobile-wrapper">
+        <ng-container *ngTemplateOutlet="infoMsg;  context: {state:isMobile===true}"></ng-container>
+        <ng-container *ngTemplateOutlet="formTemplate"></ng-container>
+    </div>
+</div>
+
+<ng-template #infoMsg let-mobile=state>
+    <p-messages *ngIf="!loaded && mobile" severity="warn">
+        <ng-template pTemplate="content">
+            <div>
+                <i class="pi pi-info-circle"></i> Заполните форму обратной связи, и в ближайшее время с вами свяжется
+                сотрудник технической поддержки.
+            </div>
+        </ng-template>
+    </p-messages>
+</ng-template>
+
+<ng-template #formTemplate>
+    <form [formGroup]="formGroup" class="sent-form">
+            <span [@controls]="controlsAnimationState" class="input-label-container phone">
+                <label>Номер телефона</label>
+                <p-inputMask formControlName="phone" mask="(999) 999-99-99" placeholder="(912) 123-45-67"></p-inputMask>
+            </span>
+        <div [@controls]="controlsAnimationState" class="input-label-container description">
+            <label>Описание проблемы</label>
+            <textarea [autoResize]="true" [rows]="5" formControlName="description" pInputTextarea></textarea>
+        </div>
+        <div [@controls]="controlsAnimationState" class="captcha-container">
+            <p-captcha (onResponse)="captchaResponse($event)"
+                       [siteKey]="api.CAPTCHA_PUBLIC"></p-captcha>
+            <p-message *ngIf="robotError" severity="error" text="Подтвердите что вы не робот"></p-message>
+        </div>
+        <span [@controls]="controlsAnimationState" class="controls">
+                <button class="p-button-secondary" icon="pi pi-home" label="На главную" pButton routerLink="/"></button>
+                <button (click)="submit()" [disabled]="!formGroup.valid" icon="pi pi-send" label="Отправить"
+                        pButton></button>
+            </span>
+        <div *ngIf="loading" class="loading">
+            <p-progressSpinner></p-progressSpinner>
+        </div>
+        <div *ngIf="loaded" class="loaded">
+            <i class="pi pi-check-circle"></i>
+            <div class="done-response">
+                Заявка отправлена специалистам технической поддержки.
+                Ожидайте звонка на контактный номер телефона.
+            </div>
+            <div>
+                <button icon="pi pi-home" label="На главную" pButton routerLink="/"></button>
+            </div>
+        </div>
+    </form>
+</ng-template>

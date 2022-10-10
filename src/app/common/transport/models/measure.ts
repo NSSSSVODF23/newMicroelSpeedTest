@@ -1,4 +1,4 @@
-import {SpeedTestController} from "../../class/speed-test-controller";
+import {SpeedCounter} from "../../class/speed-counter";
 import {PingTestController} from "../../class/ping-test-controller";
 import {SpeedChartPoint} from "../../components/speed-chart/speed-chart.component";
 import {Device} from "../../service/device-info.service";
@@ -34,8 +34,8 @@ export class Measure {
 
     constructor(
         ping?: PingTestController,
-        download?: SpeedTestController,
-        upload?: SpeedTestController,
+        download?: SpeedCounter,
+        upload?: SpeedCounter,
     ) {
         this.ping = ping?.pingValue;
         this.pingJitter = ping?.jitterValue;

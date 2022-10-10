@@ -1,66 +1,83 @@
-<div class="content-wrapper">
+<div *ngIf="!isMobile" class="content-wrapper">
     <p-card>
         <ng-template pTemplate="header">
             <div class="create-user-header">
                 <span> Пользователи </span>
-                <button
-                        (click)="openCreateDialog()"
-                        class="p-button-text p-button-sm"
-                        icon="pi pi-plus"
-                        iconPos="right"
-                        label="Добавить"
-                        pButton
-                ></button>
+                <ng-container *ngTemplateOutlet="createButton"></ng-container>
             </div>
         </ng-template>
-        <p-virtualScroller
-                [itemSize]="70"
-                [lazy]="true"
-                [value]="users"
-                scrollHeight="500px">
-            <ng-template let-scrollOptions="options" let-user pTemplate="item">
-                <div class="user-item">
-                    <app-user-avatar [user]="user" shape="square"></app-user-avatar>
-                    <div class="main-info">
+        <ng-container *ngTemplateOutlet="list"></ng-container>
+    </p-card>
+</div>
+<div *ngIf="isMobile" class="content-wrapper">
+    <span>
+        <ng-container *ngTemplateOutlet="createButton"></ng-container>
+    </span>
+    <ng-container *ngTemplateOutlet="list"></ng-container>
+</div>
+
+
+<ng-template #list>
+    <p-virtualScroller
+            [itemSize]="70"
+            [lazy]="true"
+            [value]="users"
+
+            scrollHeight="700px">
+        <ng-template let-scrollOptions="options" let-user pTemplate="item">
+            <div class="user-item">
+                <app-user-avatar [user]="user" shape="square"></app-user-avatar>
+                <div class="main-info">
 						<span class="name">
 							{{ user.name }}
 						</span>
-                        <span class="username">
+                    <span class="username">
 							{{ user.role?.description }}
 						</span>
-                    </div>
-                    <div class="empty"></div>
-                    <div class="controls">
-                        <button
-                                (click)="editUserOpen(user)"
-                                class="p-button-text"
-                                icon="pi pi-pencil"
-                                label="Редактировать"
-                                pButton
-                        ></button>
-                        <button
-                                (click)="deleteUser(user.userId)"
-                                class="p-button-text p-button-danger"
-                                icon="pi pi-trash"
-                                label="Удалить"
-                                pButton
-                        ></button>
-                    </div>
                 </div>
-            </ng-template>
-            <ng-template let-product pTemplate="loadingItem">
-                <div class="user-item">
-                    <p-skeleton height="48px" width="48px"></p-skeleton>
-                    <div class="main-info">
-                        <p-skeleton height="1rem" width="150px"></p-skeleton>
-                        <p-skeleton height="0.8rem" width="90px"></p-skeleton>
-                    </div>
-                    <div class="empty"></div>
+                <div class="empty"></div>
+                <div class="controls">
+                    <button
+                            (click)="editUserOpen(user)"
+                            [label]="isMobile?'':'Редактировать'"
+                            [ngClass]="{'p-button-icon-only':isMobile}"
+                            class="p-button-text"
+                            icon="pi pi-pencil"
+                            pButton
+                    ></button>
+                    <button
+                            (click)="deleteUser(user.userId)"
+                            [label]="isMobile?'':'Удалить'"
+                            [ngClass]="{'p-button-icon-only':isMobile}"
+                            class="p-button-text p-button-danger"
+                            icon="pi pi-trash"
+                            pButton
+                    ></button>
                 </div>
-            </ng-template>
-        </p-virtualScroller>
-    </p-card>
-</div>
+            </div>
+        </ng-template>
+        <ng-template let-product pTemplate="loadingItem">
+            <div class="user-item">
+                <p-skeleton height="48px" width="48px"></p-skeleton>
+                <div class="main-info">
+                    <p-skeleton height="1rem" width="150px"></p-skeleton>
+                    <p-skeleton height="0.8rem" width="90px"></p-skeleton>
+                </div>
+                <div class="empty"></div>
+            </div>
+        </ng-template>
+    </p-virtualScroller>
+</ng-template>
+
+<ng-template #createButton>
+    <button
+            (click)="openCreateDialog()"
+            class="p-button-text"
+            icon="pi pi-plus"
+            label="Добавить"
+            pButton
+    ></button>
+</ng-template>
 
 <p-dialog
         [(visible)]="showCreateDialog"
@@ -167,7 +184,7 @@
                 <input formControlName="name" pInputText placeholder=""/>
             </label>
             <app-input-error-message
-                    [control]="createFormGroup.controls['name']"
+                    [control]="editFormGroup.controls['name']"
                     [errors]="errorMessages"
             ></app-input-error-message>
         </div>
@@ -183,7 +200,7 @@
                 ></p-dropdown>
             </label>
             <app-input-error-message
-                    [control]="createFormGroup.controls['role']"
+                    [control]="editFormGroup.controls['role']"
                     [errors]="errorMessages"
             ></app-input-error-message>
         </div>
@@ -197,7 +214,7 @@
                 ></p-password>
             </label>
             <app-input-error-message
-                    [control]="createFormGroup.controls['password']"
+                    [control]="editFormGroup.controls['password']"
                     [errors]="errorMessages"
             ></app-input-error-message>
         </div>

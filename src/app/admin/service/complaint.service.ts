@@ -6,6 +6,8 @@ import {Complaint} from "../../common/transport/models/complaint";
 import {UserService} from "./user.service";
 import {AuthService} from "./auth.service";
 import {UpdateProvider} from "../../common/transport/models/update-provider";
+import {FilterRequestParams} from "../../common/interfaces/pageing/pageable";
+import {Page} from "../../common/transport/models/page";
 
 @Injectable({
     providedIn: 'root'
@@ -15,31 +17,38 @@ export class ComplaintService {
     constructor(readonly apollo: Apollo, readonly authService: AuthService) {
     }
 
-    getComplaints(filter: ComplaintsFilter): Observable<[Complaint[], number]> {
+    getComplaints(filter: FilterRequestParams<Complaint>): Observable<Page<Complaint>> {
         return this.apollo.query<any>({
             query: gql`
-                query getComplaints($filter: ComplaintsFilter){
-                    getComplaints(filter: $filter){
-                        complaintId
-                        created
-                        description
-                        phone
-                        processed {
-                            name
-                            avatar
-                        }
-                        processedTime
-                        session {
-                            login
-                            house {
-                                address
+                query getComplaints($matchingObject: IComplaint, $dateFilter: ITimeRange, $limits: IPagination, $isProcessed: Boolean){
+                    getComplaints(matchingObject: $matchingObject, dateFilter: $dateFilter, limits: $limits, isProcessed:$isProcessed){
+                        content {
+                            complaintId
+                            created
+                            description
+                            phone
+                            processed {
+                                name
+                                avatar
+                            }
+                            processedTime
+                            session {
+                                login
+                                house {
+                                    address
+                                }
                             }
                         }
+                        totalElements
                     }
-                    getTotalComplaints(filter: $filter)
                 }
-            `, fetchPolicy: "network-only", variables: {filter}
-        }).pipe(map(data => [data.data.getComplaints, data.data.getTotalComplaints]))
+            `, fetchPolicy: "network-only", variables: {
+                matchingObject: filter.matchingObject,
+                dateFilter: filter.extras ? filter.extras['dateFilter'] : undefined,
+                limits: filter.limits,
+                isProcessed: filter.extras ? filter.extras['isProcessed'] : undefined
+            }
+        }).pipe(map(data => data.data.getComplaints))
     }
 
     getTotalComplaints(filter: ComplaintsFilter): Observable<number> {
