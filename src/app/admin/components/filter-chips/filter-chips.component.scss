@@ -1,0 +1,11 @@
+.chips-wrapper {
+  display: grid;
+  grid: min-content/auto-flow max-content;
+  padding: .2rem;
+  overflow: hidden;
+  gap: 1rem;
+}
+
+:host {
+  overflow: hidden;
+}

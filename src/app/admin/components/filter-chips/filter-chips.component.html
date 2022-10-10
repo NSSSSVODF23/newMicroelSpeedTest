@@ -1,0 +1,7 @@
+<div appHScroll class="chips-wrapper">
+    <p-chip (onRemove)="chip.remove()" *ngFor="let chip of chips" [removable]="true"
+            [style]="{'scroll-snap-align': 'start'}"
+            styleClass="big-chip">
+        {{chip.name}}: {{chip.value}}
+    </p-chip>
+</div>

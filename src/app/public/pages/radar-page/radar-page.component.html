@@ -1,0 +1,23 @@
+<div class="radar-content">
+    <app-speed-chart [chartData]="[counter.chartData]" [fill]="['#37d9e3']" [ratio]="2" [shifted]="true"
+                     [stroke]="['#37d9e3']"
+                     sized="auto"></app-speed-chart>
+    <div class="measuring-values-container">
+        <div></div>
+        <span class="speed">{{counter.currentValue | number:"1.3"}} Мбит/с</span>
+        <div class="loss">
+            <span class="label">Потери</span>
+            <span>{{counter.percentLoss | number:"1.2"}} %</span>
+        </div>
+        <div></div>
+        <span class="session-duration">Сессия истечет ({{duration | duration}})</span>
+        <span class="home-button"><button icon="pi pi-home" label="На главную" pButton routerLink="/"></button></span>
+    </div>
+    <div *ngIf="sessionEnd" class="end-session-view">
+        <span class="end-session-title">Сессия завершена</span>
+        <span><button (click)="restart()" class="p-button-danger" icon="pi pi-refresh"
+                      label="Перезапустить" pButton></button></span>
+        <span><button icon="pi pi-home" label="На главную" pButton routerLink="/"></button></span>
+    </div>
+</div>
+

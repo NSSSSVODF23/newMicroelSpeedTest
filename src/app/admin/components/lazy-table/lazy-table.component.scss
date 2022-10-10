@@ -1,0 +1,10 @@
+@import "src/app/styles/variables";
+
+.empty-row {
+  td {
+    text-align: center !important;
+    padding: 10rem 0 !important;
+    font-size: 1.4rem;
+    color: $text-color-secondary;
+  }
+}

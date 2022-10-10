@@ -1,0 +1,44 @@
+<p-table
+        (onLazyLoad)="service.limitUpdate($event)"
+        [(first)]="service.first"
+        [@fade]="service.elements.length"
+        [columns]="colNames"
+        [dataKey]="dataKey"
+        [lazy]="true"
+        [paginator]="true"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [rows]="service.rows"
+        [showCurrentPageReport]="true"
+        [totalRecords]="service.totalElements"
+        [value]="service.elements"
+        currentPageReportTemplate="Показано с {first} по {last} из {totalRecords}"
+        responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+        <tr>
+            <th *ngFor="let col of colNames">
+                {{col}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template let-columns pTemplate="emptymessage">
+        <tr class="empty-row">
+            <td [attr.colspan]="columns.length" class="with-icon">
+                <i class="pi pi-info-circle"></i> Не найдено
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template let-columns="columns" let-row pTemplate="body">
+        <tr (click)="onSelect(row)" *ngIf="row !== undefined" [ngClass]="{ beginning: row?.isStarted }"
+            [pSelectableRow]="row"
+            class="row">
+            <ng-container *ngTemplateOutlet="rowRef; context:{$implicit:row}"></ng-container>
+        </tr>
+        <tr *ngIf="row === undefined">
+            <td *ngFor="let r of columns">
+                <p-skeleton height="1.8rem" width="100%"></p-skeleton>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+
