@@ -61,7 +61,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         name: new FormControl("", Validators.required),
         password: new FormControl("", [
             Validators.required,
-            Validators.minLength(8),
+            Validators.minLength(6),
         ]),
         role: new FormControl(1, Validators.required),
         avatar: new FormControl(undefined),
