@@ -11,9 +11,9 @@ export class DownloadTestingRequest implements TestingRequest {
     private requestIndex = 0;
     private run = true;
     private first = true;
-    private endTime?: number;
+    private endTime?: number = Number.MAX_VALUE;
     private intervalIndex: any;
-    private testingTime;
+    private readonly testingTime;
 
     constructor(testingTime = 15300) {
         this.testingTime = testingTime;
@@ -45,6 +45,17 @@ export class DownloadTestingRequest implements TestingRequest {
         // Обработчик получения количества загруженных байт
         this.request.onprogress = (event) => {
             this.byteCounterBuffer[this.requestIndex] = event.loaded;
+            if (this.first) {
+                this.first = false;
+                this.endTime = Date.now() + this.testingTime;
+                this.intervalIndex = setInterval(() => {
+                    this.updater.next(this.byteCounterBuffer.reduce((a, b) => a + b, 0))
+                    if (!this.first && this.endTime && this.endTime < Date.now()) {
+                        this.onEndTest()
+                        this.abort();
+                    }
+                }, 150)
+            }
         };
 
         this.request.onloadend = () => {
@@ -57,17 +68,6 @@ export class DownloadTestingRequest implements TestingRequest {
         } // Обработчик ошибки
 
         this.request.send(); // Отправляем запрос
-        if (this.first) {
-            this.first = false;
-            this.endTime = Date.now() + this.testingTime;
-            this.intervalIndex = setInterval(() => {
-                this.updater.next(this.byteCounterBuffer.reduce((a, b) => a + b, 0))
-                if (!this.first && this.endTime && this.endTime < Date.now()) {
-                    this.onEndTest()
-                    this.abort();
-                }
-            }, 150)
-        }
     }
 
     abort(): void {
