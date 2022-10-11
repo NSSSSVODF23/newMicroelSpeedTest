@@ -30,6 +30,7 @@ export class UploadTestingRequest implements TestingRequest {
         for (let index = 0; index < this.SIZE_OF_REQUEST; index++) {
             this.data.push(new ArrayBuffer(this.SIZE)); // Заполняем массив данными
         }
+        this.updater.subscribe({complete: this.onEndTest.bind(this)})
     }
 
     abort(): void {
@@ -119,26 +120,19 @@ export class UploadTestingRequest implements TestingRequest {
         this.webSocket.subscribe({
             next: (value) => {
                 this.lastParticle = value;
-                // Если перерыв между запросами, то пропускаем
-                if (!this.isBreak) {
-                    // Пропускаем несколько обновлений
-                    if (true) {
-                        if (this.endTimePreviousRequest !== 0) {
-                            this.decreaseTimeSum -= (Date.now() - this.endTimePreviousRequest) - 150 * 2;
-                            value.e += this.decreaseTimeSum;
-                            this.updater.next({...value});
-                            this.endTimePreviousRequest = 0; // Обнуляем время конца предыдущего запроса
-                        } else {
-                            // Если нет, то просто обновляем
-                            value.e += this.decreaseTimeSum;
-                            this.updater.next({...value});
-                        }
-                        // Если пакет определен и время его получение превышает таймаут, то прерываем тест
-                        if (value.e > 15000) {
-                            this.onEndTest();
-                            this.abort()
-                        }
-                    }
+                if (this.endTimePreviousRequest !== 0) {
+                    this.decreaseTimeSum -= (Date.now() - this.endTimePreviousRequest) - 150 * 2;
+                    value.e += this.decreaseTimeSum;
+                    this.updater.next({...value});
+                    this.endTimePreviousRequest = 0; // Обнуляем время конца предыдущего запроса
+                } else {
+                    // Если нет, то просто обновляем
+                    value.e += this.decreaseTimeSum;
+                    this.updater.next({...value});
+                }
+                // Если пакет определен и время его получение превышает таймаут, то прерываем тест
+                if (value.e > 15000) {
+                    this.abort()
                 }
             },
             error: err => {
