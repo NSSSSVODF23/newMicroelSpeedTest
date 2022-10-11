@@ -53,7 +53,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         ),
         password: new FormControl("", [
             Validators.required,
-            Validators.minLength(8),
+            Validators.minLength(6),
         ]),
         role: new FormControl(1, Validators.required),
     });
@@ -71,7 +71,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     errorMessages = {
         loginAlreadyExist: "Данный логин уже существует",
         required: "Заполните поле",
-        minlength: "Минимальная длина 8 символов",
+        minlength: "Минимальная длина 6 символов",
     };
     isMobile = false;
     private subscription: Subscription[] = [];

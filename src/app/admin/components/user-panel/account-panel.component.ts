@@ -31,7 +31,7 @@ export class AccountPanelComponent implements OnInit, OnDestroy {
     errorMessages = {
         loginAlreadyExist: "Данный логин уже существует",
         required: "Заполните поле",
-        minlength: "Минимальная длина 8 символов",
+        minlength: "Минимальная длина 6 символов",
     };
     subscription: Subscription[] = [];
 
