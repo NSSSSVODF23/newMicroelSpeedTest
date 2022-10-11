@@ -53,6 +53,7 @@ import {DurationPipe} from '../pipes/duration.pipe';
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ChipsModule} from "primeng/chips";
 import {RippleModule} from "primeng/ripple";
+import {MessageModule} from "primeng/message";
 
 @NgModule({
     declarations: [
@@ -108,7 +109,8 @@ import {RippleModule} from "primeng/ripple";
         InputSwitchModule,
         OverlayPanelModule,
         ChipsModule,
-        RippleModule
+        RippleModule,
+        MessageModule
     ],
     providers: [MessageService, ConfirmationService, NgxImageCompressService],
     exports: [

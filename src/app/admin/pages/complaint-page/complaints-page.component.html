@@ -11,6 +11,7 @@
         </ng-template>
         <ng-container *ngTemplateOutlet="filter"></ng-container>
     </p-card>
+    <ng-container *ngTemplateOutlet="subscribeLink"></ng-container>
 </div>
 
 <div *ngIf="isMobile" class="content-wrapper">
@@ -19,7 +20,9 @@
         <app-filter-chips [chips]="listLoader.filterChips"></app-filter-chips>
     </div>
     <ng-container *ngTemplateOutlet="list"></ng-container>
+    <ng-container *ngTemplateOutlet="subscribeLink"></ng-container>
 </div>
+
 <p-dialog [(visible)]="searchVisible" [dismissableMask]="true" [draggable]="false" [modal]="true"
           [showHeader]="false"
           position="top">
@@ -27,6 +30,20 @@
         <ng-container *ngTemplateOutlet="filter"></ng-container>
     </ng-template>
 </p-dialog>
+
+<ng-template #subscribeLink>
+    <p-messages [style]="{margin: isMobile?'0 2rem':'0'}" severity="info">
+        <ng-template pTemplate="content">
+            <div>
+                Подпишитесь на канал в <a [style]="{margin:'0 .3rem'}" href="https://t.me/+el1BMzUsy8VjZDAy"
+                                          target="_blank">Telegram</a>,
+                чтобы получать
+                уведомления о
+                новых обращениях.
+            </div>
+        </ng-template>
+    </p-messages>
+</ng-template>
 
 <ng-template #filter>
     <div class="search-fields-container">
