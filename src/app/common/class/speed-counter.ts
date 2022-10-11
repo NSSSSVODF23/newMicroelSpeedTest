@@ -147,7 +147,6 @@ export class SpeedCounter {
     /**
      * Добавляет данные по текущей скорости из Upload Particle
      * @param {UploadParticle} uploadPacket Объект с данными полученный от сервера
-     * @param {number} decreaseTime Время затраченное на переключение между запросами
      */
     public appendUploadParticle(
         uploadPacket: UploadParticle
@@ -197,7 +196,8 @@ export class SpeedCounter {
                 avgValuesArray.push(roundToPrecision(avgValue, 3)); // Округляем значение до 3 знаков после запятой и записываем в массив
             }
         }
-        this.slowValuesArray.push(this.avgValuesArrays[this.smoothLevel].slice(-30).sort((a, b) => b - a)[0]);
+        const lastSorted = this.avgValuesArrays[this.smoothLevel].slice(-30).sort((a, b) => b - a).slice(0, 3);
+        this.slowValuesArray.push(lastSorted.reduce((prev, curr) => prev + curr, 0) / lastSorted.length);
     }
 
     /**
