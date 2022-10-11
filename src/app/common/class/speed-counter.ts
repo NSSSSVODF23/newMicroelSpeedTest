@@ -123,8 +123,10 @@ export class SpeedCounter {
      * Рассчитывает окончательные значения и останавливает диспетчер обновления интерфейса.
      */
     public calculateFinal() {
-        this.currentValue = getAvgMaxFromArray(this.avgValuesArrays[this.smoothLevel], 30, 10);
-        this.slowCurrentValue = getAvgMaxFromArray(this.slowValuesArray, 30, 10)
+        const sortedFast = this.avgValuesArrays[this.smoothLevel].sort((a, b) => a - b).slice(-30);
+        const sortedSlow = this.slowValuesArray.sort((a, b) => a - b).slice(-30);
+        this.currentValue = sortedFast.reduce((prev, curr) => prev + curr, 0) / sortedFast.length;
+        this.slowCurrentValue = sortedSlow.reduce((prev, curr) => prev + curr, 0) / sortedSlow.length;
     }
 
     /**
