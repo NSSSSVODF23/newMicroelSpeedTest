@@ -2,7 +2,6 @@ import {TestingRequest} from "../../interfaces/testing-request";
 import {Observable, Subject} from "rxjs";
 import {webSocket} from "rxjs/webSocket";
 import {UploadParticle} from "../speed-counter";
-import {TestingStage} from "../../transport/enums/testing-stage";
 
 const HOSTNAME = location.hostname;
 const PORT = "8080";
@@ -30,13 +29,15 @@ export class UploadTestingRequest implements TestingRequest {
         for (let index = 0; index < this.SIZE_OF_REQUEST; index++) {
             this.data.push(new ArrayBuffer(this.SIZE)); // Заполняем массив данными
         }
-        this.updater.subscribe({complete: this.onEndTest.bind(this)})
+        this.getObserver().subscribe({
+            complete: () => setTimeout(() => this.endTestEvent(), 0)
+        })
     }
 
     abort(): void {
         this.run = false;
         this.activeRequests.filter(rw => !rw.isEnd).forEach(rw => rw.request.abort())
-        if (!this.updater.closed) this.updater.complete()
+        this.updater.complete()
         this.webSocket.complete()
     }
 
@@ -70,31 +71,12 @@ export class UploadTestingRequest implements TestingRequest {
             this.webSocket.complete();
         };
 
-        requestWrapper.request.upload.onloadstart = () => {
-            // if (this.isBreak) {
-            //     // Если флаг прерывания
-            //     this.isBreak = false; // Отключаем флаг прерывания
-            // }
-        }
-
         requestWrapper.request.upload.onprogress = ev => {
             if (this.activeRequests.filter(rw => !rw.isEnd).length < 2 && ev.loaded > 50_000_000 / 2) this.sendRequest()
         }
 
-        // Обрабатываем начало нового запроса
-        // this.requestWrapper.upload.onprogress = () => {
-        //     if (this.isBreak) {
-        //         // Если флаг прерывания
-        //         this.isBreak = false; // Отключаем флаг прерывания
-        //     }
-        // };
-
         // Обрабатываем конец нового запроса
         requestWrapper.request.upload.onloadend = () => {
-            // this.isBreak = true; // Устанавливаем флаг прерывания
-            // this.endTimePreviousRequest = Date.now(); // Устанавливаем время конца текущего запроса
-            // this.updateIndex = 0; // Обнуляем количество обновлений
-            // this.sendRequest(); // Начинаем новый запрос
             requestWrapper.isEnd = true;
         };
 
@@ -106,14 +88,14 @@ export class UploadTestingRequest implements TestingRequest {
     }
 
     setEndTestHandler(handler: () => void): void {
-        this.onEndTest = handler;
+        this.endTestEvent = handler;
     }
 
     getName(): string {
         return "UploadTestingRequest";
     }
 
-    private onEndTest = () => {
+    private endTestEvent = () => {
     }
 
     private connectToSocket() {
