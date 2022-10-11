@@ -69,13 +69,20 @@ export class UploadTestingRequest implements TestingRequest {
             this.webSocket.complete();
         };
 
-        // Обрабатываем начало нового запроса
-        this.request.upload.onprogress = () => {
+        this.request.upload.onloadstart = () => {
             if (this.isBreak) {
                 // Если флаг прерывания
                 this.isBreak = false; // Отключаем флаг прерывания
             }
-        };
+        }
+
+        // Обрабатываем начало нового запроса
+        // this.request.upload.onprogress = () => {
+        //     if (this.isBreak) {
+        //         // Если флаг прерывания
+        //         this.isBreak = false; // Отключаем флаг прерывания
+        //     }
+        // };
 
         // Обрабатываем конец нового запроса
         this.request.upload.onloadend = () => {
@@ -109,9 +116,9 @@ export class UploadTestingRequest implements TestingRequest {
                 // Если перерыв между запросами, то пропускаем
                 if (!this.isBreak) {
                     // Пропускаем несколько обновлений
-                    if (this.updateIndex++ > 3) {
+                    if (this.updateIndex++ > 0) {
                         if (this.endTimePreviousRequest !== 0) {
-                            this.decreaseTimeSum -= (Date.now() - this.endTimePreviousRequest) - 150 * 4;
+                            this.decreaseTimeSum -= (Date.now() - this.endTimePreviousRequest) - 150 * 2;
                             value.e += this.decreaseTimeSum;
                             this.updater.next({...value});
                             this.endTimePreviousRequest = 0; // Обнуляем время конца предыдущего запроса
