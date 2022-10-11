@@ -43,17 +43,18 @@ export class MeasurePageGuard implements CanActivate {
         | boolean
         | UrlTree {
         return this.api.isAlreadyRunning().pipe(map(r => {
-            if (r.isError || !this.testingService.isSocketOpen) {
-                if (r.isError) this.messageService.add({
-                    key: "msg",
-                    severity: "warn",
-                    life: 10000,
-                    detail: "На одном из ваших устройств уже происходит тестирование, дождитесь его окончания."
-                })
-                return this.router.createUrlTree(["/"]);
-            } else {
-                return true;
-            }
+            // if (r.isError || !this.testingService.isSocketOpen) {
+            //     if (r.isError) this.messageService.add({
+            //         key: "msg",
+            //         severity: "warn",
+            //         life: 10000,
+            //         detail: "На одном из ваших устройств уже происходит тестирование, дождитесь его окончания."
+            //     })
+            //     return this.router.createUrlTree(["/"]);
+            // } else {
+            //     return true;
+            // }
+            if (this.testingService.isSocketOpen) return this.testingService.isSocketOpen; else return this.router.createUrlTree(["/"]);
         }))
     }
 }
