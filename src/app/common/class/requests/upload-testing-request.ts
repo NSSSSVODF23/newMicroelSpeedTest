@@ -8,7 +8,7 @@ const HOSTNAME = location.hostname;
 const PORT = "8080";
 
 export class UploadTestingRequest implements TestingRequest {
-    private request = new XMLHttpRequest(); // Объявляем новый запрос
+    private activeRequests: { request: XMLHttpRequest, isEnd: boolean }[] = [];
     private updater = new Subject<UploadParticle | number>();
     private webSocket = webSocket<UploadParticle>({
         url: `ws://${HOSTNAME}:${PORT}/upload/${localStorage.getItem(
@@ -20,7 +20,7 @@ export class UploadTestingRequest implements TestingRequest {
     private SIZE_OF_REQUEST = 50 * 16; // Считаем количество чанков для загрузки
     private data: ArrayBuffer[] = []; // Объявляем переменную для хранения данных
     private SIZE = 65536; // Количество байт в одном чанке
-    private isBreak = true; // Если закончился предыдущий запрос, но не начался новый
+    private isBreak = false; // Если закончился предыдущий запрос, но не начался новый
     private updateIndex = 0; // Текущее количество обновлений в текущем запросе
     private endTimePreviousRequest: number = 0; // Конец предыдущего запроса
     private decreaseTimeSum = 0;
@@ -34,7 +34,7 @@ export class UploadTestingRequest implements TestingRequest {
 
     abort(): void {
         this.run = false;
-        this.request.abort()
+        this.activeRequests.filter(rw => !rw.isEnd).forEach(rw => rw.request.abort())
         if (!this.updater.closed) this.updater.complete()
         this.webSocket.complete()
     }
@@ -51,10 +51,10 @@ export class UploadTestingRequest implements TestingRequest {
             this.endTimePreviousRequest = Date.now();
         }
 
-        this.request = new XMLHttpRequest();
+        const requestWrapper = {request: new XMLHttpRequest(), isEnd: false};
 
         // Устанавливаем параметры запроса
-        this.request.open(
+        requestWrapper.request.open(
             "POST",
             `http://${HOSTNAME}:${PORT}/public/upload?deviceId=${localStorage.getItem(
                 "deviceId",
@@ -62,22 +62,26 @@ export class UploadTestingRequest implements TestingRequest {
         );
 
         // Устанавливаем обработчик ошибки
-        this.request.upload.onerror = () => {
+        requestWrapper.request.upload.onerror = () => {
             this.run = false;
-            this.request.abort()
+            this.activeRequests.filter(rw => !rw.isEnd).forEach(rw => rw.request.abort())
             this.updater.error("Произошла ошибка в соединении с сервером тестирования скорости загрузки.");
             this.webSocket.complete();
         };
 
-        this.request.upload.onloadstart = () => {
-            if (this.isBreak) {
-                // Если флаг прерывания
-                this.isBreak = false; // Отключаем флаг прерывания
-            }
+        requestWrapper.request.upload.onloadstart = () => {
+            // if (this.isBreak) {
+            //     // Если флаг прерывания
+            //     this.isBreak = false; // Отключаем флаг прерывания
+            // }
+        }
+
+        requestWrapper.request.upload.onprogress = ev => {
+            if (this.activeRequests.filter(rw => !rw.isEnd).length < 2 && ev.loaded > 50_000_000 / 2) this.sendRequest()
         }
 
         // Обрабатываем начало нового запроса
-        // this.request.upload.onprogress = () => {
+        // this.requestWrapper.upload.onprogress = () => {
         //     if (this.isBreak) {
         //         // Если флаг прерывания
         //         this.isBreak = false; // Отключаем флаг прерывания
@@ -85,17 +89,19 @@ export class UploadTestingRequest implements TestingRequest {
         // };
 
         // Обрабатываем конец нового запроса
-        this.request.upload.onloadend = () => {
-            this.isBreak = true; // Устанавливаем флаг прерывания
-            this.endTimePreviousRequest = Date.now(); // Устанавливаем время конца текущего запроса
-            this.updateIndex = 0; // Обнуляем количество обновлений
-            this.sendRequest(); // Начинаем новый запрос
+        requestWrapper.request.upload.onloadend = () => {
+            // this.isBreak = true; // Устанавливаем флаг прерывания
+            // this.endTimePreviousRequest = Date.now(); // Устанавливаем время конца текущего запроса
+            // this.updateIndex = 0; // Обнуляем количество обновлений
+            // this.sendRequest(); // Начинаем новый запрос
+            requestWrapper.isEnd = true;
         };
 
         // Отправляем запрос
-        this.request.send(
+        requestWrapper.request.send(
             new Blob(this.data, {type: "application/octet-stream"}),
         );
+        this.activeRequests.push(requestWrapper);
     }
 
     setEndTestHandler(handler: () => void): void {
@@ -116,7 +122,7 @@ export class UploadTestingRequest implements TestingRequest {
                 // Если перерыв между запросами, то пропускаем
                 if (!this.isBreak) {
                     // Пропускаем несколько обновлений
-                    if (this.updateIndex++ > 0) {
+                    if (true) {
                         if (this.endTimePreviousRequest !== 0) {
                             this.decreaseTimeSum -= (Date.now() - this.endTimePreviousRequest) - 150 * 2;
                             value.e += this.decreaseTimeSum;
@@ -137,7 +143,7 @@ export class UploadTestingRequest implements TestingRequest {
             },
             error: err => {
                 this.run = false;
-                this.request.abort()
+                this.activeRequests.filter(rw => !rw.isEnd).forEach(rw => rw.request.abort())
                 this.updater.error("Потеряно соединение с сокет сервером, при тестировании скорости загрузки.");
             }
         })
