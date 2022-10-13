@@ -56,7 +56,7 @@ export class AuthService {
     ) {
         // Записать ответ в поля объекта
         this.http
-            .post<AuthResponse>(`http://${location.hostname}:8080/public/login`, {
+            .post<AuthResponse>(`http://${location.hostname}:${location.port}/public/login`, {
                 username,
                 password,
             })
