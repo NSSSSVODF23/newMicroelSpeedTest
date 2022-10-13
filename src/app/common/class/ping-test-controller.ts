@@ -1,6 +1,7 @@
 import {BehaviorSubject, delay, last, Observable, retryWhen} from "rxjs";
 import {v4} from "uuid";
 import {webSocket, WebSocketSubject} from "rxjs/webSocket";
+import {endpointWs} from "../../api-endpoint";
 
 /**
  * Интерфейс для описания объекта тестирования времени запроса, его тело
@@ -25,8 +26,6 @@ interface PingTestResultValues {
 const TIMEOUT = 5000; // Таймаут тестирования
 const REQUEST_COUNT = 100; // Количество запросов
 const COUNT_SKIP_RESPONSE = 8; // Количество запросов, которые не обрабатываются в ответе
-const HOSTNAME = location.hostname;
-const PORT = location.port;
 
 /**
  * Класс аккумулирует информацию о задержках ответов от сервера
@@ -40,7 +39,7 @@ export class PingTestController {
     public pingValue = 0; // Значение задержки в миллисекундах
     public jitterValue = 0; // Значение дрожания в миллисекундах
     private webSocket: WebSocketSubject<string> = webSocket<string>({
-        url: `ws://${HOSTNAME}:${PORT}/ping/${localStorage.getItem(
+        url: `${endpointWs}/ping/${localStorage.getItem(
             "deviceId",
         )}`,
     })

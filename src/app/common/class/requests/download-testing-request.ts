@@ -1,8 +1,6 @@
 import {TestingRequest} from "../../interfaces/testing-request";
 import {Observable, Subject} from "rxjs";
-
-const HOSTNAME = location.hostname;
-const PORT = location.port;
+import {endpointHttp} from "../../../api-endpoint";
 
 export class DownloadTestingRequest implements TestingRequest {
     private activeRequests: { request: XMLHttpRequest, isRun: boolean, byteLoaded: number }[] = [];
@@ -47,7 +45,7 @@ export class DownloadTestingRequest implements TestingRequest {
 
         requestWrapper.request.open(
             "POST",
-            `http://${HOSTNAME}:${PORT}/public/download?deviceId=${localStorage.getItem(
+            `${endpointHttp}/public/download?deviceId=${localStorage.getItem(
                 "deviceId",
             )}`,
         ); // Устанавливаем параметры запроса

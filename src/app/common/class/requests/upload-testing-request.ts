@@ -2,16 +2,14 @@ import {TestingRequest} from "../../interfaces/testing-request";
 import {Observable, Subject} from "rxjs";
 import {webSocket} from "rxjs/webSocket";
 import {UploadParticle} from "../speed-counter";
-
-const HOSTNAME = location.hostname;
-const PORT = location.port;
+import {endpointHttp, endpointWs} from "../../../api-endpoint";
 
 export class UploadTestingRequest implements TestingRequest {
     private isEnded = false;
     private activeRequests: { request: XMLHttpRequest, isEnd: boolean }[] = [];
     private updater = new Subject<UploadParticle | number>();
     private webSocket = webSocket<UploadParticle>({
-        url: `ws://${HOSTNAME}:${PORT}/upload/${localStorage.getItem(
+        url: `${endpointWs}/upload/${localStorage.getItem(
             "deviceId",
         )}`,
     });
@@ -65,7 +63,7 @@ export class UploadTestingRequest implements TestingRequest {
         // Устанавливаем параметры запроса
         requestWrapper.request.open(
             "POST",
-            `http://${HOSTNAME}:${PORT}/public/upload?deviceId=${localStorage.getItem(
+            `${endpointHttp}/public/upload?deviceId=${localStorage.getItem(
                 "deviceId",
             )}`,
         );

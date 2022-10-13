@@ -11,9 +11,7 @@ import {SpeedCounter} from "../../common/class/speed-counter";
 import {Router} from "@angular/router";
 import {DownloadTestingRequest} from "../../common/class/requests/download-testing-request";
 import {UploadTestingRequest} from "../../common/class/requests/upload-testing-request";
-
-const HOSTNAME = location.hostname;
-const PORT = location.port;
+import {endpointWs} from "../../api-endpoint";
 
 @Injectable({
     providedIn: "root",
@@ -29,7 +27,7 @@ export class TestingService {
 
     // Сокет соединения с сервером для общего управления тестом
     measureSocket = webSocket<MeasureActionMessage>({
-        url: `ws://${HOSTNAME}:${PORT}/measure/${localStorage.getItem(
+        url: `${endpointWs}/measure/${localStorage.getItem(
             "deviceId",
         )}`,
         openObserver: {next: () => this.isSocketOpen = true},

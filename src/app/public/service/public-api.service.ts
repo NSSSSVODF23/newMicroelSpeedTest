@@ -6,6 +6,7 @@ import {PublicApiResponse} from "../../common/transport/models/public-api-respon
 import {CreateComplaintBody} from "../../common/transport/models/complaint";
 import {DeviceInfoService} from "../../common/service/device-info.service";
 import {Page} from "../../common/transport/models/page";
+import {endpointHttp} from "../../api-endpoint";
 
 
 @Injectable({
@@ -52,7 +53,7 @@ export class PublicApiService {
     }
 
     private url(func: string) {
-        return `http://${location.hostname}:${location.port}/public/${func}`
+        return `${endpointHttp}/public/${func}`
     }
 
 

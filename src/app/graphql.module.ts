@@ -11,8 +11,9 @@ import {setContext} from "@apollo/client/link/context";
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {SubscriptionClient} from "subscriptions-transport-ws";
 import {getMainDefinition} from "@apollo/client/utilities";
+import {endpointHttp, endpointWs} from "./api-endpoint";
 
-const uri = `http://${location.hostname}:${location.port}/graphql`; // <-- add the URL of the GraphQL server here
+const uri = `${endpointHttp}/graphql`; // <-- add the URL of the GraphQL server here
 export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
     const basic = setContext((operation, context) => ({
         headers: {
@@ -27,7 +28,7 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
     }));
     // Create a WebSocket link:
     const ws = new SubscriptionClient(
-        `ws://${location.hostname}:${location.port}/subscriptions`,
+        `${endpointWs}/subscriptions`,
         {
             reconnect: true,
             connectionParams: async () => {

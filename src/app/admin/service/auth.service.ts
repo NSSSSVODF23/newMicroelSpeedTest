@@ -5,6 +5,7 @@ import {Apollo} from "apollo-angular";
 import jwtDecode from "jwt-decode";
 import {AuthResponse} from "src/app/common/transport/models/auth";
 import {decodeJWT} from "../../common/method/object";
+import {endpointHttp} from "../../api-endpoint";
 
 @Injectable({
     providedIn: "root",
@@ -56,7 +57,7 @@ export class AuthService {
     ) {
         // Записать ответ в поля объекта
         this.http
-            .post<AuthResponse>(`http://${location.hostname}:${location.port}/public/login`, {
+            .post<AuthResponse>(`${endpointHttp}/public/login`, {
                 username,
                 password,
             })
@@ -82,7 +83,7 @@ export class AuthService {
     public doRefreshToken(callback: (authorized: boolean) => void) {
         console.log("Refresh token");
         this.http
-            .post<AuthResponse>(`http://${location.hostname}:${location.port}/public/token`, {
+            .post<AuthResponse>(`${endpointHttp}/public/token`, {
                 refreshToken: this.refreshToken,
             })
             .subscribe({
