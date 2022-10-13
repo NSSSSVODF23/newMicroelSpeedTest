@@ -98,9 +98,13 @@ export class SpeedCounter {
                 }
             },
             complete: () => {
-                this.calculateFinal()
+                if (this.isEnded()) this.calculateFinal()
             }
         })
+    }
+
+    public isEnded() {
+        return this.testingRequest.getIsEnded();
     }
 
     public getObserver() {

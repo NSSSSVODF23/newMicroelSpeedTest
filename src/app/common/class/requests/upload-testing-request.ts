@@ -4,9 +4,10 @@ import {webSocket} from "rxjs/webSocket";
 import {UploadParticle} from "../speed-counter";
 
 const HOSTNAME = location.hostname;
-const PORT = "8080";
+const PORT = location.port;
 
 export class UploadTestingRequest implements TestingRequest {
+    private isEnded = false;
     private activeRequests: { request: XMLHttpRequest, isEnd: boolean }[] = [];
     private updater = new Subject<UploadParticle | number>();
     private webSocket = webSocket<UploadParticle>({
@@ -30,8 +31,14 @@ export class UploadTestingRequest implements TestingRequest {
             this.data.push(new ArrayBuffer(this.SIZE)); // Заполняем массив данными
         }
         this.getObserver().subscribe({
-            complete: () => setTimeout(() => this.endTestEvent(), 0)
+            complete: () => {
+                if (this.isEnded) setTimeout(() => this.endTestEvent(), 0)
+            }
         })
+    }
+
+    getIsEnded(): boolean {
+        return this.isEnded
     }
 
     abort(): void {
@@ -114,6 +121,7 @@ export class UploadTestingRequest implements TestingRequest {
                 }
                 // Если пакет определен и время его получение превышает таймаут, то прерываем тест
                 if (value.e > 15000) {
+                    this.isEnded = true;
                     this.abort()
                 }
             },

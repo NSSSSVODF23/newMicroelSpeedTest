@@ -40,6 +40,8 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {RadarPageComponent} from '../pages/radar-page/radar-page.component';
 import {AdminModule} from "../../admin/admin-router/admin.module";
 import {ToastModule} from "primeng/toast";
+import {OldMeasuresPageComponent} from '../pages/old-measures-page/old-measures-page.component';
+import {SkeletonModule} from "primeng/skeleton";
 
 @NgModule({
     declarations: [
@@ -50,6 +52,7 @@ import {ToastModule} from "primeng/toast";
         ErrorPageComponent,
         ComplaintPageComponent,
         RadarPageComponent,
+        OldMeasuresPageComponent,
     ],
     imports: [
         CommonModule,
@@ -70,7 +73,8 @@ import {ToastModule} from "primeng/toast";
         MessageModule,
         ProgressSpinnerModule,
         AdminModule,
-        ToastModule
+        ToastModule,
+        SkeletonModule
     ],
     providers: [TestingService, DeviceInfoService, MeasurePageGuard],
 })

@@ -1,7 +1,4 @@
-import {
-    Component,
-    OnInit,
-} from "@angular/core";
+import {Component, OnInit,} from "@angular/core";
 import {DeviceInfoService} from "src/app/common/service/device-info.service";
 import {TestingService} from "../../service/testing.service";
 import {Title} from "@angular/platform-browser";
@@ -11,8 +8,7 @@ import {PublicApiService} from "../../service/public-api.service";
     templateUrl: "./index-page.component.html",
     styleUrls: ["./index-page.component.scss"],
 })
-export class IndexPageComponent
-    implements OnInit {
+export class IndexPageComponent implements OnInit {
     isMobile: boolean = false;
 
     constructor(

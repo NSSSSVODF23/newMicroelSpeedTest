@@ -13,7 +13,7 @@ import {DownloadTestingRequest} from "../../common/class/requests/download-testi
 import {UploadTestingRequest} from "../../common/class/requests/upload-testing-request";
 
 const HOSTNAME = location.hostname;
-const PORT = "8080";
+const PORT = location.port;
 
 @Injectable({
     providedIn: "root",
@@ -22,7 +22,6 @@ export class TestingService {
     pingTest: PingTestController // Объект хранит информацию о текущем тесте на пинг
     downloadTest: SpeedCounter // Объект для хранения информации о текущем тесте на скачивание
     uploadTest: SpeedCounter // Объект для хранения информации о текущем тесте на загрузку
-    isEnd = false;
     isSocketOpen = false;
 
     testStage = TestingStage.UNKNOWN;
@@ -66,7 +65,6 @@ export class TestingService {
     }
 
     public clear() {
-        this.isEnd = false;
         this.downloadTest.abort()
         this.uploadTest.abort()
         this.pingTest = new PingTestController(); // Объект хранит информацию о текущем тесте на пинг
@@ -99,7 +97,6 @@ export class TestingService {
         })
         this.uploadTest.getObserver().subscribe({error: this.errorHandler.bind(this)})
         this.uploadTest.onTestEnd(() => {
-            this.isEnd = true;
             // Отправляем запрос на завершение тестирования
             this.measureSocket.next({
                 type: MeasureActionTypes.END,

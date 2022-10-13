@@ -26,7 +26,7 @@ const TIMEOUT = 5000; // Таймаут тестирования
 const REQUEST_COUNT = 100; // Количество запросов
 const COUNT_SKIP_RESPONSE = 8; // Количество запросов, которые не обрабатываются в ответе
 const HOSTNAME = location.hostname;
-const PORT = "8080";
+const PORT = location.port;
 
 /**
  * Класс аккумулирует информацию о задержках ответов от сервера

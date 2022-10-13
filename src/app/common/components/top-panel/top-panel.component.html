@@ -1,3 +1,6 @@
 <div>
     <img [routerLink]="'/'" alt="" class="main-logo" src="/assets/images/logo.svg" srcset=""/>
+    <button *ngIf="router.url === '/' || router.url.includes('/result?')" [routerLink]="'/results'"
+            class="p-button-text"
+            label="Мои результаты" pButton></button>
 </div>

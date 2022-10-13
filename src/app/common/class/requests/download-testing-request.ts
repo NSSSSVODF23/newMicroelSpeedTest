@@ -2,21 +2,29 @@ import {TestingRequest} from "../../interfaces/testing-request";
 import {Observable, Subject} from "rxjs";
 
 const HOSTNAME = location.hostname;
-const PORT = "8080";
+const PORT = location.port;
 
 export class DownloadTestingRequest implements TestingRequest {
-    private request = new XMLHttpRequest();
+    private activeRequests: { request: XMLHttpRequest, isRun: boolean, byteLoaded: number }[] = [];
     private updater = new Subject<number>();
-    private byteCounterBuffer: number[] = [];
-    private requestIndex = 0;
     private run = true;
     private first = true;
     private endTime?: number = Number.MAX_VALUE;
     private intervalIndex: any;
     private readonly testingTime;
+    private isEnded = false;
 
     constructor(testingTime = 15300) {
         this.testingTime = testingTime;
+        this.getObserver().subscribe({
+            complete: () => {
+                if (this.isEnded) this.endTestEvent()
+            }
+        })
+    }
+
+    getIsEnded(): boolean {
+        return this.isEnded
     }
 
     getName(): string {
@@ -29,13 +37,15 @@ export class DownloadTestingRequest implements TestingRequest {
 
     sendRequest(): void {
         if (!this.first && this.endTime && this.endTime < Date.now()) {
-            this.onEndTest()
+            this.endTestEvent()
             this.abort()
         }
         if (!this.run) return;
-        this.request = new XMLHttpRequest(); // Создаем запрос
 
-        this.request.open(
+        const requestWrapper = {request: new XMLHttpRequest(), isRun: true, byteLoaded: 0}; // Создаем запрос
+        this.activeRequests.push(requestWrapper);
+
+        requestWrapper.request.open(
             "POST",
             `http://${HOSTNAME}:${PORT}/public/download?deviceId=${localStorage.getItem(
                 "deviceId",
@@ -43,44 +53,44 @@ export class DownloadTestingRequest implements TestingRequest {
         ); // Устанавливаем параметры запроса
 
         // Обработчик получения количества загруженных байт
-        this.request.onprogress = (event) => {
-            this.byteCounterBuffer[this.requestIndex] = event.loaded;
+        requestWrapper.request.onprogress = (event) => {
+            requestWrapper.byteLoaded = event.loaded;
             if (this.first) {
                 this.first = false;
                 this.endTime = Date.now() + this.testingTime;
                 this.intervalIndex = setInterval(() => {
-                    this.updater.next(this.byteCounterBuffer.reduce((a, b) => a + b, 0))
+                    this.updater.next(this.activeRequests.map(rw => rw.byteLoaded).reduce((a, b) => a + b, 0))
                     if (!this.first && this.endTime && this.endTime < Date.now()) {
-                        this.onEndTest()
+                        this.isEnded = true;
                         this.abort();
                     }
                 }, 150)
             }
+            if (this.activeRequests.map(rw => rw.isRun).filter(isRun => isRun).length < 2 && event.loaded > 50_000_000 / 2) this.sendRequest();
         };
 
-        this.request.onloadend = () => {
-            this.requestIndex++;
-            this.sendRequest();
+        requestWrapper.request.onloadend = () => {
+            requestWrapper.isRun = false;
         }
 
-        this.request.onerror = () => {
+        requestWrapper.request.onerror = () => {
             this.updater.error("Произошла ошибка в соединении с сервером тестирования скорости скачивания.");
         } // Обработчик ошибки
 
-        this.request.send(); // Отправляем запрос
+        requestWrapper.request.send(); // Отправляем запрос
     }
 
     abort(): void {
         this.run = false;
-        this.request.abort();
+        this.activeRequests.filter(rw => rw.isRun).forEach(rw => rw.request.abort());
         if (!this.updater.closed) this.updater.complete();
         clearInterval(this.intervalIndex);
     }
 
     setEndTestHandler(handler: () => void): void {
-        this.onEndTest = handler;
+        this.endTestEvent = handler;
     }
 
-    private onEndTest = () => {
+    private endTestEvent = () => {
     };
 }

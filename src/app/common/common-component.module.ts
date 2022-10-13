@@ -16,6 +16,7 @@ import {RippleModule} from "primeng/ripple";
 import {HScrollDirective} from './directivies/h-scroll.directive';
 import {TooltipTouchDirective} from './directivies/tooltip-touch.directive';
 import {RouterModule} from "@angular/router";
+import {ButtonModule} from "primeng/button";
 
 @NgModule({
     declarations: [
@@ -31,7 +32,7 @@ import {RouterModule} from "@angular/router";
         HScrollDirective,
         TooltipTouchDirective,
     ],
-    imports: [CommonModule, RippleModule, RouterModule],
+    imports: [CommonModule, RippleModule, RouterModule, ButtonModule],
     exports: [
         LabelComponent,
         PingResultValuesPanelComponent,

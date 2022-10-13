@@ -15,8 +15,14 @@ export class AuthService {
     private updateObserver = new UpdateTokenObserver();
 
     constructor(readonly http: HttpClient, readonly router: Router) {
-        this.loadTokens();
+        this.loadTokens()
+        if (this.hasRefresh()) this.doRefreshToken(() => {
+        })
         this.updateObserver.startObserve(this);
+    }
+
+    public hasRefresh(): boolean {
+        return typeof this.refreshToken === "string"
     }
 
     public readonly isAuth = () => {
@@ -70,13 +76,13 @@ export class AuthService {
 
     public doLogout() {
         this.saveTokens(null, null);
-        this.router.navigate(["/signin"]);
+        this.router.navigate(["/signin"]).then();
     }
 
     public doRefreshToken(callback: (authorized: boolean) => void) {
         console.log("Refresh token");
         this.http
-            .post<AuthResponse>(`http://${location.hostname}:8080/public/token`, {
+            .post<AuthResponse>(`http://${location.hostname}:${location.port}/public/token`, {
                 refreshToken: this.refreshToken,
             })
             .subscribe({
@@ -126,12 +132,20 @@ class UpdateTokenObserver {
             if (token) {
                 const decoded: any = jwtDecode(token);
                 const currentTime = Date.now();
+                if (!decoded.exp) {
+                    auth.doRefreshToken(() => {
+                    })
+                    return;
+                }
                 const expiresIn = decoded.exp * 1000;
                 const deltaTime = (expiresIn - currentTime) / 1000;
                 if (deltaTime < 10) {
                     auth.doRefreshToken(() => {
                     });
                 }
+            } else if (auth.hasRefresh()) {
+                auth.doRefreshToken(() => {
+                })
             }
         }, 1000);
     }

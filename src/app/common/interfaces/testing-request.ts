@@ -12,4 +12,6 @@ export interface TestingRequest {
     setEndTestHandler(handler: () => void): void
 
     getName(): string;
+
+    getIsEnded(): boolean
 }

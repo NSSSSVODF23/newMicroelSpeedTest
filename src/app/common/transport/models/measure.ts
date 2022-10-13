@@ -4,6 +4,7 @@ import {SpeedChartPoint} from "../../components/speed-chart/speed-chart.componen
 import {Device} from "../../service/device-info.service";
 import {Session} from "./session";
 import {MeasureActionTypes} from "./measure-action-message";
+import {MeasureConnectionTypes} from "../enums/connection-types";
 
 /**
  * Модель данных для транспортировки информации об измерении.
@@ -13,7 +14,7 @@ export class Measure {
     device?: Device;
     session?: Session;
     created?: Date;
-    connectionType?: MeasureActionTypes;
+    connectionType?: MeasureConnectionTypes;
     ping?: number;
     pingJitter?: number;
     downloadSpeed?: number;

@@ -5,6 +5,7 @@ import {catchError, map, Observable, of} from "rxjs";
 import {PublicApiResponse} from "../../common/transport/models/public-api-response";
 import {CreateComplaintBody} from "../../common/transport/models/complaint";
 import {DeviceInfoService} from "../../common/service/device-info.service";
+import {Page} from "../../common/transport/models/page";
 
 
 @Injectable({
@@ -22,6 +23,10 @@ export class PublicApiService {
             this.url("measure"),
             {id},
         )
+    }
+
+    public oldMeasurements(): Observable<PublicApiResponse<Page<Measure>>> {
+        return this.http.post(this.url("old-measures"), {});
     }
 
     public putRating(rating: number): Observable<PublicApiResponse<any>> {
@@ -47,7 +52,7 @@ export class PublicApiService {
     }
 
     private url(func: string) {
-        return `http://${location.hostname}:8080/public/${func}`
+        return `http://${location.hostname}:${location.port}/public/${func}`
     }
 
 

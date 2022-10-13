@@ -27,6 +27,7 @@ export class StartingTestButtonComponent implements OnInit {
     start(): void {
         this.loading = true;
         this.measure.connectionType = this.connectionType;
+        setTimeout(() => this.loading = false, 2000);
         setTimeout(() =>
                 this.router.navigate([this.target]).then()
             , 500)

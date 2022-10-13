@@ -1,0 +1,30 @@
+{
+  "/public/**": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/graphql": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/subscription": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "ws": true
+  },
+  "/upload/**": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "ws": true
+  },
+  "/ping/**": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "ws": true
+  },
+  "/measure/**": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "ws": true
+  }
+}

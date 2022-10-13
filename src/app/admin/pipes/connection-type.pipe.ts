@@ -1,16 +1,20 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import {Pipe, PipeTransform} from "@angular/core";
 
 @Pipe({
-	name: "connectionType",
+    name: "connectionType",
 })
 export class ConnectionTypePipe implements PipeTransform {
-	transform(value: string, ...args: unknown[]): string {
-		if (value === "ETHERNET") {
-			return "../../../../assets/icons/ethernet.svg";
-		} else if (value === "WIFI") {
-			return "../../../../assets/icons/wifi.svg";
-		} else {
-			return value;
-		}
-	}
+    transform(value: string | number | undefined, ...args: unknown[]): string {
+        if (value === "ETHERNET") {
+            return "../../../../assets/icons/ethernet.svg";
+        } else if (value === "WIFI") {
+            return "../../../../assets/icons/wifi.svg";
+        } else if (value === 0) {
+            return "../../../../assets/icons/ethernet.svg";
+        } else if (value === 1) {
+            return "../../../../assets/icons/wifi.svg";
+        } else {
+            return "../../../../assets/icons/wifi.svg";
+        }
+    }
 }

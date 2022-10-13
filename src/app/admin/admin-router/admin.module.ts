@@ -115,7 +115,9 @@ import {MessageModule} from "primeng/message";
     providers: [MessageService, ConfirmationService, NgxImageCompressService],
     exports: [
         DurationPipe,
-        ArrayLengthPipe
+        ArrayLengthPipe,
+        ConnectionTypePipe,
+        DeviceTypePipe
     ]
 })
 export class AdminModule {

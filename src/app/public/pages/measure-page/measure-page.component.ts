@@ -6,7 +6,6 @@ import {Subscription} from "rxjs";
 import {BreakpointObserver} from "@angular/cdk/layout";
 import {MeasureActionTypes} from "../../../common/transport/models/measure-action-message";
 import {Title} from "@angular/platform-browser";
-import {configureMeasurementChart} from "../../../common/method/chart";
 
 const fadeInOut = trigger("fade", [
     transition(":enter", [
@@ -145,7 +144,7 @@ export class MeasurePageComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        if (!this.service.isEnd) this.service.measureSocket.next({
+        if (!this.service.uploadTest.isEnded()) this.service.measureSocket.next({
             type: MeasureActionTypes.ABORT,
             deviceInfo: this.service.deviceInfo.getDeviceInfo()
         })

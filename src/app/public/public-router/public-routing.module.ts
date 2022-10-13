@@ -9,6 +9,7 @@ import {ErrorPageComponent} from "../pages/error-page/error-page.component";
 import {ComplaintPageComponent} from "../pages/complaint-page/complaint-page.component";
 import {RadarPageComponent} from "../pages/radar-page/radar-page.component";
 import {RadarGuard} from "../guards/radar.guard";
+import {OldMeasuresPageComponent} from "../pages/old-measures-page/old-measures-page.component";
 
 const routes: Routes = [
     {
@@ -37,6 +38,10 @@ const routes: Routes = [
                 path: "radar",
                 component: RadarPageComponent,
                 canActivate: [RadarGuard]
+            },
+            {
+                path: "results",
+                component: OldMeasuresPageComponent,
             }
         ],
     },
