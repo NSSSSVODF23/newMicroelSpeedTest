@@ -1,0 +1,93 @@
+<div *ngIf="!isMobile" class="content-wrapper">
+    <p-card class="result-card">
+        <ng-template pTemplate="header">
+            <div>
+                Последние 10 результатов
+            </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+            <ng-container *ngTemplateOutlet="items"></ng-container>
+            <ng-container *ngTemplateOutlet="loadTemp"></ng-container>
+        </ng-template>
+    </p-card>
+</div>
+
+<div *ngIf="isMobile" class="mobile-content-wrapper">
+    <span class="mobile-title">Последние 10 результатов</span>
+    <ng-container *ngTemplateOutlet="items"></ng-container>
+    <ng-container *ngTemplateOutlet="loadTemp"></ng-container>
+</div>
+
+<ng-template #items>
+    <div *ngFor="let measure of measuresPage.content" class="result-list-item">
+        <div class="title">
+            <img [src]="measure.connectionType | connectionType" alt="">
+            <img [src]="measure.device?.isMobile | deviceType" alt="">
+            <div class="empty"></div>
+            <span class="created">
+                        {{measure.created | date:"dd-MM-yyyy HH:mm:ss"}}
+                    </span>
+        </div>
+        <div class="val-chart-wrap">
+            <div class="m-val-wrap">
+                    <span class="m-val">
+                        <span class="label">Пинг</span>
+                        {{measure.ping | number: "1.3"}}мс
+                    </span>
+                <span class="m-val">
+                        <span class="label">Скачивание</span>
+                    {{measure.downloadSpeedUser | number:"1.3"}}Мбит/с
+                    </span>
+                <span class="m-val">
+                        <span class="label">Загрузка</span>
+                    {{measure.uploadSpeedUser | number:"1.3"}}Мбит/с
+                    </span>
+            </div>
+            <app-speed-chart [chartData]="[measure.downloadSpeedChartUser??[],measure.uploadSpeedChartUser??[]]"
+                             [fill]="['#37d9e3','#ba46f0']"
+                             [stroke]="['#37d9e3','#ba46f0']" class="chart" sized="auto"></app-speed-chart>
+        </div>
+    </div>
+    <div *ngIf="!loading && measuresPage.totalElements === 0" class="empty-message">
+        <img src="assets/images/notepad.svg">
+        <span>
+            Результатов измерений не найдено
+        </span>
+    </div>
+</ng-template>
+
+<ng-template #loadTemp>
+    <div *ngIf="loading">
+        <div *ngFor="let lItem of [].constructor(10)" class="result-list-item">
+            <div class="title">
+                <p-skeleton height="2rem" width="2rem"></p-skeleton>
+                <p-skeleton height="2rem" width="2rem"></p-skeleton>
+                <div class="empty"></div>
+                <p-skeleton height=".9rem" width="10rem"></p-skeleton>
+            </div>
+            <div class="val-chart-wrap">
+                <div class="m-val-wrap">
+                    <span class="m-val">
+                        <span class="label">Пинг</span>
+                        <p-skeleton [style]="{display:'inline-block'}" height="1.2rem" width="4rem"></p-skeleton>
+                    </span>
+                    <span class="m-val">
+                        <span class="label">Скачивание</span>
+                        <p-skeleton [style]="{display:'inline-block'}" height="1.2rem" width="8rem"></p-skeleton>
+                    </span>
+                    <span class="m-val">
+                        <span class="label">Загрузка</span>
+                        <p-skeleton [style]="{display:'inline-block'}" height="1.2rem" width="8rem"></p-skeleton>
+                    </span>
+                </div>
+                <p-skeleton class="chart" height="100%" width="100%"></p-skeleton>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #emptyMessage>
+    <div>
+        Не найдено
+    </div>
+</ng-template>
