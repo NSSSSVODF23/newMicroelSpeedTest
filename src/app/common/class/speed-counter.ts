@@ -54,7 +54,7 @@ export class SpeedCounter {
     /** Диспетчер обновления данных в объекте. При подписке возвращает ссылку на сам объект. */
     private testingRequest: TestingRequest;
     /** Массив с размерами окна сглаживания для построения нескольких графиков. */
-    private avgWindowSizes: number[] = [15, 30, 50];
+    private avgWindowSizes: number[] = [15, 40, 50];
     /** Массив массивов со сглаженными значениями для каждого окна сглаживания. */
     private avgValuesArrays: number[][] = [];
     private slowValuesArray: number[] = [];
@@ -177,7 +177,7 @@ export class SpeedCounter {
     }
 
     private addByteToTuple(loadedBytesCount: number) {
-        if (this.loadedBytesTuple.length < 4) {
+        if (this.loadedBytesTuple.length < 5) {
             this.loadedBytesTuple.push(loadedBytesCount);
         } else {
             this.loadedBytesTuple.splice(0, 1);
@@ -349,14 +349,12 @@ export class SpeedCounter {
         }
 
         // Отношение количества всплесков к 15
-        const peaksTo15Ratio = this.amplitudeCount / 15;
+        const peaksTo15Ratio = this.amplitudeCount / 50;
         const speedIntervalRation = this.speedInterval / this.maxSpeed;
+        let stabilityIndex = (1 - ((slowToFastRatio + peaksTo15Ratio) / 2 + speedIntervalRation / 4 + this.zeroRatio))
+        if (stabilityIndex < 0) stabilityIndex = 0;
         // Складываем среднее значение пропорций с пропорцией потерь, отнимаем от единицы умножаем на 100
-        this.stability =
-            (1 -
-                ((slowToFastRatio + peaksTo15Ratio) / 2 +
-                    speedIntervalRation / 4 +
-                    this.zeroRatio)) * 100;
+        this.stability = stabilityIndex * 100;
     }
 
     /**

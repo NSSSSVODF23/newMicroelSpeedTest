@@ -55,7 +55,7 @@ export class UploadTestingRequest implements TestingRequest {
             setTimeout(() => {
                 this.connectToSocket()
                 this.endTimePreviousRequest = Date.now();
-            }, 1000)
+            }, 2000)
         }
 
         const requestWrapper = {request: new XMLHttpRequest(), isEnd: false};

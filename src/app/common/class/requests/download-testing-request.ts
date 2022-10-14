@@ -64,7 +64,7 @@ export class DownloadTestingRequest implements TestingRequest {
                             this.abort();
                         }
                     }, 150)
-                }, 1000)
+                }, 2000)
             }
             if (this.activeRequests.map(rw => rw.isRun).filter(isRun => isRun).length < 2 && event.loaded > 50_000_000 / 2) this.sendRequest();
         };
