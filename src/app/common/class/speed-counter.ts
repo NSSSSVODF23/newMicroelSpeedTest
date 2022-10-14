@@ -54,7 +54,7 @@ export class SpeedCounter {
     /** Диспетчер обновления данных в объекте. При подписке возвращает ссылку на сам объект. */
     private testingRequest: TestingRequest;
     /** Массив с размерами окна сглаживания для построения нескольких графиков. */
-    private avgWindowSizes: number[] = [15, 40, 50];
+    private avgWindowSizes: number[] = [25, 40, 50];
     /** Массив массивов со сглаженными значениями для каждого окна сглаживания. */
     private avgValuesArrays: number[][] = [];
     private slowValuesArray: number[] = [];
@@ -87,6 +87,9 @@ export class SpeedCounter {
     private smoothLevel: number = 0;
     /** Время в миллисекундах затраченное на подготовку данных для следующего запроса */
     private breakTestTime: number = 0;
+    private isPreparingStage = true;
+    private startPreparing = false;
+
 
     constructor(request: TestingRequest) {
         this.testingRequest = request;
@@ -173,6 +176,13 @@ export class SpeedCounter {
                 uploadPacket.e,
             );
             this.updateValues(speed, uploadPacket.e); // Обновляем значения объекта
+        }
+    }
+
+    public endPrepare() {
+        this.isPreparingStage = false;
+        if (this.startTestTime === 0) {
+            this.startTestTime = Date.now(); // Записываем время начала замера
         }
     }
 
@@ -364,13 +374,13 @@ export class SpeedCounter {
     private updateChartsData(time?: number) {
         this.chartData.push(
             new SpeedChartPoint(
-                time ? time : Date.now() - this.startTestTime,
+                time ? time - 2000 : Date.now() - this.startTestTime,
                 this.currentValue,
             ),
         );
         this.slowChartData.push(
             new SpeedChartPoint(
-                time ? time : Date.now() - this.startTestTime,
+                time ? time - 2000 : Date.now() - this.startTestTime,
                 this.slowCurrentValue
             ),
         );
@@ -385,29 +395,32 @@ export class SpeedCounter {
      * @param {number} time Время замера
      */
     private updateValues(speed: number, time?: number) {
-        // Если еще не начался замер
-        if (this.rawValues.length === 0) {
-            this.startTestTime = Date.now(); // Записываем время начала замера
-        }
-
         this.rawValues.push(speed); // Записываем значение в массив
+        if (!this.startPreparing) {
+            this.startPreparing = true;
+            setTimeout(() => {
+                this.endPrepare();
+            }, 2000);
+        }
+        if (!this.isPreparingStage) {
 
-        this.calculateZeroRatio(); // Рассчитываем пропорцию потерей
+            this.calculateZeroRatio(); // Рассчитываем пропорцию потерей
 
-        this.calculateAvgValues(); // Рассчитываем сглаженные значения
+            this.calculateAvgValues(); // Рассчитываем сглаженные значения
 
-        // Обновляем текущее значение
-        this.currentValue =
-            this.avgValuesArrays[this.smoothLevel][this.avgValuesArrays[this.smoothLevel].length - 1];
-        this.slowCurrentValue = this.slowValuesArray[this.slowValuesArray.length - 1];
+            // Обновляем текущее значение
+            this.currentValue =
+                this.avgValuesArrays[this.smoothLevel][this.avgValuesArrays[this.smoothLevel].length - 1];
+            this.slowCurrentValue = this.slowValuesArray[this.slowValuesArray.length - 1];
 
 
-        this.calculateDifference(); // Рассчитываем разницу между медленным и быстрым значениями
+            this.calculateDifference(); // Рассчитываем разницу между медленным и быстрым значениями
 
-        this.updateChartsData(time); // Обновляем график
+            this.updateChartsData(time); // Обновляем график
 
-        this.calculateAmplitude(); // Рассчитываем амплитуду
+            this.calculateAmplitude(); // Рассчитываем амплитуду
 
-        this.calculateStability(); // Рассчитываем стабильность скорости
+            this.calculateStability(); // Рассчитываем стабильность скорости
+        }
     }
 }

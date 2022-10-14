@@ -52,10 +52,8 @@ export class UploadTestingRequest implements TestingRequest {
         if (!this.run) return;
         if (this.first) {
             this.first = false;
-            setTimeout(() => {
-                this.connectToSocket()
-                this.endTimePreviousRequest = Date.now();
-            }, 2000)
+            this.connectToSocket();
+            this.endTimePreviousRequest = Date.now();
         }
 
         const requestWrapper = {request: new XMLHttpRequest(), isEnd: false};
@@ -118,7 +116,7 @@ export class UploadTestingRequest implements TestingRequest {
                     this.updater.next({...value});
                 }
                 // Если пакет определен и время его получение превышает таймаут, то прерываем тест
-                if (value.e > 15000) {
+                if (value.e > 17000) {
                     this.isEnded = true;
                     this.abort()
                 }

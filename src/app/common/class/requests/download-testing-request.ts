@@ -12,7 +12,7 @@ export class DownloadTestingRequest implements TestingRequest {
     private readonly testingTime;
     private isEnded = false;
 
-    constructor(testingTime = 15300) {
+    constructor(testingTime = 17500) {
         this.testingTime = testingTime;
         this.getObserver().subscribe({
             complete: () => {
@@ -55,16 +55,14 @@ export class DownloadTestingRequest implements TestingRequest {
             requestWrapper.byteLoaded = event.loaded;
             if (this.first) {
                 this.first = false;
-                setTimeout(() => {
-                    this.endTime = Date.now() + this.testingTime;
-                    this.intervalIndex = setInterval(() => {
-                        this.updater.next(this.activeRequests.map(rw => rw.byteLoaded).reduce((a, b) => a + b, 0))
-                        if (!this.first && this.endTime && this.endTime < Date.now()) {
-                            this.isEnded = true;
-                            this.abort();
-                        }
-                    }, 150)
-                }, 2000)
+                this.endTime = Date.now() + this.testingTime;
+                this.intervalIndex = setInterval(() => {
+                    this.updater.next(this.activeRequests.map(rw => rw.byteLoaded).reduce((a, b) => a + b, 0))
+                    if (!this.first && this.endTime && this.endTime < Date.now()) {
+                        this.isEnded = true;
+                        this.abort();
+                    }
+                }, 150);
             }
             if (this.activeRequests.map(rw => rw.isRun).filter(isRun => isRun).length < 2 && event.loaded > 50_000_000 / 2) this.sendRequest();
         };
