@@ -55,14 +55,16 @@ export class DownloadTestingRequest implements TestingRequest {
             requestWrapper.byteLoaded = event.loaded;
             if (this.first) {
                 this.first = false;
-                this.endTime = Date.now() + this.testingTime;
-                this.intervalIndex = setInterval(() => {
-                    this.updater.next(this.activeRequests.map(rw => rw.byteLoaded).reduce((a, b) => a + b, 0))
-                    if (!this.first && this.endTime && this.endTime < Date.now()) {
-                        this.isEnded = true;
-                        this.abort();
-                    }
-                }, 150)
+                setTimeout(() => {
+                    this.endTime = Date.now() + this.testingTime;
+                    this.intervalIndex = setInterval(() => {
+                        this.updater.next(this.activeRequests.map(rw => rw.byteLoaded).reduce((a, b) => a + b, 0))
+                        if (!this.first && this.endTime && this.endTime < Date.now()) {
+                            this.isEnded = true;
+                            this.abort();
+                        }
+                    }, 150)
+                }, 1000)
             }
             if (this.activeRequests.map(rw => rw.isRun).filter(isRun => isRun).length < 2 && event.loaded > 50_000_000 / 2) this.sendRequest();
         };

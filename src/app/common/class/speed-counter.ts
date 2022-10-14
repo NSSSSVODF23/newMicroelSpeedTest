@@ -74,6 +74,7 @@ export class SpeedCounter {
     private countZeroValues: number = 0;
     /** Соотношение нулевых замеров от 0 до 1 относительно всех замеров. */
     private zeroRatio: number = 0;
+    private loadedBytesTuple: number[] = [];
     /** Дата и время последнего замера */
     private loadStamp: number = performance.now();
     /** Количество загруженных байт */
@@ -93,8 +94,10 @@ export class SpeedCounter {
             next: (value) => {
                 if (typeof value === "number") {
                     this.appendBytes(value);
+                    this.addByteToTuple(value)
                 } else {
                     this.appendUploadParticle(value);
+                    this.addByteToTuple(value.b);
                 }
             },
             complete: () => {
@@ -173,6 +176,20 @@ export class SpeedCounter {
         }
     }
 
+    private addByteToTuple(loadedBytesCount: number) {
+        if (this.loadedBytesTuple.length < 4) {
+            this.loadedBytesTuple.push(loadedBytesCount);
+        } else {
+            this.loadedBytesTuple.splice(0, 1);
+            this.loadedBytesTuple.push(loadedBytesCount);
+        }
+    }
+
+    private isHasLoss() {
+        const last = this.loadedBytesTuple.length - 1;
+        return last > 0 && this.loadedBytesTuple[0] === this.loadedBytesTuple[last];
+    }
+
     /**
      * Вычисляет значения скорости по объявленным окнам сглаживания.
      * Записывает их в соответствующие массивы в текущем объекте.
@@ -206,12 +223,8 @@ export class SpeedCounter {
         this.slowValuesArray.push(lastSorted.reduce((prev, curr) => prev + curr, 0) / lastSorted.length);
     }
 
-    /**
-     * Получает сырое значение скорости, и если оно равно нулю, то обновляет поля объекта.
-     * @param rawSpeed Сырое значение скорости.
-     */
-    private calculateZeroRatio(rawSpeed: number) {
-        if (rawSpeed === 0 && this.rawValues.length > 1) {
+    private calculateZeroRatio() {
+        if (this.isHasLoss()) {
             this.countZeroValues++; // Увеличиваем количество нулевых значений
 
             // Рассчитываем соотношение нулевых значений к общему количеству значений
@@ -381,7 +394,7 @@ export class SpeedCounter {
 
         this.rawValues.push(speed); // Записываем значение в массив
 
-        this.calculateZeroRatio(speed); // Рассчитываем пропорцию потерей
+        this.calculateZeroRatio(); // Рассчитываем пропорцию потерей
 
         this.calculateAvgValues(); // Рассчитываем сглаженные значения
 

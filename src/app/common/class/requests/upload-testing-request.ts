@@ -18,8 +18,6 @@ export class UploadTestingRequest implements TestingRequest {
     private SIZE_OF_REQUEST = 50 * 16; // Считаем количество чанков для загрузки
     private data: ArrayBuffer[] = []; // Объявляем переменную для хранения данных
     private SIZE = 65536; // Количество байт в одном чанке
-    private isBreak = false; // Если закончился предыдущий запрос, но не начался новый
-    private updateIndex = 0; // Текущее количество обновлений в текущем запросе
     private endTimePreviousRequest: number = 0; // Конец предыдущего запроса
     private decreaseTimeSum = 0;
     private lastParticle?: UploadParticle;
@@ -53,9 +51,11 @@ export class UploadTestingRequest implements TestingRequest {
     sendRequest(): void {
         if (!this.run) return;
         if (this.first) {
-            this.connectToSocket()
             this.first = false;
-            this.endTimePreviousRequest = Date.now();
+            setTimeout(() => {
+                this.connectToSocket()
+                this.endTimePreviousRequest = Date.now();
+            }, 1000)
         }
 
         const requestWrapper = {request: new XMLHttpRequest(), isEnd: false};
