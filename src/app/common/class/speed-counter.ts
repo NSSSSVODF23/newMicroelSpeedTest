@@ -89,6 +89,7 @@ export class SpeedCounter {
     private breakTestTime: number = 0;
     private isPreparingStage = true;
     private startPreparing = false;
+    private skipBurst = true;
 
 
     constructor(request: TestingRequest) {
@@ -395,13 +396,16 @@ export class SpeedCounter {
      * @param {number} time Время замера
      */
     private updateValues(speed: number, time?: number) {
-        this.rawValues.push(speed); // Записываем значение в массив
         if (!this.startPreparing) {
             this.startPreparing = true;
             setTimeout(() => {
                 this.endPrepare();
             }, 2000);
+            setTimeout(() => {
+                this.skipBurst = false;
+            }, 500)
         }
+        if (!this.skipBurst) this.rawValues.push(speed); // Записываем значение в массив
         if (!this.isPreparingStage) {
 
             this.calculateZeroRatio(); // Рассчитываем пропорцию потерей
