@@ -1,17 +1,12 @@
 import {Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
-import {Measure} from "src/app/common/transport/models/measure";
 import {MeasureService} from "../../service/measure.service";
 import {Table} from "primeng/table";
-import {House} from "src/app/common/transport/models/house";
 import {HouseService} from "../../service/house.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
-import {PagingLoadService} from "../../../common/class/paging-load-service";
 import {MeasurePageable} from "../../../common/class/page-loaders/measure-pageable";
-import {animate, query, stagger, style, transition, trigger} from "@angular/animations";
 import {BreakpointObserver} from "@angular/cdk/layout";
 import {Title} from "@angular/platform-browser";
-import {configureMeasurementChart} from "../../../common/method/chart";
 import {TableQueryLoader} from "../../../common/class/page-loaders/controllers/table-query-loader";
 import {ListQueryLoader} from "../../../common/class/page-loaders/controllers/list-query-loader";
 

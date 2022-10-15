@@ -1,11 +1,12 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
-import {Router} from "@angular/router";
+import {ActivationEnd, NavigationStart, Router} from "@angular/router";
 import {Apollo} from "apollo-angular";
 import jwtDecode from "jwt-decode";
 import {AuthResponse} from "src/app/common/transport/models/auth";
 import {decodeJWT} from "../../common/method/object";
 import {endpointHttp} from "../../api-endpoint";
+import {catchError, of, switchMap, tap} from "rxjs";
 
 @Injectable({
     providedIn: "root",
@@ -17,8 +18,6 @@ export class AuthService {
 
     constructor(readonly http: HttpClient, readonly router: Router) {
         this.loadTokens()
-        if (this.hasRefresh()) this.doRefreshToken(() => {
-        })
         this.updateObserver.startObserve(this);
     }
 
@@ -26,9 +25,28 @@ export class AuthService {
         return typeof this.refreshToken === "string"
     }
 
-    public readonly isAuth = () => {
+    public isAuth() {
         return this.token !== null && this.token !== undefined && this.token !== "";
     };
+
+    public authObserver() {
+        return this.http
+            .post<AuthResponse>(`${endpointHttp}/public/token`, {
+                refreshToken: this.refreshToken,
+            }).pipe(tap({
+                    next: (response) => {
+                        this.saveTokens(response.token, this.refreshToken);
+                    },
+                    error: (error) => {
+                        console.log(error)
+                        this.saveTokens(null, null);
+                    },
+                }),
+                switchMap((value, index) => of(true)
+                ),
+                catchError(() => of(this.router.createUrlTree(["/signin"])))
+            )
+    }
 
     public getUsername(): string | null {
         if (this.token) {
@@ -63,6 +81,7 @@ export class AuthService {
             })
             .subscribe({
                 next: (response) => {
+                    console.log('login', response)
                     this.saveTokens(response.token, response.refreshToken);
                 },
                 error: (error) => {

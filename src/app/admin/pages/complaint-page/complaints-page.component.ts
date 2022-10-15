@@ -9,6 +9,7 @@ import {BreakpointObserver} from "@angular/cdk/layout";
 import {ComplaintPageable} from "../../../common/class/page-loaders/complaint-pageable";
 import {Title} from "@angular/platform-browser";
 import {ListQueryLoader} from "../../../common/class/page-loaders/controllers/list-query-loader";
+import {AuthService} from "../../service/auth.service";
 
 @Component({
     templateUrl: './complaints-page.component.html',
@@ -43,7 +44,8 @@ export class ComplaintsPageComponent implements OnInit, OnDestroy {
         readonly router: Router,
         readonly route: ActivatedRoute,
         readonly breakpoint: BreakpointObserver,
-        readonly titleService: Title
+        readonly titleService: Title,
+        readonly auth: AuthService
     ) {
     }
 

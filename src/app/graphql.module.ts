@@ -13,7 +13,6 @@ import {SubscriptionClient} from "subscriptions-transport-ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 import {endpointHttp, endpointWs} from "./api-endpoint";
 
-const uri = `${endpointHttp}/graphql`; // <-- add the URL of the GraphQL server here
 export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
     const basic = setContext((operation, context) => ({
         headers: {
@@ -21,11 +20,15 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
         },
     }));
 
-    const auth = setContext((operation, context) => ({
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-    }));
+
+    const auth = setContext((operation, context) => {
+        return {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            }
+        }
+    });
+
     // Create a WebSocket link:
     const ws = new SubscriptionClient(
         `${endpointWs}/subscriptions`,
@@ -50,7 +53,7 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
             );
         },
         new WebSocketLink(ws),
-        ApolloLink.from([basic, auth, httpLink.create({uri})]),
+        ApolloLink.from([basic, auth, httpLink.create({uri: `${endpointHttp}/graphql`})]),
     );
 
     const cache = new InMemoryCache();

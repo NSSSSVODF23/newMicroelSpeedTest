@@ -17,6 +17,7 @@ import {Subscription} from "rxjs";
 import {updateListResolver} from "../../../common/method/update_resolver";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {Title} from "@angular/platform-browser";
+import {AuthService} from "../../service/auth.service";
 
 const fade = trigger("fade", [
     transition(":enter", [
@@ -201,7 +202,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
     subscriptions: Subscription[] = [];
 
-    constructor(readonly dashboard: DashboardService, readonly statistic: StatisticService, readonly titleService: Title) {
+    constructor(readonly auth: AuthService, readonly dashboard: DashboardService, readonly statistic: StatisticService, readonly titleService: Title) {
     }
 
     statisticCustomTimeRangeCallback = (timeRange: TimeRange) => {

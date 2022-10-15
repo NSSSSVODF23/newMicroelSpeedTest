@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Apollo, gql} from "apollo-angular";
 import {ComplaintsFilter} from "../../common/transport/filters/complaint-filter";
-import {map, Observable} from "rxjs";
+import {catchError, map, Observable, of, retry, switchMap} from "rxjs";
 import {Complaint} from "../../common/transport/models/complaint";
-import {UserService} from "./user.service";
 import {AuthService} from "./auth.service";
 import {UpdateProvider} from "../../common/transport/models/update-provider";
 import {FilterRequestParams} from "../../common/interfaces/pageing/pageable";
 import {Page} from "../../common/transport/models/page";
+import {buildRetryFunction} from "@apollo/client/link/retry/retryFunction";
 
 @Injectable({
     providedIn: 'root'
