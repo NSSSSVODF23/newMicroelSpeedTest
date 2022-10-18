@@ -95,6 +95,16 @@ type CpuUtil {
     stamp: String
 }
 
+type DateIntegerPoint {
+    x: String
+    y: Int
+}
+
+type DayIntegerPoint {
+    x: String
+    y: Int
+}
+
 type Device {
     deviceId: String
     hostname: String
@@ -118,15 +128,32 @@ type DeviceUpdateProvider {
     updateType: ListMutationTypes
 }
 
+type GroupedCTypeDateIntegerPoint {
+    g: MeasureConnectionTypes
+    x: String
+    y: Int
+}
+
 type GroupedCTypeDayIntegerPoint {
     g: MeasureConnectionTypes
     x: String
     y: Int
 }
 
+type GroupedCTypeHourIntegerPoint {
+    g: MeasureConnectionTypes
+    x: Int
+    y: Int
+}
+
 type GroupedCTypeStringIntegerPoint {
     g: MeasureConnectionTypes
     x: String
+    y: Int
+}
+
+type HourIntegerPoint {
+    x: Int
     y: Int
 }
 
@@ -196,14 +223,21 @@ type Query {
     getAllUsers: [User]
     getAvgAllFeedbacks: Float
     getBeginningMeasures: [BeginningMeasure]
+    getComplaintCountsInAddresses(timeRange: ITimeRange): [StringIntegerPoint]
+    getComplaintCountsInDate(timeRange: ITimeRange): [DateIntegerPoint]
+    getComplaintCountsInDays(timeRange: ITimeRange): [DayIntegerPoint]
+    getComplaintCountsInHour(timeRange: ITimeRange): [HourIntegerPoint]
     getComplaints(dateFilter: ITimeRange, isProcessed: Boolean, limits: IPagination, matchingObject: IComplaint): ComplaintPage
     getCpuStatistic(timeRange: ITimeRange): [CpuUtil]
     getDevices(limit: IPagination, matchingObject: IDevice): DevicePage
+    getFeedbackAvgInAddresses(timeRange: ITimeRange): [StringDoublePoint]
     getMeasure(id: Int): Measure
     getMeasures(dateFilter: ITimeRange, limits: IPagination, matchingObject: IMeasure): MeasurePage
     getMeasuringCountsFromPeriod(timeRange: ITimeRange): Int
     getMeasuringCountsInAddresses(timeRange: ITimeRange): [GroupedCTypeStringIntegerPoint]
+    getMeasuringCountsInDate(timeRange: ITimeRange): [GroupedCTypeDateIntegerPoint]
     getMeasuringCountsInDays(timeRange: ITimeRange): [GroupedCTypeDayIntegerPoint]
+    getMeasuringCountsInHour(timeRange: ITimeRange): [GroupedCTypeHourIntegerPoint]
     getNetworkStatistic(timeRange: ITimeRange): [NetworkUtil]
     getRamStatistic(timeRange: ITimeRange): [RamUtil]
     getTotalComplaints(filter: ComplaintsFilter): Int
@@ -230,6 +264,16 @@ type RoleGroup {
 type SpeedChartPoint {
     speed: Float
     stamp: Int
+}
+
+type StringDoublePoint {
+    x: String
+    y: Float
+}
+
+type StringIntegerPoint {
+    x: String
+    y: Int
 }
 
 type Subscription {

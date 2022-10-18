@@ -7,6 +7,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import {Calendar, ExtendDate, TimeRange} from "../../../common/method/time";
 import {
     configureHorizontalLabelStatisticChart,
+    configureLinearStatisticChart,
     configureOnlineChart,
     configureTimeStatisticChart,
     getLineDataset
@@ -77,14 +78,14 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                     label: "Количество", items: [
                         {
                             label: "Неделя",
-                            command: this.loadMeasurementsCountsInDays.bind(this,
+                            command: this.loadMeasurementsCountsInDate.bind(this,
                                 [
                                     Calendar.getDayRelativeNow(-7).getStartDay(),
                                     Calendar.getDayRelativeNow(0).getEndDay()
                                 ])
                         },
                         {
-                            label: "Месяц", command: this.loadMeasurementsCountsInDays.bind(this,
+                            label: "Месяц", command: this.loadMeasurementsCountsInDate.bind(this,
                                 [
                                     Calendar.getDayRelativeNow(-30).getStartDay(),
                                     Calendar.getDayRelativeNow(0).getEndDay()
@@ -92,7 +93,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                         },
                         {
                             label: "Выбрать",
-                            command: this.openCustomTimeRangeDialog.bind(this, this.loadMeasurementsCountsInDays, true)
+                            command: this.openCustomTimeRangeDialog.bind(this, this.loadMeasurementsCountsInDate, true)
                         },
                     ]
                 },
@@ -119,7 +120,177 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                         },
                     ]
                 },
+                {
+                    label: "Дни недели", items: [
+                        {
+                            label: "Неделя",
+                            command: this.loadMeasurementsCountsInDay.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-7).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Месяц", command: this.loadMeasurementsCountsInDay.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-30).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Выбрать",
+                            command: this.openCustomTimeRangeDialog.bind(this, this.loadMeasurementsCountsInDay, true)
+                        },
+                    ]
+                },
+                {
+                    label: "Часы", items: [
+                        {
+                            label: "Неделя",
+                            command: this.loadMeasurementsCountsInHour.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-7).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Месяц", command: this.loadMeasurementsCountsInHour.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-30).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Выбрать",
+                            command: this.openCustomTimeRangeDialog.bind(this, this.loadMeasurementsCountsInHour, true)
+                        },
+                    ]
+                },
             ],
+        },
+        {
+            label: "Жалобы",
+            items: [
+                {
+                    label: "Количество", items: [
+                        {
+                            label: "Неделя",
+                            command: this.loadComplaintsCountsInDate.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-7).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Месяц", command: this.loadComplaintsCountsInDate.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-30).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Выбрать",
+                            command: this.openCustomTimeRangeDialog.bind(this, this.loadComplaintsCountsInDate, true)
+                        },
+                    ]
+                },
+                {
+                    label: "Адреса", items: [
+                        {
+                            label: "Неделя",
+                            command: this.loadComplaintsCountsInAddresses.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-7).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Месяц", command: this.loadComplaintsCountsInAddresses.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-30).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Выбрать",
+                            command: this.openCustomTimeRangeDialog.bind(this, this.loadComplaintsCountsInAddresses, true)
+                        },
+                    ]
+                },
+                {
+                    label: "Дни недели", items: [
+                        {
+                            label: "Неделя",
+                            command: this.loadComplaintsCountsInDay.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-7).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Месяц", command: this.loadComplaintsCountsInDay.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-30).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Выбрать",
+                            command: this.openCustomTimeRangeDialog.bind(this, this.loadComplaintsCountsInDay, true)
+                        },
+                    ]
+                },
+                {
+                    label: "Часы", items: [
+                        {
+                            label: "Неделя",
+                            command: this.loadComplaintsCountsInHour.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-7).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Месяц", command: this.loadComplaintsCountsInHour.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-30).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Выбрать",
+                            command: this.openCustomTimeRangeDialog.bind(this, this.loadComplaintsCountsInHour, true)
+                        },
+                    ]
+                },
+            ],
+        },
+        {
+            label: "Рейтинг", items: [
+                {
+                    label: "Адреса", items: [
+                        {
+                            label: "Неделя",
+                            command: this.loadFeedbacksAvgInAddresses.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-7).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Месяц", command: this.loadFeedbacksAvgInAddresses.bind(this,
+                                [
+                                    Calendar.getDayRelativeNow(-30).getStartDay(),
+                                    Calendar.getDayRelativeNow(0).getEndDay()
+                                ])
+                        },
+                        {
+                            label: "Выбрать",
+                            command: this.openCustomTimeRangeDialog.bind(this, this.loadFeedbacksAvgInAddresses, true)
+                        },
+                    ]
+                }
+            ]
         },
         {
             label: "Нагрузка",
@@ -261,7 +432,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                 }
             )
         )
-        this.loadMeasurementsCountsInDays([Calendar.getDayRelativeNow(-7).getStartDay(), Calendar.getDayRelativeNow(0).getEndDay()])
+        this.loadMeasurementsCountsInDate([Calendar.getDayRelativeNow(-7).getStartDay(), Calendar.getDayRelativeNow(0).getEndDay()])
     }
 
     public setCustomTimeRange(event: any) {
@@ -295,10 +466,10 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         this.statisticCustomTimeRangeCallback = callback;
     }
 
-    private loadMeasurementsCountsInDays(timeRange: TimeRange) {
+    private loadMeasurementsCountsInDate(timeRange: TimeRange) {
         this.statisticName = 'Кол-во замеров в день'
         this.statisticChartType = 'bar'
-        this.statistic.measuresCountsInDays(timeRange).subscribe(data => {
+        this.statistic.measuresCountsInDate(timeRange).subscribe(data => {
             this.statisticChartData = {
                 datasets: [
                     {
@@ -342,6 +513,184 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                         label: "Wifi",
                         data: labels.map(a => mapper(a, data, MeasureConnectionTypes.WIFI)),
                         backgroundColor: "#c31fff",
+                    },
+                ],
+            };
+            this.statisticChartOptions = configureHorizontalLabelStatisticChart(true);
+        });
+    }
+
+    private loadMeasurementsCountsInDay(timeRange: TimeRange) {
+
+        const mapper = (dow: string, data: GroupCTypeStringIntegerPoint[], type: MeasureConnectionTypes) => {
+            return data.filter(point => point.x === dow && point.g === type).reduce((prev, o) => prev + o.y, 0)
+        }
+
+        this.statisticName = 'Кол-во замеров по дням в неделе'
+        this.statisticChartType = 'bar'
+        this.statistic.measuresCountsInDays(timeRange).subscribe(data => {
+            let labels = [
+                "Понедельник",
+                "Вторник",
+                "Среда",
+                "Четверг",
+                "Пятница",
+                "Суббота",
+                "Воскресенье"
+            ];
+            this.statisticChartData = {
+                labels,
+                datasets: [
+                    {
+                        label: "Ethernet",
+                        data: labels.map(a => mapper(a, data, MeasureConnectionTypes.ETHERNET)),
+                        backgroundColor: "#ff961f",
+                    },
+                    {
+                        label: "Wifi",
+                        data: labels.map(a => mapper(a, data, MeasureConnectionTypes.WIFI)),
+                        backgroundColor: "#c31fff",
+                    },
+                ],
+            };
+            this.statisticChartOptions = configureHorizontalLabelStatisticChart(true);
+        });
+    }
+
+    private loadMeasurementsCountsInHour(timeRange: TimeRange) {
+
+        this.statisticName = 'Кол-во замеров в час'
+        this.statisticChartType = 'bar'
+        this.statistic.measuresCountsInHour(timeRange).subscribe(data => {
+            const ethHours = data.filter(p => p.g === MeasureConnectionTypes.ETHERNET).map(item => item.x);
+            const preparedEth = ethHours.filter((item, pos) => {
+                return ethHours.indexOf(item) === pos;
+            }).map((hour, i, a) => {
+                return {x: hour, y: data.filter(fp => fp.x === hour).reduce((prev, curr) => prev + curr.y, 0)};
+            })
+            const wifiHours = data.filter(p => p.g === MeasureConnectionTypes.WIFI).map(item => item.x);
+            const preparedWifi = wifiHours.filter((item, pos) => {
+                return wifiHours.indexOf(item) === pos;
+            }).map((hour, i, a) => {
+                return {x: hour, y: data.filter(fp => fp.x === hour).reduce((prev, curr) => prev + curr.y, 0)};
+            })
+            this.statisticChartData = {
+                datasets: [
+                    {
+                        label: "Ethernet",
+                        data: preparedEth,
+                        backgroundColor: "#ff961f",
+                    },
+                    {
+                        label: "Wifi",
+                        data: preparedWifi,
+                        backgroundColor: "#c31fff",
+                    },
+                ],
+            };
+            this.statisticChartOptions = configureLinearStatisticChart(true, 0, 23);
+        });
+    }
+
+    private loadComplaintsCountsInDate(timeRange: TimeRange) {
+        this.statisticName = 'Кол-во жалоб в день'
+        this.statisticChartType = 'bar'
+        this.statistic.complaintsCountsInDate(timeRange).subscribe(data => {
+            this.statisticChartData = {
+                datasets: [
+                    {
+                        label: "Жалобы",
+                        data: data,
+                        backgroundColor: "#ff391f",
+                    },
+                ],
+            };
+            this.statisticChartOptions = configureTimeStatisticChart(timeRange[0], timeRange[1], true, true);
+        });
+    }
+
+    private loadComplaintsCountsInAddresses(timeRange: TimeRange) {
+        this.statisticName = 'Кол-во жалоб топ-10 адресов'
+        this.statisticChartType = 'bar'
+        this.statistic.complaintsCountsInAddresses(timeRange).subscribe(data => {
+            let labels = data.map(point => point.x);
+            this.statisticChartData = {
+                labels,
+                datasets: [
+                    {
+                        label: "Жалобы",
+                        data: data.map(point => point.y),
+                        backgroundColor: "#ff391f",
+                    },
+                ],
+            };
+            this.statisticChartOptions = configureHorizontalLabelStatisticChart(true);
+        });
+    }
+
+    private loadComplaintsCountsInDay(timeRange: TimeRange) {
+        this.statisticName = 'Кол-во жалоб по дням в неделе'
+        this.statisticChartType = 'bar'
+        this.statistic.complaintsCountsInDays(timeRange).subscribe(data => {
+            let labels = [
+                "Понедельник",
+                "Вторник",
+                "Среда",
+                "Четверг",
+                "Пятница",
+                "Суббота",
+                "Воскресенье"
+            ];
+            this.statisticChartData = {
+                labels,
+                datasets: [
+                    {
+                        label: "Жалобы",
+                        data: labels.map(a => data.find(p => p.x === a)?.y),
+                        backgroundColor: "#ff391f",
+                    },
+                ],
+            };
+            this.statisticChartOptions = configureHorizontalLabelStatisticChart(true);
+        });
+    }
+
+    private loadComplaintsCountsInHour(timeRange: TimeRange) {
+
+        this.statisticName = 'Кол-во жалоб в час'
+        this.statisticChartType = 'bar'
+        this.statistic.complaintsCountsInHour(timeRange).subscribe(data => {
+            const complaintHours = data.map(item => item.x);
+            const preparedComplaint = complaintHours.filter((item, pos) => {
+                return complaintHours.indexOf(item) === pos;
+            }).map((hour, i, a) => {
+                return {x: hour, y: data.filter(fp => fp.x === hour).reduce((prev, curr) => prev + curr.y, 0)};
+            })
+            this.statisticChartData = {
+                datasets: [
+                    {
+                        label: "Жалобы",
+                        data: preparedComplaint,
+                        backgroundColor: "#ff391f",
+                    },
+                ],
+            };
+            this.statisticChartOptions = configureLinearStatisticChart(true, 0, 23);
+        });
+    }
+
+    private loadFeedbacksAvgInAddresses(timeRange: TimeRange) {
+        this.statisticName = 'Средний рейтинг по адресам'
+        this.statisticChartType = 'bar'
+        this.statistic.feedbackAvgInAddresses(timeRange).subscribe(data => {
+            let labels = data.map(point => point.x);
+            this.statisticChartData = {
+                labels,
+                datasets: [
+                    {
+                        label: "Рейтинг",
+                        data: data.map(point => point.y),
+                        backgroundColor: "#3be8a0",
                     },
                 ],
             };

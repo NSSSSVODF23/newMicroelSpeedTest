@@ -4,15 +4,24 @@ import {map, Observable} from "rxjs";
 import {
     ActiveSession,
     CpuUtil,
-    GroupCTypeDayIntegerPoint, GroupCTypeStringIntegerPoint, GroupStringDayIntegerPoint,
+    DateIntegerPoint,
+    DayIntegerPoint,
+    GroupCTypeDateIntegerPoint,
+    GroupCTypeDayIntegerPoint,
+    GroupCTypeHourIntegerPoint,
+    GroupCTypeStringIntegerPoint,
+    GroupStringDayIntegerPoint,
+    HourIntegerPoint,
     NetworkUtil,
-    RamUtil,
+    RamUtil, StringDoublePoint,
+    StringIntegerPoint,
     TimeNumberPoint
 } from "../../common/transport/models/statistics";
 import {TimeRange} from "../../common/method/time";
 import {MeasureConnectionTypes} from "../../common/transport/enums/connection-types";
 import {Measure} from "../../common/transport/models/measure";
 import {UpdateProvider} from "../../common/transport/models/update-provider";
+
 
 @Injectable({
     providedIn: 'root'
@@ -40,6 +49,30 @@ export class StatisticService {
         })))
     }
 
+    measuresCountsInDate(timeRange: TimeRange): Observable<GroupCTypeDateIntegerPoint[]> {
+        return this.apollo.query<any>(
+            {
+                query: gql`
+                    query getMeasuringCountsInDate($timeRange: ITimeRange){
+                        getMeasuringCountsInDate(timeRange: $timeRange){
+                            x
+                            y
+                            g
+                        }
+                    }
+                `,
+                fetchPolicy: 'network-only',
+                variables: {
+                    timeRange: {start: timeRange[0], end: timeRange[1]}
+                }
+            }
+        ).pipe(map(data => data.data.getMeasuringCountsInDate.map((point: any) => {
+            return {
+                ...point, x: new Date(point.x), g: MeasureConnectionTypes[point.g]
+            }
+        })))
+    }
+
     measuresCountsInDays(timeRange: TimeRange): Observable<GroupCTypeDayIntegerPoint[]> {
         return this.apollo.query<any>(
             {
@@ -59,7 +92,117 @@ export class StatisticService {
             }
         ).pipe(map(data => data.data.getMeasuringCountsInDays.map((point: any) => {
             return {
+                ...point, g: MeasureConnectionTypes[point.g]
+            }
+        })))
+    }
+
+    measuresCountsInHour(timeRange: TimeRange): Observable<GroupCTypeHourIntegerPoint[]> {
+        return this.apollo.query<any>(
+            {
+                query: gql`
+                    query getMeasuringCountsInHour($timeRange: ITimeRange){
+                        getMeasuringCountsInHour(timeRange: $timeRange){
+                            x
+                            y
+                            g
+                        }
+                    }
+                `,
+                fetchPolicy: 'network-only',
+                variables: {
+                    timeRange: {start: timeRange[0], end: timeRange[1]}
+                }
+            }
+        ).pipe(map(data => data.data.getMeasuringCountsInHour.map((point: any) => {
+            return {
+                ...point, g: MeasureConnectionTypes[point.g]
+            }
+        })))
+    }
+
+    complaintsCountsInAddresses(timeRange: TimeRange): Observable<StringIntegerPoint[]> {
+        return this.apollo.query<any>({
+            query: gql`
+                query getComplaintCountsInAddresses($timeRange: ITimeRange){
+                    getComplaintCountsInAddresses(timeRange: $timeRange){
+                        x
+                        y
+                    }
+                }
+            `,
+            fetchPolicy: "network-only",
+            variables: {timeRange: {start: timeRange[0], end: timeRange[1]}}
+        }).pipe(map(data => data.data.getComplaintCountsInAddresses.map((point: any) => {
+            return {...point, g: MeasureConnectionTypes[point.g]}
+        })))
+    }
+
+    complaintsCountsInDate(timeRange: TimeRange): Observable<DateIntegerPoint[]> {
+        return this.apollo.query<any>(
+            {
+                query: gql`
+                    query getComplaintCountsInDate($timeRange: ITimeRange){
+                        getComplaintCountsInDate(timeRange: $timeRange){
+                            x
+                            y
+                        }
+                    }
+                `,
+                fetchPolicy: 'network-only',
+                variables: {
+                    timeRange: {start: timeRange[0], end: timeRange[1]}
+                }
+            }
+        ).pipe(map(data => data.data.getComplaintCountsInDate.map((point: any) => {
+            return {
                 ...point, x: new Date(point.x), g: MeasureConnectionTypes[point.g]
+            }
+        })))
+    }
+
+    complaintsCountsInDays(timeRange: TimeRange): Observable<DayIntegerPoint[]> {
+        return this.apollo.query<any>(
+            {
+                query: gql`
+                    query getComplaintCountsInDays($timeRange: ITimeRange){
+                        getComplaintCountsInDays(timeRange: $timeRange){
+                            x
+                            y
+                        }
+                    }
+                `,
+                fetchPolicy: 'network-only',
+                variables: {
+                    timeRange: {start: timeRange[0], end: timeRange[1]}
+                }
+            }
+        ).pipe(map(data => data.data.getComplaintCountsInDays.map((point: any) => {
+            return {
+                ...point, g: MeasureConnectionTypes[point.g]
+            }
+        })))
+    }
+
+    complaintsCountsInHour(timeRange: TimeRange): Observable<HourIntegerPoint[]> {
+        return this.apollo.query<any>(
+            {
+                query: gql`
+                    query getComplaintCountsInHour($timeRange: ITimeRange){
+                        getComplaintCountsInHour(timeRange: $timeRange){
+                            x
+                            y
+                        }
+                    }
+                `,
+                fetchPolicy: 'network-only',
+                variables: {
+                    timeRange: {start: timeRange[0], end: timeRange[1]}
+                }
+            }
+        ).pipe(map(data => data.data.getComplaintCountsInHour.map((point: any) => {
+            return {
+                ...point, g: MeasureConnectionTypes[point.g]
             }
         })))
     }
@@ -205,5 +348,20 @@ export class StatisticService {
                 timeRange: {start: timeRange[0], end: timeRange[1]}
             }
         }).pipe(map(data => data.data.getNetworkStatistic))
+    }
+
+    feedbackAvgInAddresses(timeRange: TimeRange): Observable<StringDoublePoint[]> {
+        return this.apollo.query<any>({
+            query: gql`
+                query getFeedbackAvgInAddresses($timeRange: ITimeRange){
+                    getFeedbackAvgInAddresses(timeRange: $timeRange){
+                        x
+                        y
+                    }
+                }
+            `,
+            fetchPolicy: "network-only",
+            variables: {timeRange: {start: timeRange[0], end: timeRange[1]}}
+        }).pipe(map(data => data.data.getFeedbackAvgInAddresses));
     }
 }

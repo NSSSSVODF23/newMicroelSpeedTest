@@ -25,8 +25,20 @@ export interface TimeNumberPoint {
     y: number;
 }
 
-export interface GroupCTypeDayIntegerPoint {
+export interface GroupCTypeDateIntegerPoint {
     x: Date;
+    y: number;
+    g: MeasureConnectionTypes;
+}
+
+export interface GroupCTypeDayIntegerPoint {
+    x: string;
+    y: number;
+    g: MeasureConnectionTypes;
+}
+
+export interface GroupCTypeHourIntegerPoint {
+    x: number;
     y: number;
     g: MeasureConnectionTypes;
 }
@@ -51,4 +63,29 @@ export interface ActiveSession {
     address: string;
     isStarted: boolean;
     hasInfo: boolean;
+}
+
+export interface StringIntegerPoint {
+    x: string
+    y: number
+}
+
+export interface StringDoublePoint {
+    x: string
+    y: number
+}
+
+export interface DateIntegerPoint {
+    x: Date
+    y: number
+}
+
+export interface DayIntegerPoint {
+    x: string
+    y: number
+}
+
+export interface HourIntegerPoint {
+    x: number
+    y: number
 }

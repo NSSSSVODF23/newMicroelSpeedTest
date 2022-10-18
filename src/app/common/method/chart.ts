@@ -74,6 +74,28 @@ export function configureHorizontalLabelStatisticChart(stacked?: boolean) {
     };
 }
 
+export function configureLinearStatisticChart(stacked?: boolean, min?: number, max?: number) {
+    return {
+        indexAxis: 'x',
+        scales: {
+            x: {
+                stacked,
+                type: 'linear',
+                min,
+                max,
+                ticks: {
+                    maxTicksLimit: 25,
+                    stepSize: 1,
+                    autoSkip: false
+                }
+            },
+            y: {
+                stacked
+            },
+        },
+    };
+}
+
 export function configureOnlineChart(suffix: string) {
     return {
         animation: false,
