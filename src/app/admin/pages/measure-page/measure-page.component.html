@@ -171,7 +171,8 @@
 </ng-template>
 
 <ng-template #charts>
-    <p-chart [data]="{datasets:[downloadDataset,uploadDataset]}" [height]="isMobile ? '100%' : '30rem'"
+    <p-chart [data]="{datasets:[downloadDataset,uploadDataset,downloadDatasetUser,uploadDatasetUser]}"
+             [height]="isMobile ? '100%' : '30rem'"
              [options]="chartOptions"
              [responsive]="true"
              type="line"></p-chart>

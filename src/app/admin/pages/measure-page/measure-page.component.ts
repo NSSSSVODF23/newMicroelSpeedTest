@@ -56,6 +56,8 @@ export class MeasurePageComponent implements OnInit, OnDestroy {
 
     downloadDataset: any = {};
     uploadDataset: any = {};
+    downloadDatasetUser: any;
+    uploadDatasetUser: any;
 
     chartOptions = configureMeasurementChart();
 
@@ -85,6 +87,14 @@ export class MeasurePageComponent implements OnInit, OnDestroy {
                     this.uploadDataset = getLineDataset("Загрузка", "#ba46f0", this.currentMeasure?.uploadSpeedChart?.map(p => {
                         return {x: p.stamp, y: p.speed}
                     }))
+                    this.downloadDatasetUser = getLineDataset("Скачивание (что видит пользователь)", "#3de337", this.currentMeasure?.downloadSpeedChartUser?.map(p => {
+                        return {x: p.stamp, y: p.speed}
+                    }))
+                    this.uploadDatasetUser = getLineDataset("Загрузка (что видит пользователь)", "#466ef0", this.currentMeasure?.uploadSpeedChartUser?.map(p => {
+                        return {x: p.stamp, y: p.speed}
+                    }))
+                    this.downloadDatasetUser.hidden = true;
+                    this.uploadDatasetUser.hidden = true;
                 });
             }
         });
