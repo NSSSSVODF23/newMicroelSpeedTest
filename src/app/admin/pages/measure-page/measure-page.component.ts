@@ -56,8 +56,8 @@ export class MeasurePageComponent implements OnInit, OnDestroy {
 
     downloadDataset: any = {};
     uploadDataset: any = {};
-    downloadDatasetUser: any;
-    uploadDatasetUser: any;
+    downloadDatasetUser: any = {};
+    uploadDatasetUser: any = {};
 
     chartOptions = configureMeasurementChart();
 

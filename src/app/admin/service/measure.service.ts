@@ -51,10 +51,18 @@ export class MeasureService {
                             stamp
                             speed
                         }
+                        downloadSpeedChartUser{
+                            stamp
+                            speed
+                        }
                         uploadSpeed
                         uploadStability
                         uploadLoss
                         uploadSpeedChart{
+                            stamp
+                            speed
+                        }
+                        uploadSpeedChartUser{
                             stamp
                             speed
                         }
