@@ -1,3 +1,5 @@
+import jwtDecode from "jwt-decode";
+
 export function deepCopy(object: Object) {
     return JSON.parse(JSON.stringify(object));
 }
@@ -8,5 +10,5 @@ export function reduceToStringObject(prev: { [key: string]: string | undefined }
 }
 
 export function decodeJWT(token: string) {
-    return JSON.parse(atob(token.split(".")[1].replace('_', '/').replace('-', '+')))
+    return jwtDecode<any>(token);
 }
